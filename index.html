@@ -181,11 +181,11 @@ tr:hover td{background:#faf9f6}
 <div class="nav">
   <div class="nav-brand">MJSR <span>Procurement</span></div>
   <div class="nav-tabs">
+    <button class="nav-tab" onclick="go('sub-prf')">+ New PRF</button>
+    <button class="nav-tab" onclick="go('sub-grn')">+ New GRN</button>
     <button class="nav-tab active" onclick="go('dashboard')">Dashboard</button>
     <button class="nav-tab" onclick="go('prf-tracker')">PRF Tracker <span class="ntag ntag-p" id="prf-cnt">0</span></button>
     <button class="nav-tab" onclick="go('grn-tracker')">GRN Tracker <span class="ntag ntag-g" id="grn-cnt">0</span></button>
-    <button class="nav-tab" onclick="go('sub-prf')">+ New PRF</button>
-    <button class="nav-tab" onclick="go('sub-grn')">+ New GRN</button>
     <button class="nav-tab" onclick="go('status')">Update Status</button>
   </div>
 </div>
@@ -226,6 +226,10 @@ tr:hover td{background:#faf9f6}
   <div class="fbar">
     <label>Status</label>
     <select id="pf-s" onchange="rprf()"><option value="">All</option><option>Pending</option><option>Approved</option><option>Rejected</option></select>
+    <label>Finance</label>
+    <select id="pf-fin" onchange="rprf()"><option value="">All</option><option>Pending</option><option>Approved</option><option>Rejected</option></select>
+    <label>GM</label>
+    <select id="pf-gm" onchange="rprf()"><option value="">All</option><option>Not Required</option><option>Pending</option><option>Approved</option><option>Rejected</option></select>
     <label>Dept</label>
     <select id="pf-d" onchange="rprf()"><option value="">All</option></select>
     <input type="text" id="pf-q" placeholder="PRF No. / requester name..." oninput="rprf()">
@@ -236,7 +240,7 @@ tr:hover td{background:#faf9f6}
     <div style="overflow-x:auto">
     <table><thead><tr>
       <th>PRF No.</th><th>Date</th><th>Department</th><th>Name of Requester</th>
-      <th>Items</th><th>Reason for Purchase</th><th>H.O.D</th><th>Store Incharge</th><th>Status</th><th></th>
+      <th>Items</th><th>Reason for Purchase</th><th>Finance Approval</th><th>GM Approval</th><th>Status</th><th></th>
     </tr></thead><tbody id="prf-tbody"><tr><td colspan="10" class="empty">Loading...</td></tr></tbody></table>
     </div>
   </div>
@@ -462,6 +466,54 @@ tr:hover td{background:#faf9f6}
 
 <div class="toast" id="toast"></div>
 
+<!-- ══════════════════════════════════════════════ APPROVAL PANEL MODAL -->
+<div class="moverlay" id="appr-overlay" onclick="closeApprO(event)">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-hdr">
+      <h3 id="appr-title">Update Approval Stage</h3>
+      <button class="mclose" onclick="closeApprD()">&#x2715;</button>
+    </div>
+    <div id="appr-body">
+      <div style="font-size:11px;color:var(--text2);margin-bottom:16px;padding:9px 12px;background:var(--surface2);border-radius:6px;border-left:3px solid var(--gold);line-height:1.5">
+        Update the Finance and GM approval stages for this PRF. These are updated by the Procurement Executive after obtaining sign-off from the relevant parties.
+      </div>
+      <input type="hidden" id="appr-ref">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+        <div class="field">
+          <label style="font-size:11px;color:var(--text2);margin-bottom:4px;display:block;font-weight:600">Finance Approval <span style="color:var(--danger-text)">*</span></label>
+          <select id="appr-fin" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit">
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="field">
+          <label style="font-size:11px;color:var(--text2);margin-bottom:4px;display:block;font-weight:600">GM Approval</label>
+          <select id="appr-gm" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit">
+            <option value="Not Required">Not Required</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:16px">
+        <label style="font-size:11px;color:var(--text2);margin-bottom:4px;display:block;font-weight:600">Finance Approved By (Name)</label>
+        <input type="text" id="appr-fin-by" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit" placeholder="e.g. Accounts Manager name">
+      </div>
+      <div class="field" style="margin-bottom:16px">
+        <label style="font-size:11px;color:var(--text2);margin-bottom:4px;display:block;font-weight:600">GM Approved By (Name)</label>
+        <input type="text" id="appr-gm-by" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit" placeholder="e.g. Martin Schultz">
+      </div>
+      <div class="field" style="margin-bottom:20px">
+        <label style="font-size:11px;color:var(--text2);margin-bottom:4px;display:block;font-weight:600">Notes</label>
+        <textarea id="appr-notes" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical;min-height:56px" placeholder="Optional notes on approval decision..."></textarea>
+      </div>
+      <button class="submitbtn" style="width:100%" onclick="saveApproval()">Save Approval Update</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════════════════════════════════════════════════════════ SCRIPT -->
 <script>
 // ═══════════════════════════════════════════════════════ CONFIGURATION
@@ -506,7 +558,7 @@ function go(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
-  const order = ['dashboard','prf-tracker','grn-tracker','sub-prf','sub-grn','status'];
+  const order = ['sub-prf','sub-grn','dashboard','prf-tracker','grn-tracker','status'];
   const idx = order.indexOf(id);
   if (idx >= 0) document.querySelectorAll('.nav-tab')[idx].classList.add('active');
   counts(); depts();
@@ -572,12 +624,21 @@ function rdash() {
 function clrDash() { ['df-type','df-status','df-dept'].forEach(id => document.getElementById(id).value = ''); document.getElementById('df-q').value = ''; rdash(); }
 
 // ═══════════════════════════════════════════════════════ PRF TRACKER
+function approvalBadge(val) {
+  if (!val || val === 'Pending')      return '<span class="badge b-pending">Pending</span>';
+  if (val === 'Approved')             return '<span class="badge b-approved">Approved</span>';
+  if (val === 'Rejected')             return '<span class="badge b-rejected">Rejected</span>';
+  if (val === 'Not Required')         return '<span class="badge" style="background:#f0ede8;color:var(--text2)">Not Required</span>';
+  return '<span class="badge b-pending">' + val + '</span>';
+}
 function rprf() {
-  const st = gv('pf-s'), dp = gv('pf-d'), q = gv('pf-q').toLowerCase();
+  const st = gv('pf-s'), fin = gv('pf-fin'), gm = gv('pf-gm'), dp = gv('pf-d'), q = gv('pf-q').toLowerCase();
   let rows = [...STATE.prfs].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-  if (st) rows = rows.filter(r => r.status === st);
-  if (dp) rows = rows.filter(r => r.dept === dp);
-  if (q) rows = rows.filter(r => (r.ref || '').toLowerCase().includes(q) || (r.reqName || '').toLowerCase().includes(q));
+  if (st)  rows = rows.filter(r => r.status === st);
+  if (fin) rows = rows.filter(r => (r.financeApproval || 'Pending') === fin);
+  if (gm)  rows = rows.filter(r => (r.gmApproval || 'Pending') === gm);
+  if (dp)  rows = rows.filter(r => r.dept === dp);
+  if (q)   rows = rows.filter(r => (r.ref || '').toLowerCase().includes(q) || (r.reqName || '').toLowerCase().includes(q));
   document.getElementById('prf-tcnt').textContent = rows.length + ' record' + (rows.length !== 1 ? 's' : '');
   const tb = document.getElementById('prf-tbody');
   if (!rows.length) { tb.innerHTML = '<tr><td colspan="10" class="empty">No PRFs match filters</td></tr>'; return; }
@@ -586,14 +647,17 @@ function rprf() {
     <td>${r.date || '—'}</td><td>${r.dept || '—'}</td>
     <td>${r.reqName || '—'}</td>
     <td>${(r.items || []).length} item${(r.items || []).length !== 1 ? 's' : ''}</td>
-    <td style="max-width:150px;font-size:11px;color:var(--text2)">${r.reason ? r.reason.slice(0, 55) + (r.reason.length > 55 ? '…' : '') : '—'}</td>
-    <td>${r.sigHOD || '—'}</td>
-    <td>${r.sigStore || '—'}</td>
+    <td style="max-width:130px;font-size:11px;color:var(--text2)">${r.reason ? r.reason.slice(0, 50) + (r.reason.length > 50 ? '…' : '') : '—'}</td>
+    <td>${approvalBadge(r.financeApproval)}</td>
+    <td>${approvalBadge(r.gmApproval)}</td>
     <td><span class="badge b-${(r.status || '').toLowerCase()}">${r.status || '—'}</span></td>
-    <td><button class="abtn gold" onclick="openM('PRF','${esc(r.ref)}')">View</button></td>
+    <td>
+      <button class="abtn gold" onclick="openM('PRF','${esc(r.ref)}')">View</button>
+      <button class="abtn" onclick="openApprovalPanel('${esc(r.ref)}')" title="Update approval stages">Approve</button>
+    </td>
   </tr>`).join('');
 }
-function clrPRF() { ['pf-s','pf-d'].forEach(id => document.getElementById(id).value = ''); document.getElementById('pf-q').value = ''; rprf(); }
+function clrPRF() { ['pf-s','pf-fin','pf-gm','pf-d'].forEach(id => document.getElementById(id).value = ''); document.getElementById('pf-q').value = ''; rprf(); }
 
 // ═══════════════════════════════════════════════════════ GRN TRACKER
 function rgrn() {
@@ -813,6 +877,25 @@ function openM(type, ref) {
       <div class="di"><div class="dk">Store Incharge / Keeper</div><div class="dv">${r.sigStore||'—'}</div></div>
       <div class="di" style="grid-column:span 2"><div class="dk">Reason for Purchase</div><div class="dv">${r.reason||'—'}</div></div>
     </div>
+    <div style="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+        <span>Approval Stages</span>
+        <button class="abtn" style="font-size:11px;padding:3px 10px" onclick="closeModalDirect();openApprovalPanel('${r.ref}')">Update Approvals</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="border:0.5px solid var(--border);border-radius:6px;padding:10px 12px;background:var(--surface)">
+          <div style="font-size:10px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:4px">Finance Approval</div>
+          <div style="margin-bottom:4px">${approvalBadge(r.financeApproval)}</div>
+          ${r.financeApprovedBy ? '<div style="font-size:11px;color:var(--text2)">By: <strong>' + r.financeApprovedBy + '</strong></div>' : ''}
+        </div>
+        <div style="border:0.5px solid var(--border);border-radius:6px;padding:10px 12px;background:var(--surface)">
+          <div style="font-size:10px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:4px">GM Approval</div>
+          <div style="margin-bottom:4px">${approvalBadge(r.gmApproval || 'Not Required')}</div>
+          ${r.gmApprovedBy ? '<div style="font-size:11px;color:var(--text2)">By: <strong>' + r.gmApprovedBy + '</strong></div>' : ''}
+        </div>
+      </div>
+      ${r.approvalNotes ? '<div style="margin-top:10px;font-size:11px;color:var(--text2)"><strong>Notes:</strong> ' + r.approvalNotes + '</div>' : ''}
+    </div>
     <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:8px">Description of Items</div>
     <div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse">
       <thead><tr style="background:var(--surface2)">
@@ -886,6 +969,7 @@ function openM(type, ref) {
 }
 function closeMO(e) { if (e.target === document.getElementById('moverlay')) closeMD(); }
 function closeMD() { document.getElementById('moverlay').classList.remove('open'); curRec = null; }
+function closeModalDirect() { document.getElementById('moverlay').classList.remove('open'); }
 
 function doPrint() {
   if (!curRec) return;
@@ -914,6 +998,56 @@ function doPrint() {
   ${body}
   <script>setTimeout(()=>window.print(),500)<\/script></body></html>`);
   w.document.close();
+}
+
+// ═══════════════════════════════════════════════════════ APPROVAL PANEL
+function openApprovalPanel(ref) {
+  const r = STATE.prfs.find(x => x.ref === ref);
+  if (!r) return;
+  document.getElementById('appr-title').textContent = 'Update Approval — ' + ref;
+  document.getElementById('appr-ref').value = ref;
+  document.getElementById('appr-fin').value    = r.financeApproval    || 'Pending';
+  document.getElementById('appr-gm').value     = r.gmApproval         || 'Not Required';
+  document.getElementById('appr-fin-by').value = r.financeApprovedBy  || '';
+  document.getElementById('appr-gm-by').value  = r.gmApprovedBy       || '';
+  document.getElementById('appr-notes').value  = r.approvalNotes      || '';
+  document.getElementById('appr-overlay').classList.add('open');
+}
+function closeApprO(e) { if (e.target === document.getElementById('appr-overlay')) closeApprD(); }
+function closeApprD() { document.getElementById('appr-overlay').classList.remove('open'); }
+
+async function saveApproval() {
+  const ref         = document.getElementById('appr-ref').value;
+  const finApproval = document.getElementById('appr-fin').value;
+  const gmApproval  = document.getElementById('appr-gm').value;
+  const finBy       = document.getElementById('appr-fin-by').value.trim();
+  const gmBy        = document.getElementById('appr-gm-by').value.trim();
+  const notes       = document.getElementById('appr-notes').value.trim();
+  if (!ref) return;
+
+  const btn = document.querySelector('#appr-overlay .submitbtn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  try {
+    const res = await gasPost({ action: 'updateApproval', ref, financeApproval: finApproval, gmApproval, financeApprovedBy: finBy, gmApprovedBy: gmBy, approvalNotes: notes });
+    if (res.ok) {
+      // Update local state immediately
+      const rec = STATE.prfs.find(x => x.ref === ref);
+      if (rec) {
+        rec.financeApproval   = finApproval;
+        rec.gmApproval        = gmApproval;
+        rec.financeApprovedBy = finBy;
+        rec.gmApprovedBy      = gmBy;
+        rec.approvalNotes     = notes;
+      }
+      closeApprD();
+      rprf();
+      toast('Approval updated for ' + ref);
+    } else {
+      toast('Update failed: ' + (res.error || 'unknown'), true);
+    }
+  } catch(e) { toast('Network error — could not save.', true); }
+  btn.disabled = false; btn.textContent = 'Save Approval Update';
 }
 
 // ═══════════════════════════════════════════════════════ UTILS
