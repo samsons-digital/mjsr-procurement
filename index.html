@@ -612,20 +612,23 @@ function rdash() {
   document.getElementById('d-cnt').textContent = rows.length + ' record' + (rows.length !== 1 ? 's' : '');
   const tb = document.getElementById('d-tbody');
   if (!rows.length) { tb.innerHTML = '<tr><td colspan="10" class="empty">No records match current filters</td></tr>'; return; }
-  tb.innerHTML = rows.map(r => `<tr>
-    <td><span class="ref-link" data-type="${r._t}" data-ref="${r.ref}">${r.ref}</span></td>
-    <td><span class="badge b-${r._t.toLowerCase()}">${r._t}</span></td>
-    <td>${r.date || '—'}</td><td>${r.dept || '—'}</td>
-    <td>${r.person || '—'}</td>
-    <td>${r.supplier || '—'}</td>
-    <td>${(r.items || []).length}</td>
-    <td>${r.valStr}</td>
-    <td><span class="badge b-${(r.status || '').toLowerCase()}">${r.status || '—'}</span></td>
-    <td>
-      <button class="abtn gold" data-type="${r._t}" data-ref="${r.ref}" data-action="view">View</button>
-      ${r._t === 'PRF' ? '<button class="abtn" data-ref="' + r.ref + '" data-action="approve" style="margin-left:3px" title="Update approval stages">Approve</button>' : ''}
-    </td>
-  </tr>`).join('');
+  tb.innerHTML = rows.map(r => {
+    const approveBtn = r._t === 'PRF'
+      ? `<button class="abtn" data-ref="${r.ref}" data-action="approve" style="margin-left:3px">Approve</button>`
+      : '';
+    return `<tr>
+      <td><span class="ref-link" data-type="${r._t}" data-ref="${r.ref}">${r.ref}</span></td>
+      <td><span class="badge b-${r._t.toLowerCase()}">${r._t}</span></td>
+      <td>${r.date || '—'}</td>
+      <td>${r.dept || '—'}</td>
+      <td>${r.person || '—'}</td>
+      <td>${r.supplier || '—'}</td>
+      <td>${(r.items || []).length}</td>
+      <td>${r.valStr}</td>
+      <td><span class="badge b-${(r.status || '').toLowerCase()}">${r.status || '—'}</span></td>
+      <td><button class="abtn gold" data-type="${r._t}" data-ref="${r.ref}" data-action="view">View</button>${approveBtn}</td>
+    </tr>`;
+  }).join('');
 }
 function clrDash() { ['df-type','df-status','df-dept'].forEach(id => document.getElementById(id).value = ''); document.getElementById('df-q').value = ''; rdash(); }
 
@@ -648,20 +651,25 @@ function rprf() {
   document.getElementById('prf-tcnt').textContent = rows.length + ' record' + (rows.length !== 1 ? 's' : '');
   const tb = document.getElementById('prf-tbody');
   if (!rows.length) { tb.innerHTML = '<tr><td colspan="10" class="empty">No PRFs match filters</td></tr>'; return; }
-  tb.innerHTML = rows.map(r => `<tr>
-    <td><span class="ref-link" data-type="PRF" data-ref="${r.ref}">${r.ref}</span></td>
-    <td>${r.date || '—'}</td><td>${r.dept || '—'}</td>
-    <td>${r.reqName || '—'}</td>
-    <td>${(r.items || []).length} item${(r.items || []).length !== 1 ? 's' : ''}</td>
-    <td style="max-width:130px;font-size:11px;color:var(--text2)">${r.reason ? r.reason.slice(0, 50) + (r.reason.length > 50 ? '…' : '') : '—'}</td>
-    <td>${approvalBadge(r.financeApproval)}</td>
-    <td>${approvalBadge(r.gmApproval)}</td>
-    <td><span class="badge b-${(r.status || '').toLowerCase()}">${r.status || '—'}</span></td>
-    <td>
-      <button class="abtn gold" data-type="PRF" data-ref="${r.ref}" data-action="view">View</button>
-      <button class="abtn" data-ref="${r.ref}" data-action="approve" title="Update approval stages">Approve</button>
-    </td>
-  </tr>`).join('');
+  tb.innerHTML = rows.map(r => {
+    const reason = r.reason ? r.reason.slice(0, 50) + (r.reason.length > 50 ? '…' : '') : '—';
+    const itemCount = (r.items || []).length;
+    return `<tr>
+      <td><span class="ref-link" data-type="PRF" data-ref="${r.ref}">${r.ref}</span></td>
+      <td>${r.date || '—'}</td>
+      <td>${r.dept || '—'}</td>
+      <td>${r.reqName || '—'}</td>
+      <td>${itemCount} item${itemCount !== 1 ? 's' : ''}</td>
+      <td style="max-width:130px;font-size:11px;color:var(--text2)">${reason}</td>
+      <td>${approvalBadge(r.financeApproval)}</td>
+      <td>${approvalBadge(r.gmApproval)}</td>
+      <td><span class="badge b-${(r.status || '').toLowerCase()}">${r.status || '—'}</span></td>
+      <td>
+        <button class="abtn gold" data-type="PRF" data-ref="${r.ref}" data-action="view">View</button>
+        <button class="abtn" data-ref="${r.ref}" data-action="approve">Approve</button>
+      </td>
+    </tr>`;
+  }).join('');
 }
 function clrPRF() { ['pf-s','pf-fin','pf-gm','pf-d'].forEach(id => document.getElementById(id).value = ''); document.getElementById('pf-q').value = ''; rprf(); }
 
@@ -679,19 +687,21 @@ function rgrn() {
   document.getElementById('grn-tcnt').textContent = rows.length + ' record' + (rows.length !== 1 ? 's' : '');
   const tb = document.getElementById('grn-tbody');
   if (!rows.length) { tb.innerHTML = '<tr><td colspan="11" class="empty">No GRNs match filters</td></tr>'; return; }
-  tb.innerHTML = rows.map(r => `<tr>
-    <td><span class="ref-link" data-type="GRN" data-ref="${r.ref}">${r.ref}</span></td>
-    <td>${r.date || '—'}</td>
-    <td>${r.prfRef || '—'}</td>
-    <td>${r.dept || '—'}</td>
-    <td>${r.supplier || '—'}</td>
-    <td>${r.invoiceRef || '—'}</td>
-    <td>${(r.items || []).length}</td>
-    <td>PKR ${(r.total || 0).toLocaleString()}</td>
-    <td>${r.recBy || '—'}</td>
-    <td><span class="badge b-${(r.status || '').toLowerCase()}">${r.status || '—'}</span></td>
-    <td><button class="abtn gold" data-type="GRN" data-ref="${r.ref}" data-action="view">View</button></td>
-  </tr>`).join('');
+  tb.innerHTML = rows.map(r => {
+    return `<tr>
+      <td><span class="ref-link" data-type="GRN" data-ref="${r.ref}">${r.ref}</span></td>
+      <td>${r.date || '—'}</td>
+      <td>${r.prfRef || '—'}</td>
+      <td>${r.dept || '—'}</td>
+      <td>${r.supplier || '—'}</td>
+      <td>${r.invoiceRef || '—'}</td>
+      <td>${(r.items || []).length}</td>
+      <td>PKR ${(r.total || 0).toLocaleString()}</td>
+      <td>${r.recBy || '—'}</td>
+      <td><span class="badge b-${(r.status || '').toLowerCase()}">${r.status || '—'}</span></td>
+      <td><button class="abtn gold" data-type="GRN" data-ref="${r.ref}" data-action="view">View</button></td>
+    </tr>`;
+  }).join('');
 }
 function clrGRN() { ['gf-s','gf-d'].forEach(id => document.getElementById(id).value = ''); document.getElementById('gf-q').value = ''; rgrn(); }
 
@@ -1106,23 +1116,25 @@ function toast(msg, isErr) {
 }
 
 // ═══════════════════════════════════════════════════════ EVENT DELEGATION
-// Single listener handles all table clicks safely — no inline onclick strings,
-// so ref values with any character work correctly.
-document.addEventListener('click', function(e) {
+// Handles all table button and ref-link clicks via data attributes.
+// Using a named function so it can never be double-registered.
+function handleTableClick(e) {
+  // ref-link spans
+  const link = e.target.closest('.ref-link[data-ref]');
+  if (link) { openM(link.dataset.type, link.dataset.ref); return; }
+  // action buttons
   const btn = e.target.closest('[data-action]');
-  if (!btn) {
-    // Also handle ref-link spans
-    const link = e.target.closest('.ref-link[data-ref]');
-    if (link) { openM(link.dataset.type, link.dataset.ref); }
-    return;
-  }
+  if (!btn) return;
+  e.stopPropagation();
   const action = btn.dataset.action;
   const ref    = btn.dataset.ref;
   const type   = btn.dataset.type;
-  if (action === 'view')         openM(type, ref);
-  if (action === 'approve')      openApprovalPanel(ref);
-  if (action === 'open-approval'){ closeModalDirect(); openApprovalPanel(ref); }
-});
+  if (action === 'view')         { openM(type, ref); return; }
+  if (action === 'approve')      { openApprovalPanel(ref); return; }
+  if (action === 'open-approval'){ closeModalDirect(); openApprovalPanel(ref); return; }
+}
+document.removeEventListener('click', handleTableClick);
+document.addEventListener('click', handleTableClick);
 
 // ═══════════════════════════════════════════════════════ INIT
 addPRFRow(); addGRNRow();
