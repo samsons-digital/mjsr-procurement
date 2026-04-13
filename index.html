@@ -583,6 +583,34 @@ tr:hover td{background:#faf9f6}
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════ MOVE ENTITY MODAL -->
+<div class="moverlay" id="move-overlay" onclick="closeMoveO(event)">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-hdr">
+      <div>
+        <h3 id="move-title" style="margin-bottom:2px">Move to Different Entity</h3>
+        <div id="move-subtitle" style="font-size:11px;color:var(--text2)"></div>
+      </div>
+      <button class="mclose" onclick="closeMoveD()">&#x2715;</button>
+    </div>
+    <div id="move-summary" style="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--text2)"></div>
+    <input type="hidden" id="move-ref">
+    <input type="hidden" id="move-type">
+    <div style="margin-bottom:20px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:8px">Move to Entity</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="move-entity-grid"></div>
+    </div>
+    <div style="margin-bottom:20px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:5px">Reason for Move (optional)</div>
+      <textarea id="move-reason" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical;min-height:52px" placeholder="e.g. Submitted under wrong entity by mistake"></textarea>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="submitbtn" style="margin-top:0;background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)" onclick="closeMoveD()">Cancel</button>
+      <button class="submitbtn" id="move-save-btn" style="margin-top:0" onclick="saveMove()">Move Record</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════════════════════════════════════════════════════════ SCRIPT -->
 <script>
 // ═══════════════════════════════════════════════════════ CONFIGURATION
@@ -735,7 +763,10 @@ function rdash() {
       <td>${(r.items || []).length}</td>
       <td>${r.valStr}</td>
       <td><span class="badge b-${(r.status || '').toLowerCase()}">${r.status || '—'}</span></td>
-      <td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button>${approveBtn}</td>
+      <td>
+        <button class="abtn gold" onclick="viewRecord('${enc}')">View</button>${approveBtn}
+        <button class="abtn" onclick="moveRecord('${enc}')" style="margin-left:3px" title="Move to different entity">Move</button>
+      </td>
     </tr>`;
   }).join('');
 }
@@ -778,6 +809,7 @@ function rprf() {
       <td>
         <button class="abtn gold" onclick="viewRecord('${enc}')">View</button>
         <button class="abtn" onclick="approveRecord('${encRef}')">Approve</button>
+        <button class="abtn" onclick="moveRecord('${enc}')" title="Move to different entity">Move</button>
       </td>
     </tr>`;
   }).join('');
@@ -811,7 +843,10 @@ function rgrn() {
       <td>PKR ${(r.total || 0).toLocaleString()}</td>
       <td>${r.recBy || '—'}</td>
       <td><span class="badge b-${(r.status || '').toLowerCase()}">${r.status || '—'}</span></td>
-      <td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button></td>
+      <td>
+        <button class="abtn gold" onclick="viewRecord('${enc}')">View</button>
+        <button class="abtn" onclick="moveRecord('${enc}')" title="Move to different entity">Move</button>
+      </td>
     </tr>`;
   }).join('');
 }
@@ -1220,6 +1255,86 @@ async function saveApproval() {
   btn.disabled = false; btn.textContent = 'Save Approval';
 }
 
+// ═══════════════════════════════════════════════════════ MOVE ENTITY PANEL
+function openMovePanel(type, ref) {
+  const arr   = type === 'PRF' ? STATE.prfs : STATE.grns;
+  const r     = arr.find(x => x.ref === ref);
+  if (!r) { toast('Record not found: ' + ref, true); return; }
+
+  document.getElementById('move-title').textContent    = 'Move to Different Entity';
+  document.getElementById('move-subtitle').textContent = ref + '  |  Currently: ' + (r.entity || ACTIVE_ENTITY);
+  document.getElementById('move-ref').value  = ref;
+  document.getElementById('move-type').value = type;
+  document.getElementById('move-reason').value = '';
+
+  // Summary of the record
+  const summary = type === 'PRF'
+    ? 'Dept: ' + (r.dept||'—') + '   |   Requester: ' + (r.reqName||'—') + '   |   Date: ' + (r.date||'—') + '   |   Items: ' + (r.items||[]).length
+    : 'Supplier: ' + (r.supplier||'—') + '   |   Dept: ' + (r.dept||'—') + '   |   Date: ' + (r.date||'—') + '   |   Total: PKR ' + (r.total||0).toLocaleString();
+  document.getElementById('move-summary').textContent = summary;
+
+  // Build entity selector buttons — exclude current entity
+  const current = r.entity || ACTIVE_ENTITY;
+  const grid = document.getElementById('move-entity-grid');
+  grid.innerHTML = Object.entries(ENTITIES).map(([name, cfg]) => {
+    if (name === current) return ''; // skip current entity
+    return `<button onclick="selectMoveTarget('${name}')"
+      id="move-target-${name}"
+      style="padding:10px 8px;border-radius:8px;border:0.5px solid var(--border2);background:var(--surface2);cursor:pointer;font-family:inherit;transition:all .15s;text-align:center">
+      <div style="font-size:18px;margin-bottom:4px">${cfg.icon}</div>
+      <div style="font-size:12px;font-weight:600;color:var(--text)">${name}</div>
+      <div style="font-size:10px;color:var(--text2)">${cfg.desc}</div>
+    </button>`;
+  }).join('');
+
+  document.getElementById('move-save-btn').dataset.target = '';
+  document.getElementById('move-overlay').classList.add('open');
+}
+
+function selectMoveTarget(name) {
+  // Highlight selected entity button
+  document.querySelectorAll('#move-entity-grid button').forEach(b => {
+    b.style.borderColor = 'var(--border2)';
+    b.style.background  = 'var(--surface2)';
+  });
+  const btn = document.getElementById('move-target-' + name);
+  if (btn) {
+    btn.style.borderColor = ENTITIES[name].color;
+    btn.style.background  = 'rgba(0,0,0,0.04)';
+  }
+  document.getElementById('move-save-btn').dataset.target = name;
+}
+
+function closeMoveO(e) { if (e.target === document.getElementById('move-overlay')) closeMoveD(); }
+function closeMoveD()  { document.getElementById('move-overlay').classList.remove('open'); }
+
+async function saveMove() {
+  const ref    = document.getElementById('move-ref').value;
+  const type   = document.getElementById('move-type').value;
+  const target = document.getElementById('move-save-btn').dataset.target;
+  const reason = document.getElementById('move-reason').value.trim();
+
+  if (!target) { toast('Please select a target entity.', true); return; }
+
+  const btn = document.getElementById('move-save-btn');
+  btn.disabled = true; btn.textContent = 'Moving...';
+
+  try {
+    const res = await gasPost({ action: 'moveRecord', ref, type, fromEntity: ACTIVE_ENTITY, toEntity: target, reason });
+    if (res.ok) {
+      // Remove from local STATE — it now belongs to another entity
+      if (type === 'PRF') STATE.prfs = STATE.prfs.filter(r => r.ref !== ref);
+      else                STATE.grns = STATE.grns.filter(r => r.ref !== ref);
+      closeMoveD();
+      rdash(); rprf(); rgrn(); counts();
+      toast(ref + ' moved to ' + target);
+    } else {
+      toast('Move failed: ' + (res.error || 'unknown'), true);
+    }
+  } catch(e) { toast('Network error — could not move record.', true); }
+  btn.disabled = false; btn.textContent = 'Move Record';
+}
+
 // ═══════════════════════════════════════════════════════ UTILS
 function gv(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
 function esc(s) { return (s || '').replace(/'/g, "\\'"); }
@@ -1237,6 +1352,7 @@ function toast(msg, isErr) {
 window.viewRecord   = function(enc)    { const r=atob(enc).split('|'); openM(r[0], r[1]); };
 window.approveRecord= function(enc)    { openApprovalPanel(atob(enc)); };
 window.openApproval = function(enc)    { closeModalDirect(); openApprovalPanel(atob(enc)); };
+window.moveRecord   = function(enc)    { const r=atob(enc).split('|'); openMovePanel(r[0], r[1]); };
 
 // ═══════════════════════════════════════════════════════ INIT
 addPRFRow(); addGRNRow();
@@ -1244,7 +1360,7 @@ addPRFRow(); addGRNRow();
 // Move modals to be the very last children of <body> so no sibling
 // stacking context (overflow:hidden, transforms, etc.) can clip them.
 (function hoistModals() {
-  ['moverlay','appr-overlay'].forEach(function(id) {
+  ['moverlay','appr-overlay','move-overlay'].forEach(function(id) {
     const el = document.getElementById(id);
     if (el && el.parentNode !== document.body) {
       document.body.appendChild(el);
