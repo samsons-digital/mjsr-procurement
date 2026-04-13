@@ -613,11 +613,13 @@ function rdash() {
   const tb = document.getElementById('d-tbody');
   if (!rows.length) { tb.innerHTML = '<tr><td colspan="10" class="empty">No records match current filters</td></tr>'; return; }
   tb.innerHTML = rows.map(r => {
+    const enc = btoa(r._t + '|' + r.ref);
+    const encRef = btoa(r.ref);
     const approveBtn = r._t === 'PRF'
-      ? `<button class="abtn" data-ref="${r.ref}" data-action="approve" style="margin-left:3px">Approve</button>`
+      ? `<button class="abtn" onclick="approveRecord('${encRef}')" style="margin-left:3px">Approve</button>`
       : '';
     return `<tr>
-      <td><span class="ref-link" data-type="${r._t}" data-ref="${r.ref}">${r.ref}</span></td>
+      <td><span class="ref-link" style="cursor:pointer;font-weight:600;text-decoration:underline" onclick="viewRecord('${enc}')">${r.ref}</span></td>
       <td><span class="badge b-${r._t.toLowerCase()}">${r._t}</span></td>
       <td>${r.date || '—'}</td>
       <td>${r.dept || '—'}</td>
@@ -626,7 +628,7 @@ function rdash() {
       <td>${(r.items || []).length}</td>
       <td>${r.valStr}</td>
       <td><span class="badge b-${(r.status || '').toLowerCase()}">${r.status || '—'}</span></td>
-      <td><button class="abtn gold" data-type="${r._t}" data-ref="${r.ref}" data-action="view">View</button>${approveBtn}</td>
+      <td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button>${approveBtn}</td>
     </tr>`;
   }).join('');
 }
@@ -654,8 +656,10 @@ function rprf() {
   tb.innerHTML = rows.map(r => {
     const reason = r.reason ? r.reason.slice(0, 50) + (r.reason.length > 50 ? '…' : '') : '—';
     const itemCount = (r.items || []).length;
+    const enc = btoa('PRF|' + r.ref);
+    const encRef = btoa(r.ref);
     return `<tr>
-      <td><span class="ref-link" data-type="PRF" data-ref="${r.ref}">${r.ref}</span></td>
+      <td><span class="ref-link" style="cursor:pointer;font-weight:600;text-decoration:underline" onclick="viewRecord('${enc}')">${r.ref}</span></td>
       <td>${r.date || '—'}</td>
       <td>${r.dept || '—'}</td>
       <td>${r.reqName || '—'}</td>
@@ -665,8 +669,8 @@ function rprf() {
       <td>${approvalBadge(r.gmApproval)}</td>
       <td><span class="badge b-${(r.status || '').toLowerCase()}">${r.status || '—'}</span></td>
       <td>
-        <button class="abtn gold" data-type="PRF" data-ref="${r.ref}" data-action="view">View</button>
-        <button class="abtn" data-ref="${r.ref}" data-action="approve">Approve</button>
+        <button class="abtn gold" onclick="viewRecord('${enc}')">View</button>
+        <button class="abtn" onclick="approveRecord('${encRef}')">Approve</button>
       </td>
     </tr>`;
   }).join('');
@@ -688,8 +692,9 @@ function rgrn() {
   const tb = document.getElementById('grn-tbody');
   if (!rows.length) { tb.innerHTML = '<tr><td colspan="11" class="empty">No GRNs match filters</td></tr>'; return; }
   tb.innerHTML = rows.map(r => {
+    const enc = btoa('GRN|' + r.ref);
     return `<tr>
-      <td><span class="ref-link" data-type="GRN" data-ref="${r.ref}">${r.ref}</span></td>
+      <td><span class="ref-link" style="cursor:pointer;font-weight:600;text-decoration:underline" onclick="viewRecord('${enc}')">${r.ref}</span></td>
       <td>${r.date || '—'}</td>
       <td>${r.prfRef || '—'}</td>
       <td>${r.dept || '—'}</td>
@@ -699,7 +704,7 @@ function rgrn() {
       <td>PKR ${(r.total || 0).toLocaleString()}</td>
       <td>${r.recBy || '—'}</td>
       <td><span class="badge b-${(r.status || '').toLowerCase()}">${r.status || '—'}</span></td>
-      <td><button class="abtn gold" data-type="GRN" data-ref="${r.ref}" data-action="view">View</button></td>
+      <td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button></td>
     </tr>`;
   }).join('');
 }
@@ -896,7 +901,7 @@ function openM(type, ref) {
     <div style="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
         <span>Approval Stages</span>
-        <button class="abtn" style="font-size:11px;padding:3px 10px" data-action="open-approval" data-ref="${r.ref}">Update Approvals</button>
+        <button class="abtn" style="font-size:11px;padding:3px 10px" onclick="openApproval('${btoa(r.ref)}')">Update Approvals</button>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div style="border:0.5px solid var(--border);border-radius:6px;padding:10px 12px;background:var(--surface)">
@@ -1115,26 +1120,12 @@ function toast(msg, isErr) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ═══════════════════════════════════════════════════════ EVENT DELEGATION
-// Handles all table button and ref-link clicks via data attributes.
-// Using a named function so it can never be double-registered.
-function handleTableClick(e) {
-  // ref-link spans
-  const link = e.target.closest('.ref-link[data-ref]');
-  if (link) { openM(link.dataset.type, link.dataset.ref); return; }
-  // action buttons
-  const btn = e.target.closest('[data-action]');
-  if (!btn) return;
-  e.stopPropagation();
-  const action = btn.dataset.action;
-  const ref    = btn.dataset.ref;
-  const type   = btn.dataset.type;
-  if (action === 'view')         { openM(type, ref); return; }
-  if (action === 'approve')      { openApprovalPanel(ref); return; }
-  if (action === 'open-approval'){ closeModalDirect(); openApprovalPanel(ref); return; }
-}
-document.removeEventListener('click', handleTableClick);
-document.addEventListener('click', handleTableClick);
+// ═══════════════════════════════════════════════════════ GLOBAL CLICK HELPERS
+// These are called directly from onclick attributes using btoa-encoded refs
+// to safely handle any characters in the ref string.
+window.viewRecord   = function(enc)    { const r=atob(enc).split('|'); openM(r[0], r[1]); };
+window.approveRecord= function(enc)    { openApprovalPanel(atob(enc)); };
+window.openApproval = function(enc)    { closeModalDirect(); openApprovalPanel(atob(enc)); };
 
 // ═══════════════════════════════════════════════════════ INIT
 addPRFRow(); addGRNRow();
