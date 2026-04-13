@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MJSR Procurement Portal</title>
+<title>Samsons Group — Procurement Hub</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -18,6 +18,32 @@
   --info-bg:#e6f1fb;--info-text:#185fa5;
   --radius:8px;--radius-lg:12px;
 }
+
+/* ── ENTITY SELECTOR LANDING ── */
+#entity-landing{position:fixed;inset:0;background:#1a1a1a;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+#entity-landing.hidden{display:none}
+.el-brand{text-align:center;margin-bottom:40px}
+.el-brand h1{font-size:26px;font-weight:700;color:#fff;letter-spacing:.02em;margin-bottom:6px}
+.el-brand h1 span{color:var(--gold)}
+.el-brand p{font-size:12px;color:#888;letter-spacing:.06em;text-transform:uppercase}
+.el-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;max-width:900px;width:100%}
+.el-card{background:#242424;border:0.5px solid #333;border-radius:12px;padding:28px 16px;text-align:center;cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.el-card::before{content:'';position:absolute;inset:0;background:var(--entity-color,var(--gold));opacity:0;transition:opacity .18s}
+.el-card:hover{border-color:var(--entity-color,var(--gold));transform:translateY(-2px)}
+.el-card:hover::before{opacity:.06}
+.el-icon{font-size:32px;margin-bottom:12px;display:block;position:relative}
+.el-name{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px;position:relative}
+.el-desc{font-size:10px;color:#777;position:relative;letter-spacing:.03em}
+.el-dot{width:8px;height:8px;border-radius:50%;background:var(--entity-color,var(--gold));display:inline-block;margin-right:5px;vertical-align:middle}
+
+/* ── ENTITY BADGE IN NAV ── */
+.entity-badge{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:6px;border:0.5px solid #444;cursor:pointer;margin-right:12px;transition:border-color .15s;flex-shrink:0}
+.entity-badge:hover{border-color:var(--gold)}
+.entity-badge-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.entity-badge-name{font-size:11px;font-weight:600;color:var(--nav-text)}
+.entity-badge-change{font-size:10px;color:#666}
+
+@media(max-width:700px){.el-grid{grid-template-columns:repeat(2,1fr)}.el-card:last-child{grid-column:span 2}}
 body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px}
 
 /* ── NAV ── */
@@ -177,9 +203,49 @@ tr:hover td{background:#faf9f6}
   <div class="bar"><div class="bar-inner"></div></div>
 </div>
 
+<!-- ENTITY LANDING -->
+<div id="entity-landing">
+  <div class="el-brand">
+    <h1>Samsons <span>Procurement Hub</span></h1>
+    <p>Samsons Group of Companies &nbsp;·&nbsp; Select Entity to Continue</p>
+  </div>
+  <div class="el-grid">
+    <div class="el-card" style="--entity-color:#b8922e" onclick="selectEntity('MJSR')">
+      <span class="el-icon">🏔</span>
+      <div class="el-name">MJSR</div>
+      <div class="el-desc">Malam Jabba Ski Resort</div>
+    </div>
+    <div class="el-card" style="--entity-color:#2d8a6e" onclick="selectEntity('Healthcare')">
+      <span class="el-icon">🏥</span>
+      <div class="el-name">Healthcare</div>
+      <div class="el-desc">Samsons Healthcare</div>
+    </div>
+    <div class="el-card" style="--entity-color:#185fa5" onclick="selectEntity('ALIF')">
+      <span class="el-icon">🎓</span>
+      <div class="el-name">ALIF</div>
+      <div class="el-desc">ALIF — Education</div>
+    </div>
+    <div class="el-card" style="--entity-color:#7b4fa6" onclick="selectEntity('Construction')">
+      <span class="el-icon">🏗</span>
+      <div class="el-name">Construction</div>
+      <div class="el-desc">Samsons Construction</div>
+    </div>
+    <div class="el-card" style="--entity-color:#c0392b" onclick="selectEntity('CORA')">
+      <span class="el-icon">⚙️</span>
+      <div class="el-name">CORA</div>
+      <div class="el-desc">CORA Operations</div>
+    </div>
+  </div>
+</div>
+
 <!-- NAV -->
 <div class="nav">
-  <div class="nav-brand">MJSR <span>Procurement</span></div>
+  <div class="entity-badge" onclick="returnToLanding()" title="Switch entity">
+    <div class="entity-badge-dot" id="eb-dot"></div>
+    <div class="entity-badge-name" id="eb-name">—</div>
+    <div class="entity-badge-change">▾</div>
+  </div>
+  <div class="nav-brand"><span>Procurement</span></div>
   <div class="nav-tabs">
     <button class="nav-tab" onclick="go('sub-prf')">+ New PRF</button>
     <button class="nav-tab" onclick="go('sub-grn')">+ New GRN</button>
@@ -192,7 +258,7 @@ tr:hover td{background:#faf9f6}
 
 <!-- ═══════════════════════════════════════════════════════════ DASHBOARD -->
 <div class="page active" id="page-dashboard">
-  <div class="pg-hdr"><h2>Dashboard — All Submissions</h2></div>
+  <div class="pg-hdr"><h2 id="dash-title">Dashboard — All Submissions</h2></div>
   <div class="kpi-row">
     <div class="kpi"><div class="kpi-lbl">Total Submissions</div><div class="kpi-val" id="k-total">—</div><div class="kpi-sub">PRF + GRN combined</div></div>
     <div class="kpi"><div class="kpi-lbl">Pending Review</div><div class="kpi-val" id="k-pend">—</div><div class="kpi-sub">Awaiting action</div></div>
@@ -273,7 +339,7 @@ tr:hover td{background:#faf9f6}
   <div class="pg-hdr"><h2>New Purchase Requisition Form (PRF)</h2></div>
   <div class="fcard">
     <div class="fc-title">Purchase Requisition Form</div>
-    <div class="fc-sub">Samsons Group of Companies (Pvt) Ltd — Malam Jabba Ski Resort &nbsp;|&nbsp; Accounts Copy</div>
+    <div class="fc-sub" id="prf-form-sub">Samsons Group of Companies (Pvt) Ltd &nbsp;|&nbsp; Accounts Copy</div>
 
     <div class="fsec">Header Details</div>
     <div class="frow fr4">
@@ -341,7 +407,7 @@ tr:hover td{background:#faf9f6}
   <div class="pg-hdr"><h2>New Goods / Material Received Note (GRN)</h2></div>
   <div class="fcard">
     <div class="fc-title">Goods / Material Received Note (GRN)</div>
-    <div class="fc-sub">Samsons Group of Companies (Pvt) Ltd — Malam Jabba Ski Resort &nbsp;|&nbsp; Accounts Copy</div>
+    <div class="fc-sub" id="grn-form-sub">Samsons Group of Companies (Pvt) Ltd &nbsp;|&nbsp; Accounts Copy</div>
 
     <div class="fsec">Header Details</div>
     <div class="frow fr4">
@@ -527,6 +593,44 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycby_M0NW85JpZBvJXCAoIM0p
 let STATE = { prfs: [], grns: [], slog: [], loaded: false };
 let prfRowN = 0, grnRowN = 0, curRec = null;
 
+// ═══════════════════════════════════════════════════════ ENTITY CONFIG
+const ENTITIES = {
+  'MJSR':         { color: '#b8922e', icon: '🏔', desc: 'Malam Jabba Ski Resort' },
+  'Healthcare':   { color: '#2d8a6e', icon: '🏥', desc: 'Samsons Healthcare' },
+  'ALIF':         { color: '#185fa5', icon: '🎓', desc: 'ALIF — Education' },
+  'Construction': { color: '#7b4fa6', icon: '🏗',  desc: 'Samsons Construction' },
+  'CORA':         { color: '#c0392b', icon: '⚙️',  desc: 'CORA Operations' }
+};
+let ACTIVE_ENTITY = null;
+
+function selectEntity(name) {
+  ACTIVE_ENTITY = name;
+  const cfg = ENTITIES[name];
+  // Update nav badge
+  document.getElementById('eb-name').textContent = name;
+  document.getElementById('eb-dot').style.background = cfg.color;
+  // Update nav brand
+  document.querySelector('.nav-brand').innerHTML = '<span style="color:' + cfg.color + '">' + name + '</span> <span style="color:#aaa;font-weight:400">Procurement</span>';
+  // Update page title and form subtitles
+  document.title = name + ' — Procurement Portal';
+  const subText = 'Samsons Group of Companies (Pvt) Ltd — ' + name + ' &nbsp;|&nbsp; Accounts Copy';
+  document.getElementById('prf-form-sub').innerHTML = subText;
+  document.getElementById('grn-form-sub').innerHTML = subText;
+  // Hide landing, show nav + pages
+  document.getElementById('entity-landing').classList.add('hidden');
+  // Clear and reload data for this entity
+  STATE = { prfs: [], grns: [], slog: [], loaded: false };
+  counts(); rdash();
+  document.getElementById('loading').classList.remove('hidden');
+  loadAll();
+}
+
+function returnToLanding() {
+  ACTIVE_ENTITY = null;
+  STATE = { prfs: [], grns: [], slog: [], loaded: false };
+  document.getElementById('entity-landing').classList.remove('hidden');
+}
+
 // ═══════════════════════════════════════════════════════ GAS FETCH (text/plain to avoid CORS preflight)
 async function gasPost(payload) {
   const res = await fetch(GAS_URL, {
@@ -540,7 +644,7 @@ async function gasPost(payload) {
 // ═══════════════════════════════════════════════════════ LOAD ALL DATA
 async function loadAll() {
   try {
-    const res = await gasPost({ action: 'getAll' });
+    const res = await gasPost({ action: 'getAll', entity: ACTIVE_ENTITY });
     if (res.ok) {
       STATE.prfs = res.prfs || [];
       STATE.grns = res.grns || [];
@@ -565,7 +669,10 @@ function go(id) {
   const idx = order.indexOf(id);
   if (idx >= 0) document.querySelectorAll('.nav-tab')[idx].classList.add('active');
   counts(); depts();
-  if (id === 'dashboard') rdash();
+  if (id === 'dashboard') {
+    document.getElementById('dash-title').textContent = (ACTIVE_ENTITY || '') + ' — All Submissions';
+    rdash();
+  }
   if (id === 'prf-tracker') rprf();
   if (id === 'grn-tracker') rgrn();
   if (id === 'status') renderSlog();
@@ -739,6 +846,7 @@ async function subPRF() {
   });
   const payload = {
     action: 'submitPRF',
+    entity: ACTIVE_ENTITY,
     date, reqName: req, dept, reason, items,
     sigReq, sigHOD, sigStore
   };
@@ -747,6 +855,7 @@ async function subPRF() {
   try {
     const res = await gasPost(payload);
     if (res.ok) {
+      if (!res.record.entity) res.record.entity = ACTIVE_ENTITY;
       STATE.prfs.unshift(res.record);
       counts();
       toast('PRF submitted: ' + res.record.ref);
@@ -810,6 +919,7 @@ async function subGRN() {
   const total = items.reduce((s, x) => s + x.total, 0);
   const payload = {
     action: 'submitGRN',
+    entity: ACTIVE_ENTITY,
     date, prfRef: gv('grn-prf'), dept, supplier,
     invoiceRef: gv('grn-challan'), items, total,
     remarks: gv('grn-remarks'),
@@ -821,6 +931,7 @@ async function subGRN() {
   try {
     const res = await gasPost(payload);
     if (res.ok) {
+      if (!res.record.entity) res.record.entity = ACTIVE_ENTITY;
       STATE.grns.unshift(res.record);
       counts();
       toast('GRN submitted: ' + res.record.ref);
@@ -850,7 +961,7 @@ async function doStatus() {
   const ns = gv('us-st');
   const notes = gv('us-notes');
   if (!ref || !ns) { toast('Enter a reference number and select new status.', true); return; }
-  const res = await gasPost({ action: 'updateStatus', ref, status: ns, notes });
+  const res = await gasPost({ action: 'updateStatus', entity: ACTIVE_ENTITY, ref, status: ns, notes });
   if (res.ok) {
     // Update local state
     const arr = ref.startsWith('PRF') ? STATE.prfs : STATE.grns;
@@ -1083,7 +1194,7 @@ async function saveApproval() {
   btn.disabled = true; btn.textContent = 'Saving...';
 
   try {
-    const res = await gasPost({ action: 'updateApproval', ref, financeApproval: finApproval, gmApproval, financeApprovedBy: finBy, gmApprovedBy: gmBy, approvalNotes: notes });
+    const res = await gasPost({ action: 'updateApproval', entity: ACTIVE_ENTITY, ref, financeApproval: finApproval, gmApproval, financeApprovedBy: finBy, gmApprovedBy: gmBy, approvalNotes: notes });
     if (res.ok) {
       // Update local state immediately so dashboard + tracker refresh without reload
       const rec = STATE.prfs.find(x => x.ref === ref);
@@ -1144,7 +1255,10 @@ addPRFRow(); addGRNRow();
   });
 })();
 
-setTimeout(loadAll, 1200); // slight delay so loading animation plays
+// Don't auto-load — wait for entity selection
+// loadAll is called by selectEntity()
+// Keep loading screen hidden on start (entity landing is shown instead)
+document.getElementById('loading').classList.add('hidden');
 </script>
 </body>
 </html>
