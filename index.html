@@ -308,20 +308,23 @@ tr:hover td{background:#faf9f6}
     </div>
 
     <div class="fsec">Signatures &amp; Authorisation</div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:12px;padding:10px 13px;background:var(--surface2);border-radius:6px;border-left:3px solid var(--gold);line-height:1.5">
+      All three signature fields are required before a PRF can be submitted. It is the responsibility of the Procurement Executive to obtain H.O.D and Store Incharge authorisation prior to submission.
+    </div>
     <div class="sig-grid">
       <div class="sig-box">
-        <div class="sig-role">Requested By</div>
-        <label>Name</label><input type="text" id="prf-s-req" placeholder="Requester name">
+        <div class="sig-role">Requested By <span style="color:var(--danger-text)">*</span></div>
+        <label>Name</label><input type="text" id="prf-s-req" placeholder="Requester name — required">
         <label>Sign</label><input type="text" id="prf-s-req-sign" placeholder="(acknowledged on submission)">
       </div>
       <div class="sig-box">
-        <div class="sig-role">Recommended &amp; Approved by H.O.D</div>
-        <label>Name</label><input type="text" id="prf-s-hod" placeholder="H.O.D name">
+        <div class="sig-role">Recommended &amp; Approved by H.O.D <span style="color:var(--danger-text)">*</span></div>
+        <label>Name</label><input type="text" id="prf-s-hod" placeholder="H.O.D name — required">
         <label>Sign</label><input type="text" id="prf-s-hod-sign" placeholder="">
       </div>
       <div class="sig-box">
-        <div class="sig-role">Store Incharge / Keeper</div>
-        <label>Name</label><input type="text" id="prf-s-store" placeholder="Store keeper name">
+        <div class="sig-role">Store Incharge / Keeper <span style="color:var(--danger-text)">*</span></div>
+        <label>Name</label><input type="text" id="prf-s-store" placeholder="Store keeper name — required">
         <label>Sign</label><input type="text" id="prf-s-store-sign" placeholder="">
       </div>
     </div>
@@ -640,6 +643,10 @@ async function subPRF() {
   if (!date || !req || !dept) { toast('Complete all required fields (Date, Requester, Department).', true); return; }
   const rows = document.querySelectorAll('#prf-ibody tr');
   if (!rows.length) { toast('Add at least one item.', true); return; }
+  const sigReq = gv('prf-s-req'), sigHOD = gv('prf-s-hod'), sigStore = gv('prf-s-store');
+  if (!sigReq)   { toast('Requested By name is required in the Signatures section.', true); document.getElementById('prf-s-req').focus(); return; }
+  if (!sigHOD)   { toast('H.O.D name is required — obtain approval before submitting.', true); document.getElementById('prf-s-hod').focus(); return; }
+  if (!sigStore) { toast('Store Incharge name is required — obtain confirmation before submitting.', true); document.getElementById('prf-s-store').focus(); return; }
   const items = [];
   rows.forEach((tr, i) => {
     const c = tr.querySelectorAll('input');
@@ -648,7 +655,7 @@ async function subPRF() {
   const payload = {
     action: 'submitPRF',
     date, reqName: req, dept, reason, items,
-    sigReq: gv('prf-s-req'), sigHOD: gv('prf-s-hod'), sigStore: gv('prf-s-store')
+    sigReq, sigHOD, sigStore
   };
   const btn = document.querySelector('#page-sub-prf .submitbtn');
   btn.disabled = true; btn.textContent = 'Submitting...';
