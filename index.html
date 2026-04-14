@@ -588,69 +588,11 @@ tr:hover td{background:var(--gold-bg)}
 
 
 
-<div class="moverlay" id="moverlay" onclick="closeMO(event)">
-  <div class="modal">
-    <div class="modal-hdr">
-      <h3 id="m-title">Record Detail</h3>
-      <div class="mactions"><button class="printbtn" onclick="doPrint()">Print / Download PDF</button><button class="mclose" onclick="closeMD()">&#x2715;</button></div>
-    </div>
-    <div id="m-body"></div>
-  </div>
-</div>
 
-<div class="moverlay" id="appr-overlay" onclick="closeApprO(event)">
-  <div class="modal" style="max-width:520px">
-    <div class="modal-hdr">
-      <div><h3 id="appr-title">Update Approval Stage</h3><div id="appr-subtitle" style="font-size:11px;color:var(--text2)"></div></div>
-      <button class="mclose" onclick="closeApprD()">&#x2715;</button>
-    </div>
-    <div id="appr-summary" style="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:13px 15px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"></div>
-    <input type="hidden" id="appr-ref">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-      <div>
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">Finance Approval <span style="color:var(--danger-text)">*</span></div>
-        <select id="appr-fin" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit"><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
-        <input type="text" id="appr-fin-by" placeholder="Finance approver name" style="width:100%;margin-top:6px;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit">
-      </div>
-      <div>
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">GM Approval</div>
-        <select id="appr-gm" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit"><option value="Not Required">Not Required</option><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
-        <input type="text" id="appr-gm-by" placeholder="GM name" style="width:100%;margin-top:6px;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit">
-      </div>
-    </div>
-    <div style="margin-bottom:16px">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">Notes (optional)</div>
-      <textarea id="appr-notes" rows="2" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical"></textarea>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <button class="submitbtn" style="margin-top:0;background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)" onclick="closeApprD()">Cancel</button>
-      <button class="submitbtn" style="margin-top:0" onclick="saveApproval()">Save Approval</button>
-    </div>
-  </div>
-</div>
 
-<div class="moverlay" id="move-overlay" onclick="closeMoveO(event)">
-  <div class="modal" style="max-width:440px">
-    <div class="modal-hdr">
-      <div><h3 id="move-title">Move to Different Entity</h3><div id="move-subtitle" style="font-size:11px;color:var(--text2)"></div></div>
-      <button class="mclose" onclick="closeMoveD()">&#x2715;</button>
-    </div>
-    <div id="move-summary" style="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--text2)"></div>
-    <input type="hidden" id="move-ref"><input type="hidden" id="move-type">
-    <div style="margin-bottom:20px">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:8px">Move to Entity</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="move-entity-grid"></div>
-    </div>
-    <div style="margin-bottom:20px">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">Reason for Move (optional)</div>
-      <textarea id="move-reason" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical;min-height:52px"></textarea>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <button class="submitbtn" style="margin-top:0;background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)" onclick="closeMoveD()">Cancel</button>
-      <button class="submitbtn" style="margin-top:0" onclick="saveMove()">Move Record</button>
-    </div>
-  </div>
-</div>
+
+
+
 
 <div class="toast" id="toast"></div>
 
