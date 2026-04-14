@@ -19,14 +19,9 @@
   --radius:8px;--radius-lg:12px;
 }
 body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px}
-body.on-landing .nav,.nav{display:none}
-body.on-landing .page{display:none!important}
-body.on-landing #loading{display:none!important}
-#entity-landing{width:100%;min-height:100vh;background:#162844;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+#entity-landing{position:fixed;inset:0;background:#162844;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;overflow-y:auto}
 #entity-landing.hidden{display:none}
-body:not(.on-landing) .nav{display:flex}
 .el-brand{text-align:center;margin-bottom:32px}
-.el-brand img{width:280px;max-width:80vw;height:auto;display:block;margin:0 auto 20px}
 .el-brand h1{font-size:34px;font-weight:700;color:var(--gold);letter-spacing:.02em;margin-bottom:6px}
 .el-brand p{font-size:12px;color:rgba(255,255,255,0.55);letter-spacing:.06em;text-transform:uppercase}
 .el-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;max-width:900px;width:100%}
@@ -59,7 +54,7 @@ body:not(.on-landing) .nav{display:flex}
 .entity-badge-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
 .entity-badge-name{font-size:11px;font-weight:600;color:var(--nav-text)}
 .entity-badge-change{font-size:10px;color:#666}
-.nav{height:50px;background:var(--nav-bg);align-items:center;padding:0 20px;gap:0;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,0.25)}
+.nav{height:50px;background:var(--nav-bg);display:none;align-items:center;padding:0 20px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,0.25)}
 .nav-brand{font-size:13px;font-weight:600;color:var(--nav-text);margin-right:22px;white-space:nowrap;letter-spacing:.02em}
 .nav-tabs{display:flex;gap:2px;flex:1;flex-wrap:wrap}
 .nav-tab{padding:6px 13px;border-radius:6px;font-size:12px;border:none;background:none;color:rgba(255,255,255,0.55);cursor:pointer;transition:all .15s;white-space:nowrap}
@@ -68,14 +63,13 @@ body:not(.on-landing) .nav{display:flex}
 .ntag{font-size:10px;padding:1px 6px;border-radius:8px;margin-left:3px;font-weight:600}
 .ntag-p{background:var(--info-bg);color:var(--info-text)}
 .ntag-g{background:var(--success-bg);color:var(--success-text)}
-#loading{position:fixed;inset:0;background:var(--nav-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:12px}
+#loading{position:fixed;inset:0;background:var(--nav-bg);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:12px}
 #loading .logo{font-size:22px;font-weight:700;color:var(--nav-text);letter-spacing:.04em}
 #loading .logo span{color:var(--gold)}
 #loading .sub{font-size:12px;color:#888}
 #loading .bar{width:200px;height:2px;background:#333;border-radius:2px;overflow:hidden}
 #loading .bar-inner{height:100%;background:var(--gold);border-radius:2px;animation:load 1.2s ease-out forwards}
 @keyframes load{from{width:0}to{width:100%}}
-#loading.hidden{display:none}
 .page{display:none;padding:20px;max-width:1160px;margin:0 auto}
 .page.active{display:block}
 .pg-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
@@ -119,6 +113,7 @@ tr:hover td{background:var(--gold-bg)}
 .fc-sub{font-size:11px;color:var(--text2);margin-bottom:20px}
 .fsec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--gold)}
 .frow{display:grid;gap:12px;margin-bottom:12px}
+.fr1{grid-template-columns:1fr}
 .fr2{grid-template-columns:1fr 1fr}
 .fr3{grid-template-columns:1fr 1fr 1fr}
 .fr4{grid-template-columns:1fr 1fr 1fr 1fr}
@@ -134,7 +129,7 @@ tr:hover td{background:var(--gold-bg)}
 .itable input{width:100%;font-size:12px;padding:5px 6px;border:0.5px solid var(--border2);border-radius:4px;background:var(--surface2);color:var(--text);font-family:inherit}
 .itable input:focus{outline:none;border-color:var(--gold)}
 .add-row-btn{font-size:11px;padding:5px 14px;border-radius:6px;border:0.5px solid var(--gold);background:var(--gold-bg);color:var(--gold);cursor:pointer;font-family:inherit}
-.del-row{background:none;border:none;color:var(--danger-text);cursor:pointer;font-size:14px;padding:2px 6px}
+.del-row,.delrow{background:none;border:none;color:var(--danger-text);cursor:pointer;font-size:14px;padding:2px 6px}
 .sig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px}
 .sig-box{border:0.5px solid var(--border2);border-radius:var(--radius);padding:12px}
 .sig-role{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gold);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--gold)}
@@ -152,21 +147,47 @@ tr:hover td{background:var(--gold-bg)}
 .di .dk{font-size:10px;color:#162844;margin-bottom:1px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
 .di .dv{font-size:13px;font-weight:500}
 .dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.toast{position:fixed;bottom:22px;right:22px;background:var(--success-bg);color:var(--success-text);border:0.5px solid #b0d88a;padding:11px 18px;border-radius:var(--radius);font-size:12px;font-weight:500;z-index:300;transform:translateY(60px);opacity:0;transition:all .22s;pointer-events:none}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--success-bg);color:var(--success-text);border:0.5px solid #b0d88a;padding:11px 18px;border-radius:var(--radius);font-size:12px;font-weight:500;z-index:9999;transform:translateY(60px);opacity:0;transition:all .22s;pointer-events:none}
 .toast.err{background:var(--danger-bg);color:var(--danger-text);border-color:#f09595}
 .toast.show{transform:translateY(0);opacity:1}
 @media print{.nav,.fbar,.abtn,.submitbtn,.add-row-btn{display:none!important}.page{display:block!important}}
-.nav{display:none}
-.page{display:none}
-#loading{display:none}
-</style>
-<style id="boot-hide">
-.nav,.page,#loading{display:none!important}
 </style>
 </head>
 <body>
 
-
+<div id="entity-landing">
+  <div class="el-brand">
+    <h1>Procurement Hub</h1>
+    <p>Samsons Group of Companies &nbsp;&middot;&nbsp; Select Entity to Continue</p>
+  </div>
+  <div class="el-grid">
+    <div class="el-card" style="--entity-color:#b8922e" onclick="promptEntityPin('MJSR')">
+      <span class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 72" width="48" height="48" style="display:block"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a3a5c"/><stop offset="100%" stop-color="#4a7fbf"/></linearGradient><linearGradient id="p1L" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#3a5a7a"/><stop offset="100%" stop-color="#5a7fa0"/></linearGradient><linearGradient id="p1R" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#2a4560"/><stop offset="100%" stop-color="#3a5a7a"/></linearGradient><linearGradient id="gnd" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2d5a2d"/><stop offset="100%" stop-color="#1a3a1a"/></linearGradient></defs><rect x="0" y="0" width="80" height="72" fill="url(#sky)"/><polygon points="0,50 15,22 30,50" fill="#3a5878" opacity="0.6"/><polygon points="20,50 38,18 56,50" fill="#405f80" opacity="0.5"/><polygon points="45,50 62,25 80,50" fill="#3a5070" opacity="0.6"/><polygon points="40,5 8,58 40,58" fill="url(#p1L)"/><polygon points="40,5 40,58 72,58" fill="url(#p1R)"/><polygon points="40,5 24,30 40,30" fill="#f0f4f8"/><polygon points="40,5 40,30 54,30" fill="#c8d8e8"/><polygon points="24,30 26,36 30,30" fill="#e0ecf8"/><polygon points="52,30 53,35 56,30" fill="#b8ccd8"/><polygon points="18,35 6,58 30,58" fill="#3a5070"/><polygon points="18,35 13,44 23,44" fill="#e8f0f8"/><polygon points="62,38 50,58 74,58" fill="#2a4060"/><polygon points="62,38 57,47 67,47" fill="#c8d8e8"/><rect x="0" y="55" width="80" height="17" fill="url(#gnd)"/><polygon points="10,55 7,62 13,62" fill="#1a3a1a"/><polygon points="15,54 12,62 18,62" fill="#1e421e"/><polygon points="68,55 65,62 71,62" fill="#1a3a1a"/><polygon points="73,54 70,62 76,62" fill="#1e421e"/><circle cx="40" cy="5" r="1.2" fill="#ffffff"/></svg></span>
+      <div class="el-name">MJSR</div>
+      <div class="el-desc">Malam Jabba Ski Resort</div>
+    </div>
+    <div class="el-card" style="--entity-color:#2d8a6e" onclick="promptEntityPin('Healthcare')">
+      <span class="el-icon">&#127973;</span>
+      <div class="el-name">Healthcare</div>
+      <div class="el-desc">Samsons Healthcare</div>
+    </div>
+    <div class="el-card" style="--entity-color:#185fa5" onclick="promptEntityPin('ALIF')">
+      <span class="el-icon">&#127891;</span>
+      <div class="el-name">ALIF</div>
+      <div class="el-desc">ALIF &#8212; Education</div>
+    </div>
+    <div class="el-card" style="--entity-color:#7b4fa6" onclick="promptEntityPin('Construction')">
+      <span class="el-icon">&#127959;</span>
+      <div class="el-name">Construction</div>
+      <div class="el-desc">Samsons Construction</div>
+    </div>
+    <div class="el-card" style="--entity-color:#c0392b" onclick="promptEntityPin('CORA')">
+      <span class="el-icon">&#9878;&#65039;</span>
+      <div class="el-name">CORA</div>
+      <div class="el-desc">Corporate Affairs</div>
+    </div>
+  </div>
+</div>
 
 <div id="pin-overlay">
   <div id="pin-box">
@@ -187,7 +208,7 @@ tr:hover td{background:var(--gold-bg)}
   </div>
 </div>
 
-<div class="nav" id="main-nav" style="display:none">
+<div class="nav" id="main-nav">
   <div class="entity-badge" onclick="returnToLanding()" title="Switch entity">
     <div class="entity-badge-dot" id="eb-dot"></div>
     <div class="entity-badge-name" id="eb-name">&#8212;</div>
@@ -197,226 +218,20 @@ tr:hover td{background:var(--gold-bg)}
   <div class="nav-tabs">
     <button class="nav-tab" onclick="go('sub-prf')">+ New PRF</button>
     <button class="nav-tab" onclick="go('sub-grn')">+ New GRN</button>
-    <button class="nav-tab active" onclick="go('dashboard')">Dashboard</button>
+    <button class="nav-tab" onclick="go('dashboard')">Dashboard</button>
     <button class="nav-tab" onclick="go('prf-tracker')">PRF Tracker <span class="ntag ntag-p" id="prf-cnt">0</span></button>
     <button class="nav-tab" onclick="go('grn-tracker')">GRN Tracker <span class="ntag ntag-g" id="grn-cnt">0</span></button>
     <button class="nav-tab" onclick="go('status')">Update Status</button>
   </div>
 </div>
 
-<div id="loading" style="display:none">
+<div id="loading">
   <div class="logo">Samsons <span>Procurement</span></div>
   <div class="sub">Loading data...</div>
   <div class="bar"><div class="bar-inner"></div></div>
 </div>
 
-<div id="pages-container"></div>
-
-<div class="moverlay" id="moverlay" onclick="closeMO(event)">
-  <div class="modal">
-    <div class="modal-hdr">
-      <h3 id="m-title">Record Detail</h3>
-      <div class="mactions"><button class="printbtn" onclick="doPrint()">Print / Download PDF</button><button class="mclose" onclick="closeMD()">&#x2715;</button></div>
-    </div>
-    <div id="m-body"></div>
-  </div>
-</div>
-
-<div class="moverlay" id="appr-overlay" onclick="closeApprO(event)">
-  <div class="modal" style="max-width:520px">
-    <div class="modal-hdr">
-      <div><h3 id="appr-title" style="margin-bottom:2px">Update Approval Stage</h3><div id="appr-subtitle" style="font-size:11px;color:var(--text2)"></div></div>
-      <button class="mclose" onclick="closeApprD()">&#x2715;</button>
-    </div>
-    <div id="appr-summary" style="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:13px 15px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"></div>
-    <input type="hidden" id="appr-ref">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-      <div><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">Finance Approval <span style="color:var(--danger-text)">*</span></div>
-        <select id="appr-fin" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit"><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
-        <input type="text" id="appr-fin-by" placeholder="Finance approver name" style="width:100%;margin-top:6px;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit">
-      </div>
-      <div><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">GM Approval</div>
-        <select id="appr-gm" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit"><option value="Not Required">Not Required</option><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
-        <input type="text" id="appr-gm-by" placeholder="GM name" style="width:100%;margin-top:6px;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit">
-      </div>
-    </div>
-    <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">Notes (optional)</div>
-      <textarea id="appr-notes" rows="2" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical"></textarea>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <button class="submitbtn" style="margin-top:0;background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)" onclick="closeApprD()">Cancel</button>
-      <button class="submitbtn" id="appr-save-btn" style="margin-top:0" onclick="saveApproval()">Save Approval</button>
-    </div>
-  </div>
-</div>
-
-<div class="moverlay" id="move-overlay" onclick="closeMoveO(event)">
-  <div class="modal" style="max-width:440px">
-    <div class="modal-hdr">
-      <div><h3 id="move-title">Move to Different Entity</h3><div id="move-subtitle" style="font-size:11px;color:var(--text2)"></div></div>
-      <button class="mclose" onclick="closeMoveD()">&#x2715;</button>
-    </div>
-    <div id="move-summary" style="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--text2)"></div>
-    <input type="hidden" id="move-ref"><input type="hidden" id="move-type">
-    <div style="margin-bottom:20px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:8px">Move to Entity</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="move-entity-grid"></div>
-    </div>
-    <div style="margin-bottom:20px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">Reason for Move (optional)</div>
-      <textarea id="move-reason" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical;min-height:52px" placeholder="e.g. Submitted under wrong entity by mistake"></textarea>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <button class="submitbtn" style="margin-top:0;background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)" onclick="closeMoveD()">Cancel</button>
-      <button class="submitbtn" id="move-save-btn" style="margin-top:0" onclick="saveMove()">Move Record</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-
-// ── BUILD LANDING SCREEN ──────────────────────────────────────────────
-function buildLanding() {
-  var landing = document.createElement('div');
-  landing.id = 'entity-landing';
-  landing.innerHTML = [
-    '<div class="el-brand">',
-    '<h1>Procurement Hub</h1>',
-    '<p>Samsons Group of Companies &nbsp;&middot;&nbsp; Select Entity to Continue</p>',
-    '</div>',
-    '<div class="el-grid">',
-    '<div class="el-card" style="--entity-color:#b8922e" onclick="promptEntityPin(\'MJSR\')">',
-    '<span class="el-icon"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 80 72\" width=\"48\" height=\"48\" style=\"display:block\"><defs><linearGradient id=\"sky\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"#1a3a5c\"/><stop offset=\"100%\" stop-color=\"#4a7fbf\"/></linearGradient><linearGradient id=\"p1L\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop offset=\"0%\" stop-color=\"#3a5a7a\"/><stop offset=\"100%\" stop-color=\"#5a7fa0\"/></linearGradient><linearGradient id=\"p1R\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop offset=\"0%\" stop-color=\"#2a4560\"/><stop offset=\"100%\" stop-color=\"#3a5a7a\"/></linearGradient><linearGradient id=\"gnd\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"#2d5a2d\"/><stop offset=\"100%\" stop-color=\"#1a3a1a\"/></linearGradient></defs><rect x=\"0\" y=\"0\" width=\"80\" height=\"72\" fill=\"url(#sky)\"/><polygon points=\"0,50 15,22 30,50\" fill=\"#3a5878\" opacity=\"0.6\"/><polygon points=\"20,50 38,18 56,50\" fill=\"#405f80\" opacity=\"0.5\"/><polygon points=\"45,50 62,25 80,50\" fill=\"#3a5070\" opacity=\"0.6\"/><polygon points=\"40,5 8,58 40,58\" fill=\"url(#p1L)\"/><polygon points=\"40,5 40,58 72,58\" fill=\"url(#p1R)\"/><polygon points=\"40,5 24,30 40,30\" fill=\"#f0f4f8\"/><polygon points=\"40,5 40,30 54,30\" fill=\"#c8d8e8\"/><polygon points=\"24,30 26,36 30,30\" fill=\"#e0ecf8\"/><polygon points=\"52,30 53,35 56,30\" fill=\"#b8ccd8\"/><polygon points=\"18,35 6,58 30,58\" fill=\"#3a5070\"/><polygon points=\"18,35 13,44 23,44\" fill=\"#e8f0f8\"/><polygon points=\"62,38 50,58 74,58\" fill=\"#2a4060\"/><polygon points=\"62,38 57,47 67,47\" fill=\"#c8d8e8\"/><rect x=\"0\" y=\"55\" width=\"80\" height=\"17\" fill=\"url(#gnd)\"/><polygon points=\"10,55 7,62 13,62\" fill=\"#1a3a1a\"/><polygon points=\"15,54 12,62 18,62\" fill=\"#1e421e\"/><polygon points=\"68,55 65,62 71,62\" fill=\"#1a3a1a\"/><polygon points=\"73,54 70,62 76,62\" fill=\"#1e421e\"/><circle cx=\"40\" cy=\"5\" r=\"1.2\" fill=\"#ffffff\"/></svg></span>',
-    '<div class=\"el-name\">MJSR</div>',
-    '<div class=\"el-desc\">Malam Jabba Ski Resort</div>',
-    '</div>',
-    '<div class=\"el-card\" style=\"--entity-color:#2d8a6e\" onclick=\"promptEntityPin(\'Healthcare\')\">',
-    '<span class=\"el-icon\">&#127973;</span>',
-    '<div class=\"el-name\">Healthcare</div><div class=\"el-desc\">Samsons Healthcare</div>',
-    '</div>',
-    '<div class=\"el-card\" style=\"--entity-color:#185fa5\" onclick=\"promptEntityPin(\'ALIF\')\">',
-    '<span class=\"el-icon\">&#127891;</span>',
-    '<div class=\"el-name\">ALIF</div><div class=\"el-desc\">ALIF &#8212; Education</div>',
-    '</div>',
-    '<div class=\"el-card\" style=\"--entity-color:#7b4fa6\" onclick=\"promptEntityPin(\'Construction\')\">',
-    '<span class=\"el-icon\">&#127959;</span>',
-    '<div class=\"el-name\">Construction</div><div class=\"el-desc\">Samsons Construction</div>',
-    '</div>',
-    '<div class=\"el-card\" style=\"--entity-color:#c0392b\" onclick=\"promptEntityPin(\'CORA\')\">',
-    '<span class=\"el-icon\">&#9878;&#65039;</span>',
-    '<div class=\"el-name\">CORA</div><div class=\"el-desc\">Corporate Affairs</div>',
-    '</div>',
-    '</div>'
-  ].join('');
-  document.body.insertBefore(landing, document.body.firstChild);
-}
-document.addEventListener('DOMContentLoaded', buildLanding);
-
-
-// ═══════════════════════════════════════════════════════ CONFIGURATION
-// REPLACE THIS URL with your deployed Google Apps Script Web App URL
-const GAS_URL = 'https://script.google.com/macros/s/AKfycby_M0NW85JpZBvJXCAoIM0p70V4YmD_ohwO1maXYjWme6_49rRKBp5JbSSPFiR0cQno/exec';
-
-// ═══════════════════════════════════════════════════════ STATE
-let STATE = { prfs: [], grns: [], slog: [], loaded: false };
-let prfRowN = 0, grnRowN = 0, curRec = null;
-
-// ═══════════════════════════════════════════════════════ ENTITY CONFIG
-const ENTITIES = {
-  'MJSR':         { color: '#b8922e', icon: '🏔️', desc: 'Malam Jabba Ski Resort' },
-  'Healthcare':   { color: '#2d8a6e', icon: '🏥', desc: 'Samsons Healthcare' },
-  'ALIF':         { color: '#185fa5', icon: '🎓', desc: 'ALIF — Education' },
-  'Construction': { color: '#7b4fa6', icon: '🏗',  desc: 'Samsons Construction' },
-  'CORA':         { color: '#c0392b', icon: '⚖️',  desc: 'Corporate Affairs' }
-};
-const ENTITY_PINS = {
-  'MJSR':         '1234',
-  'Healthcare':   '1999',
-  'ALIF':         '2000',
-  'Construction': '2100',
-  'CORA':         '2200'
-};
-let ACTIVE_ENTITY = null;
-let PIN_TARGET = null;
-let PIN_ENTRY  = '';
-
-function promptEntityPin(name) {
-  PIN_TARGET = name;
-  PIN_ENTRY  = '';
-  const cfg = ENTITIES[name];
-  document.getElementById('pin-entity-name').textContent = name;
-  document.getElementById('pin-entity-name').style.color = cfg.color;
-  document.getElementById('pin-error').textContent = '';
-  updatePinDots();
-  document.getElementById('pin-overlay').classList.add('open');
-}
-
-function updatePinDots() {
-  for (let i = 0; i < 4; i++) {
-    document.getElementById('pd' + i).classList.toggle('filled', i < PIN_ENTRY.length);
-  }
-}
-
-function pinKey(digit) {
-  if (PIN_ENTRY.length >= 4) return;
-  PIN_ENTRY += digit;
-  updatePinDots();
-  document.getElementById('pin-error').textContent = '';
-  if (PIN_ENTRY.length === 4) {
-    setTimeout(validatePin, 120); // brief delay so last dot fills visibly
-  }
-}
-
-function pinDel() {
-  PIN_ENTRY = PIN_ENTRY.slice(0, -1);
-  updatePinDots();
-  document.getElementById('pin-error').textContent = '';
-}
-
-function pinClear() {
-  PIN_ENTRY = '';
-  updatePinDots();
-  document.getElementById('pin-error').textContent = '';
-}
-
-function validatePin() {
-  if (PIN_ENTRY === ENTITY_PINS[PIN_TARGET]) {
-    document.getElementById('pin-overlay').classList.remove('open');
-    PIN_ENTRY = '';
-    selectEntity(PIN_TARGET);
-  } else {
-    document.getElementById('pin-error').textContent = 'Incorrect code — please try again';
-    PIN_ENTRY = '';
-    updatePinDots();
-  }
-}
-
-function pinCancel() {
-  document.getElementById('pin-overlay').classList.remove('open');
-  PIN_ENTRY  = '';
-  PIN_TARGET = null;
-}
-
-function selectEntity(name) {
-  ACTIVE_ENTITY = name;
-  const cfg = ENTITIES[name];
-  // Update nav badge
-  document.getElementById('eb-name').textContent = name;
-  document.getElementById('eb-dot').style.background = cfg.color;
-  // Update nav brand
-  document.querySelector('.nav-brand').innerHTML = '<span style="color:' + cfg.color + '">' + name + '</span> <span style="color:#aaa;font-weight:400">Procurement</span>';
-  // Update page title and form subtitles
-  document.title = name + ' — Procurement Portal';
-  // subText set after page injection above
-  // Hide landing, show nav + pages
-  var el = document.getElementById('entity-landing'); if(el) el.parentNode.removeChild(el);
-  document.body.classList.remove('on-landing');
-  var bs = document.getElementById('boot-hide'); if (bs) bs.parentNode.removeChild(bs);
-  document.getElementById('main-nav').style.display = 'flex';
-  // Inject pages if not already done
-  var pc = document.getElementById('pages-container');
-  if (pc && !pc.dataset.loaded) {
-    pc.innerHTML = `<!-- ═══════════════════════════════════════════════════════════ DASHBOARD -->
+<!-- ═══════════════════════════════════════════════════════════ DASHBOARD -->
 <div class="page" id="page-dashboard" style="display:none">
   <div class="pg-hdr"><h2 id="dash-title">Dashboard — All Submissions</h2></div>
   <div class="kpi-row">
@@ -528,7 +343,7 @@ function selectEntity(name) {
       </tr></thead>
       <tbody id="prf-ibody"></tbody>
     </table>
-    <button class="add-row-btn" onclick="addPRFRow()">+ Add Item Row</button>
+    <button class="addrow" onclick="addPRFRow()">+ Add Item Row</button>
 
     <div class="fsec">Reason for Purchase</div>
     <div class="frow fr1">
@@ -603,7 +418,7 @@ function selectEntity(name) {
       </tr></thead>
       <tbody id="grn-ibody"></tbody>
     </table>
-    <button class="add-row-btn" onclick="addGRNRow()">+ Add Item Row</button>
+    <button class="addrow" onclick="addGRNRow()">+ Add Item Row</button>
     <div class="tot-row"><span>Total Amount</span><strong id="grn-tot">Rs 0</strong></div>
 
     <div class="fsec">Remarks</div>
@@ -771,16 +586,176 @@ function selectEntity(name) {
   </div>
 </div>
 
-`;
-    pc.dataset.loaded = '1';
-    // Set up form subtitles now that DOM exists
-    var subText = 'Samsons Group of Companies (Pvt) Ltd — ' + name + ' &nbsp;|&nbsp; Accounts Copy';
-    var prfSub = document.getElementById('prf-form-sub');
-    var grnSub = document.getElementById('grn-form-sub');
-    if (prfSub) prfSub.innerHTML = subText;
-    if (grnSub) grnSub.innerHTML = subText;
-    // rows added on first open of form tab
+
+
+<div class="moverlay" id="moverlay" onclick="closeMO(event)">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3 id="m-title">Record Detail</h3>
+      <div class="mactions"><button class="printbtn" onclick="doPrint()">Print / Download PDF</button><button class="mclose" onclick="closeMD()">&#x2715;</button></div>
+    </div>
+    <div id="m-body"></div>
+  </div>
+</div>
+
+<div class="moverlay" id="appr-overlay" onclick="closeApprO(event)">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-hdr">
+      <div><h3 id="appr-title">Update Approval Stage</h3><div id="appr-subtitle" style="font-size:11px;color:var(--text2)"></div></div>
+      <button class="mclose" onclick="closeApprD()">&#x2715;</button>
+    </div>
+    <div id="appr-summary" style="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:13px 15px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"></div>
+    <input type="hidden" id="appr-ref">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">Finance Approval <span style="color:var(--danger-text)">*</span></div>
+        <select id="appr-fin" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit"><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
+        <input type="text" id="appr-fin-by" placeholder="Finance approver name" style="width:100%;margin-top:6px;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit">
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">GM Approval</div>
+        <select id="appr-gm" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit"><option value="Not Required">Not Required</option><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
+        <input type="text" id="appr-gm-by" placeholder="GM name" style="width:100%;margin-top:6px;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit">
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">Notes (optional)</div>
+      <textarea id="appr-notes" rows="2" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical"></textarea>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="submitbtn" style="margin-top:0;background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)" onclick="closeApprD()">Cancel</button>
+      <button class="submitbtn" style="margin-top:0" onclick="saveApproval()">Save Approval</button>
+    </div>
+  </div>
+</div>
+
+<div class="moverlay" id="move-overlay" onclick="closeMoveO(event)">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-hdr">
+      <div><h3 id="move-title">Move to Different Entity</h3><div id="move-subtitle" style="font-size:11px;color:var(--text2)"></div></div>
+      <button class="mclose" onclick="closeMoveD()">&#x2715;</button>
+    </div>
+    <div id="move-summary" style="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--text2)"></div>
+    <input type="hidden" id="move-ref"><input type="hidden" id="move-type">
+    <div style="margin-bottom:20px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:8px">Move to Entity</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="move-entity-grid"></div>
+    </div>
+    <div style="margin-bottom:20px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">Reason for Move (optional)</div>
+      <textarea id="move-reason" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical;min-height:52px"></textarea>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="submitbtn" style="margin-top:0;background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)" onclick="closeMoveD()">Cancel</button>
+      <button class="submitbtn" style="margin-top:0" onclick="saveMove()">Move Record</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+// ═══════════════════════════════════════════════════════ CONFIGURATION
+// REPLACE THIS URL with your deployed Google Apps Script Web App URL
+const GAS_URL = 'https://script.google.com/macros/s/AKfycby_M0NW85JpZBvJXCAoIM0p70V4YmD_ohwO1maXYjWme6_49rRKBp5JbSSPFiR0cQno/exec';
+
+// ═══════════════════════════════════════════════════════ STATE
+let STATE = { prfs: [], grns: [], slog: [], loaded: false };
+let prfRowN = 0, grnRowN = 0, curRec = null;
+
+// ═══════════════════════════════════════════════════════ ENTITY CONFIG
+const ENTITIES = {
+  'MJSR':         { color: '#b8922e', icon: '🏔️', desc: 'Malam Jabba Ski Resort' },
+  'Healthcare':   { color: '#2d8a6e', icon: '🏥', desc: 'Samsons Healthcare' },
+  'ALIF':         { color: '#185fa5', icon: '🎓', desc: 'ALIF — Education' },
+  'Construction': { color: '#7b4fa6', icon: '🏗',  desc: 'Samsons Construction' },
+  'CORA':         { color: '#c0392b', icon: '⚖️',  desc: 'Corporate Affairs' }
+};
+const ENTITY_PINS = {
+  'MJSR':         '1234',
+  'Healthcare':   '1999',
+  'ALIF':         '2000',
+  'Construction': '2100',
+  'CORA':         '2200'
+};
+let ACTIVE_ENTITY = null;
+let PIN_TARGET = null;
+let PIN_ENTRY  = '';
+
+function promptEntityPin(name) {
+  PIN_TARGET = name;
+  PIN_ENTRY  = '';
+  const cfg = ENTITIES[name];
+  document.getElementById('pin-entity-name').textContent = name;
+  document.getElementById('pin-entity-name').style.color = cfg.color;
+  document.getElementById('pin-error').textContent = '';
+  updatePinDots();
+  document.getElementById('pin-overlay').classList.add('open');
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('pd' + i).classList.toggle('filled', i < PIN_ENTRY.length);
   }
+}
+
+function pinKey(digit) {
+  if (PIN_ENTRY.length >= 4) return;
+  PIN_ENTRY += digit;
+  updatePinDots();
+  document.getElementById('pin-error').textContent = '';
+  if (PIN_ENTRY.length === 4) {
+    setTimeout(validatePin, 120); // brief delay so last dot fills visibly
+  }
+}
+
+function pinDel() {
+  PIN_ENTRY = PIN_ENTRY.slice(0, -1);
+  updatePinDots();
+  document.getElementById('pin-error').textContent = '';
+}
+
+function pinClear() {
+  PIN_ENTRY = '';
+  updatePinDots();
+  document.getElementById('pin-error').textContent = '';
+}
+
+function validatePin() {
+  if (PIN_ENTRY === ENTITY_PINS[PIN_TARGET]) {
+    document.getElementById('pin-overlay').classList.remove('open');
+    PIN_ENTRY = '';
+    selectEntity(PIN_TARGET);
+  } else {
+    document.getElementById('pin-error').textContent = 'Incorrect code — please try again';
+    PIN_ENTRY = '';
+    updatePinDots();
+  }
+}
+
+function pinCancel() {
+  document.getElementById('pin-overlay').classList.remove('open');
+  PIN_ENTRY  = '';
+  PIN_TARGET = null;
+}
+
+function selectEntity(name) {
+  ACTIVE_ENTITY = name;
+  const cfg = ENTITIES[name];
+  // Update nav badge
+  document.getElementById('eb-name').textContent = name;
+  document.getElementById('eb-dot').style.background = cfg.color;
+  // Update nav brand
+  document.querySelector('.nav-brand').innerHTML = '<span style="color:' + cfg.color + '">' + name + '</span> <span style="color:#aaa;font-weight:400">Procurement</span>';
+  // Update page title and form subtitles
+  document.title = name + ' — Procurement Portal';
+  const subText = 'Samsons Group of Companies (Pvt) Ltd — ' + name + ' &nbsp;|&nbsp; Accounts Copy';
+  document.getElementById('prf-form-sub').innerHTML = subText;
+  document.getElementById('grn-form-sub').innerHTML = subText;
+  // Hide landing, show nav + pages
+  document.getElementById('entity-landing').style.display = 'none';
+  document.getElementById('main-nav').style.display = 'flex';
   // Clear and reload data for this entity
   STATE = { prfs: [], grns: [], slog: [], loaded: false };
   go('dashboard');
@@ -791,12 +766,9 @@ function selectEntity(name) {
 function returnToLanding() {
   ACTIVE_ENTITY = null;
   STATE = { prfs: [], grns: [], slog: [], loaded: false };
-  // Remove portal content
+  document.getElementById('entity-landing').style.display = 'flex';
   document.getElementById('main-nav').style.display = 'none';
-  document.getElementById('loading').style.display = 'none';
-  var pc = document.getElementById('pages-container');
-  if (pc) { pc.innerHTML = ''; pc.dataset.loaded = ''; }
-  buildLanding();
+  document.querySelectorAll('.page').forEach(p => p.style.display='none');
 }
 
 // ═══════════════════════════════════════════════════════ GAS FETCH (text/plain to avoid CORS preflight)
@@ -841,12 +813,8 @@ function go(id) {
     document.getElementById('dash-title').textContent = (ACTIVE_ENTITY || '') + ' — All Submissions';
     rdash();
   }
-  if (id === 'sub-prf') {
-    if (!document.getElementById('prf-ibody').hasChildNodes()) addPRFRow();
-  }
-  if (id === 'sub-grn') {
-    if (!document.getElementById('grn-ibody').hasChildNodes()) addGRNRow();
-  }
+  if (id === 'sub-prf' && !document.getElementById('prf-ibody').hasChildNodes()) addPRFRow();
+  if (id === 'sub-grn' && !document.getElementById('grn-ibody').hasChildNodes()) addGRNRow();
   if (id === 'prf-tracker') rprf();
   if (id === 'grn-tracker') rgrn();
   if (id === 'status') renderSlog();
@@ -1502,7 +1470,7 @@ window.openApproval = function(enc)    { closeModalDirect(); openApprovalPanel(a
 window.moveRecord   = function(enc)    { const r=atob(enc).split('|'); openMovePanel(r[0], r[1]); };
 
 // ═══════════════════════════════════════════════════════ INIT
-// Row init moved to after page injection
+// rows added on demand
 
 // Move modals to be the very last children of <body> so no sibling
 // stacking context (overflow:hidden, transforms, etc.) can clip them.
