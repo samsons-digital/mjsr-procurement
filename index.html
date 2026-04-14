@@ -604,6 +604,7 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycby_M0NW85JpZBvJXCAoIM0p
 
 // ═══════════════════════════════════════════════════════ STATE
 let STATE = { prfs: [], grns: [], slog: [], loaded: false };
+let curRec = null;
 let prfRowN = 0, grnRowN = 0, curRec = null;
 
 // ═══════════════════════════════════════════════════════ ENTITY CONFIG
@@ -1398,7 +1399,7 @@ function esc(s) { return (s || '').replace(/'/g, "\\'"); }
 function toast(msg, isErr) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.className = 'toast' + (isErr ? ' error' : '');
+  t.className = 'toast' + (isErr ? ' err' : '');
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
 }
