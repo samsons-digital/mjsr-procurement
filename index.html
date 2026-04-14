@@ -826,7 +826,7 @@ async function loadAll() {
     toast('Could not connect to server. Check GAS_URL in config.', true);
   }
   counts(); depts(); rdash();
-  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('loading').style.display = 'none';
 }
 
 // ═══════════════════════════════════════════════════════ NAVIGATION
@@ -1515,7 +1515,7 @@ window.moveRecord   = function(enc)    { const r=atob(enc).split('|'); openMoveP
 // Don't auto-load — wait for entity selection
 // loadAll is called by selectEntity()
 // Keep loading screen hidden on start (entity landing is shown instead)
-document.getElementById('loading').classList.add('hidden');
+document.getElementById('loading').style.display = 'none';
 
 </script>
 </body>
