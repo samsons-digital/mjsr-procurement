@@ -243,7 +243,175 @@ tr:hover td{background:var(--gold-bg)}
   <div class="bar"><div class="bar-inner"></div></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════ DASHBOARD -->
+<div id="pages-container"></div>
+
+<div class="moverlay" id="moverlay" onclick="closeMO(event)">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3 id="m-title">Record Detail</h3>
+      <div class="mactions"><button class="printbtn" onclick="doPrint()">Print / Download PDF</button><button class="mclose" onclick="closeMD()">&#x2715;</button></div>
+    </div>
+    <div id="m-body"></div>
+  </div>
+</div>
+
+<div class="moverlay" id="appr-overlay" onclick="closeApprO(event)">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-hdr">
+      <div><h3 id="appr-title" style="margin-bottom:2px">Update Approval Stage</h3><div id="appr-subtitle" style="font-size:11px;color:var(--text2)"></div></div>
+      <button class="mclose" onclick="closeApprD()">&#x2715;</button>
+    </div>
+    <div id="appr-summary" style="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:13px 15px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"></div>
+    <input type="hidden" id="appr-ref">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">Finance Approval <span style="color:var(--danger-text)">*</span></div>
+        <select id="appr-fin" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit"><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
+        <input type="text" id="appr-fin-by" placeholder="Finance approver name" style="width:100%;margin-top:6px;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit">
+      </div>
+      <div><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">GM Approval</div>
+        <select id="appr-gm" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit"><option value="Not Required">Not Required</option><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
+        <input type="text" id="appr-gm-by" placeholder="GM name" style="width:100%;margin-top:6px;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit">
+      </div>
+    </div>
+    <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">Notes (optional)</div>
+      <textarea id="appr-notes" rows="2" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical"></textarea>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="submitbtn" style="margin-top:0;background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)" onclick="closeApprD()">Cancel</button>
+      <button class="submitbtn" id="appr-save-btn" style="margin-top:0" onclick="saveApproval()">Save Approval</button>
+    </div>
+  </div>
+</div>
+
+<div class="moverlay" id="move-overlay" onclick="closeMoveO(event)">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-hdr">
+      <div><h3 id="move-title">Move to Different Entity</h3><div id="move-subtitle" style="font-size:11px;color:var(--text2)"></div></div>
+      <button class="mclose" onclick="closeMoveD()">&#x2715;</button>
+    </div>
+    <div id="move-summary" style="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--text2)"></div>
+    <input type="hidden" id="move-ref"><input type="hidden" id="move-type">
+    <div style="margin-bottom:20px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:8px">Move to Entity</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="move-entity-grid"></div>
+    </div>
+    <div style="margin-bottom:20px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">Reason for Move (optional)</div>
+      <textarea id="move-reason" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical;min-height:52px" placeholder="e.g. Submitted under wrong entity by mistake"></textarea>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="submitbtn" style="margin-top:0;background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)" onclick="closeMoveD()">Cancel</button>
+      <button class="submitbtn" id="move-save-btn" style="margin-top:0" onclick="saveMove()">Move Record</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+// ═══════════════════════════════════════════════════════ CONFIGURATION
+// REPLACE THIS URL with your deployed Google Apps Script Web App URL
+const GAS_URL = 'https://script.google.com/macros/s/AKfycby_M0NW85JpZBvJXCAoIM0p70V4YmD_ohwO1maXYjWme6_49rRKBp5JbSSPFiR0cQno/exec';
+
+// ═══════════════════════════════════════════════════════ STATE
+let STATE = { prfs: [], grns: [], slog: [], loaded: false };
+let prfRowN = 0, grnRowN = 0, curRec = null;
+
+// ═══════════════════════════════════════════════════════ ENTITY CONFIG
+const ENTITIES = {
+  'MJSR':         { color: '#b8922e', icon: '🏔️', desc: 'Malam Jabba Ski Resort' },
+  'Healthcare':   { color: '#2d8a6e', icon: '🏥', desc: 'Samsons Healthcare' },
+  'ALIF':         { color: '#185fa5', icon: '🎓', desc: 'ALIF — Education' },
+  'Construction': { color: '#7b4fa6', icon: '🏗',  desc: 'Samsons Construction' },
+  'CORA':         { color: '#c0392b', icon: '⚖️',  desc: 'Corporate Affairs' }
+};
+const ENTITY_PINS = {
+  'MJSR':         '1234',
+  'Healthcare':   '1999',
+  'ALIF':         '2000',
+  'Construction': '2100',
+  'CORA':         '2200'
+};
+let ACTIVE_ENTITY = null;
+let PIN_TARGET = null;
+let PIN_ENTRY  = '';
+
+function promptEntityPin(name) {
+  PIN_TARGET = name;
+  PIN_ENTRY  = '';
+  const cfg = ENTITIES[name];
+  document.getElementById('pin-entity-name').textContent = name;
+  document.getElementById('pin-entity-name').style.color = cfg.color;
+  document.getElementById('pin-error').textContent = '';
+  updatePinDots();
+  document.getElementById('pin-overlay').classList.add('open');
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('pd' + i).classList.toggle('filled', i < PIN_ENTRY.length);
+  }
+}
+
+function pinKey(digit) {
+  if (PIN_ENTRY.length >= 4) return;
+  PIN_ENTRY += digit;
+  updatePinDots();
+  document.getElementById('pin-error').textContent = '';
+  if (PIN_ENTRY.length === 4) {
+    setTimeout(validatePin, 120); // brief delay so last dot fills visibly
+  }
+}
+
+function pinDel() {
+  PIN_ENTRY = PIN_ENTRY.slice(0, -1);
+  updatePinDots();
+  document.getElementById('pin-error').textContent = '';
+}
+
+function pinClear() {
+  PIN_ENTRY = '';
+  updatePinDots();
+  document.getElementById('pin-error').textContent = '';
+}
+
+function validatePin() {
+  if (PIN_ENTRY === ENTITY_PINS[PIN_TARGET]) {
+    document.getElementById('pin-overlay').classList.remove('open');
+    PIN_ENTRY = '';
+    selectEntity(PIN_TARGET);
+  } else {
+    document.getElementById('pin-error').textContent = 'Incorrect code — please try again';
+    PIN_ENTRY = '';
+    updatePinDots();
+  }
+}
+
+function pinCancel() {
+  document.getElementById('pin-overlay').classList.remove('open');
+  PIN_ENTRY  = '';
+  PIN_TARGET = null;
+}
+
+function selectEntity(name) {
+  ACTIVE_ENTITY = name;
+  const cfg = ENTITIES[name];
+  // Update nav badge
+  document.getElementById('eb-name').textContent = name;
+  document.getElementById('eb-dot').style.background = cfg.color;
+  // Update nav brand
+  document.querySelector('.nav-brand').innerHTML = '<span style="color:' + cfg.color + '">' + name + '</span> <span style="color:#aaa;font-weight:400">Procurement</span>';
+  // Update page title and form subtitles
+  document.title = name + ' — Procurement Portal';
+  // subText set after page injection above
+  // Hide landing, show nav + pages
+  document.getElementById('entity-landing').classList.add('hidden');
+  document.body.classList.remove('on-landing');
+  var bs = document.getElementById('boot-hide'); if (bs) bs.parentNode.removeChild(bs);
+  document.getElementById('main-nav').style.display = 'flex';
+  // Inject pages if not already done
+  var pc = document.getElementById('pages-container');
+  if (pc && !pc.dataset.loaded) {
+    pc.innerHTML = `<!-- ═══════════════════════════════════════════════════════════ DASHBOARD -->
 <div class="page" id="page-dashboard" style="display:none">
   <div class="pg-hdr"><h2 id="dash-title">Dashboard — All Submissions</h2></div>
   <div class="kpi-row">
@@ -598,173 +766,15 @@ tr:hover td{background:var(--gold-bg)}
   </div>
 </div>
 
-
-
-<div class="moverlay" id="moverlay" onclick="closeMO(event)">
-  <div class="modal">
-    <div class="modal-hdr">
-      <h3 id="m-title">Record Detail</h3>
-      <div class="mactions"><button class="printbtn" onclick="doPrint()">Print / Download PDF</button><button class="mclose" onclick="closeMD()">&#x2715;</button></div>
-    </div>
-    <div id="m-body"></div>
-  </div>
-</div>
-
-<div class="moverlay" id="appr-overlay" onclick="closeApprO(event)">
-  <div class="modal" style="max-width:520px">
-    <div class="modal-hdr">
-      <div><h3 id="appr-title" style="margin-bottom:2px">Update Approval Stage</h3><div id="appr-subtitle" style="font-size:11px;color:var(--text2)"></div></div>
-      <button class="mclose" onclick="closeApprD()">&#x2715;</button>
-    </div>
-    <div id="appr-summary" style="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:13px 15px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"></div>
-    <input type="hidden" id="appr-ref">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-      <div><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">Finance Approval <span style="color:var(--danger-text)">*</span></div>
-        <select id="appr-fin" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit"><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
-        <input type="text" id="appr-fin-by" placeholder="Finance approver name" style="width:100%;margin-top:6px;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit">
-      </div>
-      <div><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">GM Approval</div>
-        <select id="appr-gm" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit"><option value="Not Required">Not Required</option><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
-        <input type="text" id="appr-gm-by" placeholder="GM name" style="width:100%;margin-top:6px;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit">
-      </div>
-    </div>
-    <div style="margin-bottom:16px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">Notes (optional)</div>
-      <textarea id="appr-notes" rows="2" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical"></textarea>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <button class="submitbtn" style="margin-top:0;background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)" onclick="closeApprD()">Cancel</button>
-      <button class="submitbtn" id="appr-save-btn" style="margin-top:0" onclick="saveApproval()">Save Approval</button>
-    </div>
-  </div>
-</div>
-
-<div class="moverlay" id="move-overlay" onclick="closeMoveO(event)">
-  <div class="modal" style="max-width:440px">
-    <div class="modal-hdr">
-      <div><h3 id="move-title">Move to Different Entity</h3><div id="move-subtitle" style="font-size:11px;color:var(--text2)"></div></div>
-      <button class="mclose" onclick="closeMoveD()">&#x2715;</button>
-    </div>
-    <div id="move-summary" style="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--text2)"></div>
-    <input type="hidden" id="move-ref"><input type="hidden" id="move-type">
-    <div style="margin-bottom:20px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:8px">Move to Entity</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="move-entity-grid"></div>
-    </div>
-    <div style="margin-bottom:20px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:5px">Reason for Move (optional)</div>
-      <textarea id="move-reason" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical;min-height:52px" placeholder="e.g. Submitted under wrong entity by mistake"></textarea>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <button class="submitbtn" style="margin-top:0;background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)" onclick="closeMoveD()">Cancel</button>
-      <button class="submitbtn" id="move-save-btn" style="margin-top:0" onclick="saveMove()">Move Record</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-
-// ═══════════════════════════════════════════════════════ CONFIGURATION
-// REPLACE THIS URL with your deployed Google Apps Script Web App URL
-const GAS_URL = 'https://script.google.com/macros/s/AKfycby_M0NW85JpZBvJXCAoIM0p70V4YmD_ohwO1maXYjWme6_49rRKBp5JbSSPFiR0cQno/exec';
-
-// ═══════════════════════════════════════════════════════ STATE
-let STATE = { prfs: [], grns: [], slog: [], loaded: false };
-let prfRowN = 0, grnRowN = 0, curRec = null;
-
-// ═══════════════════════════════════════════════════════ ENTITY CONFIG
-const ENTITIES = {
-  'MJSR':         { color: '#b8922e', icon: '🏔️', desc: 'Malam Jabba Ski Resort' },
-  'Healthcare':   { color: '#2d8a6e', icon: '🏥', desc: 'Samsons Healthcare' },
-  'ALIF':         { color: '#185fa5', icon: '🎓', desc: 'ALIF — Education' },
-  'Construction': { color: '#7b4fa6', icon: '🏗',  desc: 'Samsons Construction' },
-  'CORA':         { color: '#c0392b', icon: '⚖️',  desc: 'Corporate Affairs' }
-};
-const ENTITY_PINS = {
-  'MJSR':         '1234',
-  'Healthcare':   '1999',
-  'ALIF':         '2000',
-  'Construction': '2100',
-  'CORA':         '2200'
-};
-let ACTIVE_ENTITY = null;
-let PIN_TARGET = null;
-let PIN_ENTRY  = '';
-
-function promptEntityPin(name) {
-  PIN_TARGET = name;
-  PIN_ENTRY  = '';
-  const cfg = ENTITIES[name];
-  document.getElementById('pin-entity-name').textContent = name;
-  document.getElementById('pin-entity-name').style.color = cfg.color;
-  document.getElementById('pin-error').textContent = '';
-  updatePinDots();
-  document.getElementById('pin-overlay').classList.add('open');
-}
-
-function updatePinDots() {
-  for (let i = 0; i < 4; i++) {
-    document.getElementById('pd' + i).classList.toggle('filled', i < PIN_ENTRY.length);
+`;
+    pc.dataset.loaded = '1';
+    // Set up form subtitles now that DOM exists
+    var subText = 'Samsons Group of Companies (Pvt) Ltd — ' + name + ' &nbsp;|&nbsp; Accounts Copy';
+    var prfSub = document.getElementById('prf-form-sub');
+    var grnSub = document.getElementById('grn-form-sub');
+    if (prfSub) prfSub.innerHTML = subText;
+    if (grnSub) grnSub.innerHTML = subText;
   }
-}
-
-function pinKey(digit) {
-  if (PIN_ENTRY.length >= 4) return;
-  PIN_ENTRY += digit;
-  updatePinDots();
-  document.getElementById('pin-error').textContent = '';
-  if (PIN_ENTRY.length === 4) {
-    setTimeout(validatePin, 120); // brief delay so last dot fills visibly
-  }
-}
-
-function pinDel() {
-  PIN_ENTRY = PIN_ENTRY.slice(0, -1);
-  updatePinDots();
-  document.getElementById('pin-error').textContent = '';
-}
-
-function pinClear() {
-  PIN_ENTRY = '';
-  updatePinDots();
-  document.getElementById('pin-error').textContent = '';
-}
-
-function validatePin() {
-  if (PIN_ENTRY === ENTITY_PINS[PIN_TARGET]) {
-    document.getElementById('pin-overlay').classList.remove('open');
-    PIN_ENTRY = '';
-    selectEntity(PIN_TARGET);
-  } else {
-    document.getElementById('pin-error').textContent = 'Incorrect code — please try again';
-    PIN_ENTRY = '';
-    updatePinDots();
-  }
-}
-
-function pinCancel() {
-  document.getElementById('pin-overlay').classList.remove('open');
-  PIN_ENTRY  = '';
-  PIN_TARGET = null;
-}
-
-function selectEntity(name) {
-  ACTIVE_ENTITY = name;
-  const cfg = ENTITIES[name];
-  // Update nav badge
-  document.getElementById('eb-name').textContent = name;
-  document.getElementById('eb-dot').style.background = cfg.color;
-  // Update nav brand
-  document.querySelector('.nav-brand').innerHTML = '<span style="color:' + cfg.color + '">' + name + '</span> <span style="color:#aaa;font-weight:400">Procurement</span>';
-  // Update page title and form subtitles
-  document.title = name + ' — Procurement Portal';
-  const subText = 'Samsons Group of Companies (Pvt) Ltd — ' + name + ' &nbsp;|&nbsp; Accounts Copy';
-  document.getElementById('prf-form-sub').innerHTML = subText;
-  document.getElementById('grn-form-sub').innerHTML = subText;
-  // Hide landing, show nav + pages
-  document.getElementById('entity-landing').classList.add('hidden');
-  document.body.classList.remove('on-landing');
-  var bs = document.getElementById('boot-hide'); if (bs) bs.parentNode.removeChild(bs);
-  document.getElementById('main-nav').style.display = 'flex';
   // Clear and reload data for this entity
   STATE = { prfs: [], grns: [], slog: [], loaded: false };
   counts(); rdash();
