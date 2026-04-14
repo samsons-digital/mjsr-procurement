@@ -528,7 +528,7 @@ function selectEntity(name) {
       </tr></thead>
       <tbody id="prf-ibody"></tbody>
     </table>
-    <button class="addrow" onclick="addPRFRow()">+ Add Item Row</button>
+    <button class="add-row-btn" onclick="addPRFRow()">+ Add Item Row</button>
 
     <div class="fsec">Reason for Purchase</div>
     <div class="frow fr1">
@@ -603,7 +603,7 @@ function selectEntity(name) {
       </tr></thead>
       <tbody id="grn-ibody"></tbody>
     </table>
-    <button class="addrow" onclick="addGRNRow()">+ Add Item Row</button>
+    <button class="add-row-btn" onclick="addGRNRow()">+ Add Item Row</button>
     <div class="tot-row"><span>Total Amount</span><strong id="grn-tot">Rs 0</strong></div>
 
     <div class="fsec">Remarks</div>
@@ -779,18 +779,25 @@ function selectEntity(name) {
     var grnSub = document.getElementById('grn-form-sub');
     if (prfSub) prfSub.innerHTML = subText;
     if (grnSub) grnSub.innerHTML = subText;
+    // Init default rows now that DOM exists
+    addPRFRow(); addGRNRow();
   }
   // Clear and reload data for this entity
   STATE = { prfs: [], grns: [], slog: [], loaded: false };
-  counts(); rdash();
-  document.getElementById('loading').classList.remove('hidden');
+  go('dashboard');
+  document.getElementById('loading').style.display = 'flex';
   loadAll();
 }
 
 function returnToLanding() {
   ACTIVE_ENTITY = null;
   STATE = { prfs: [], grns: [], slog: [], loaded: false };
-  document.getElementById('entity-landing').classList.remove('hidden');
+  // Remove portal content
+  document.getElementById('main-nav').style.display = 'none';
+  document.getElementById('loading').style.display = 'none';
+  var pc = document.getElementById('pages-container');
+  if (pc) { pc.innerHTML = ''; pc.dataset.loaded = ''; }
+  buildLanding();
 }
 
 // ═══════════════════════════════════════════════════════ GAS FETCH (text/plain to avoid CORS preflight)
@@ -1489,7 +1496,7 @@ window.openApproval = function(enc)    { closeModalDirect(); openApprovalPanel(a
 window.moveRecord   = function(enc)    { const r=atob(enc).split('|'); openMovePanel(r[0], r[1]); };
 
 // ═══════════════════════════════════════════════════════ INIT
-addPRFRow(); addGRNRow();
+// Row init moved to after page injection
 
 // Move modals to be the very last children of <body> so no sibling
 // stacking context (overflow:hidden, transforms, etc.) can clip them.
