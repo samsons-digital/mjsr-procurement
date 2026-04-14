@@ -779,8 +779,7 @@ function selectEntity(name) {
     var grnSub = document.getElementById('grn-form-sub');
     if (prfSub) prfSub.innerHTML = subText;
     if (grnSub) grnSub.innerHTML = subText;
-    // Init default rows now that DOM exists
-    addPRFRow(); addGRNRow();
+    // rows added on first open of form tab
   }
   // Clear and reload data for this entity
   STATE = { prfs: [], grns: [], slog: [], loaded: false };
@@ -842,6 +841,12 @@ function go(id) {
     document.getElementById('dash-title').textContent = (ACTIVE_ENTITY || '') + ' — All Submissions';
     rdash();
   }
+  if (id === 'sub-prf') {
+    if (!document.getElementById('prf-ibody').hasChildNodes()) addPRFRow();
+  }
+  if (id === 'sub-grn') {
+    if (!document.getElementById('grn-ibody').hasChildNodes()) addGRNRow();
+  }
   if (id === 'prf-tracker') rprf();
   if (id === 'grn-tracker') rgrn();
   if (id === 'status') renderSlog();
@@ -850,13 +855,14 @@ function go(id) {
 // ═══════════════════════════════════════════════════════ KPI + DEPTS
 function counts() {
   const all = [...STATE.prfs, ...STATE.grns];
-  document.getElementById('prf-cnt').textContent = STATE.prfs.length;
-  document.getElementById('grn-cnt').textContent = STATE.grns.length;
-  document.getElementById('k-total').textContent = all.length;
-  document.getElementById('k-pend').textContent = all.filter(r => r.status === 'Pending').length;
-  document.getElementById('k-appr').textContent = all.filter(r => r.status === 'Approved').length;
+  const se = id => document.getElementById(id);
+  if (se('prf-cnt')) se('prf-cnt').textContent = STATE.prfs.length;
+  if (se('grn-cnt')) se('grn-cnt').textContent = STATE.grns.length;
+  if (se('k-total')) se('k-total').textContent = all.length;
+  if (se('k-pend')) se('k-pend').textContent = all.filter(r => r.status === 'Pending').length;
+  if (se('k-appr')) se('k-appr').textContent = all.filter(r => r.status === 'Approved').length;
   const gv = STATE.grns.reduce((s, r) => s + (r.total || 0), 0);
-  document.getElementById('k-val').textContent = 'PKR ' + gv.toLocaleString();
+  if (se('k-val')) se('k-val').textContent = 'PKR ' + gv.toLocaleString();
 }
 function depts() {
   const ds = [...new Set([...STATE.prfs, ...STATE.grns].map(r => r.dept))].filter(Boolean).sort();
