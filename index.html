@@ -16,23 +16,31 @@
   --warn-bg:#faeeda;--warn-text:#854f0b;
   --danger-bg:#fcebeb;--danger-text:#a32d2d;
   --info-bg:#e6f1fb;--info-text:#185fa5;
+  --admin-color:#4a3f6b;
   --radius:8px;--radius-lg:12px;
 }
 body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px}
+
+/* ── Entity landing ── */
 #entity-landing{position:fixed;inset:0;background:#162844;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;overflow-y:auto}
 #entity-landing.hidden{display:none}
 .el-brand{text-align:center;margin-bottom:32px}
 .el-brand h1{font-size:34px;font-weight:700;color:var(--gold);letter-spacing:.02em;margin-bottom:6px}
 .el-brand p{font-size:12px;color:rgba(255,255,255,0.55);letter-spacing:.06em;text-transform:uppercase}
-.el-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;max-width:900px;width:100%}
+.el-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:900px;width:100%}
+.el-grid-top{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;max-width:900px;width:100%;margin-bottom:14px}
 .el-card{background:rgba(255,255,255,0.08);border:0.5px solid rgba(255,255,255,0.15);border-radius:12px;padding:34px 20px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .el-card::before{content:'';position:absolute;inset:0;background:var(--entity-color,var(--gold));opacity:0;transition:opacity .18s}
 .el-card:hover{border-color:var(--entity-color,var(--gold));transform:translateY(-3px);background:rgba(255,255,255,0.13)}
 .el-card:hover::before{opacity:.08}
+.el-card.admin-card{padding:22px 20px;background:rgba(74,63,107,0.2);border-color:rgba(74,63,107,0.5)}
+.el-card.admin-card:hover{border-color:#9b8fd4;background:rgba(74,63,107,0.3)}
 .el-icon{font-size:44px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;position:relative}
 .el-name{font-size:20px;font-weight:700;color:#fff;margin-bottom:6px;position:relative;letter-spacing:.02em}
 .el-desc{font-size:13px;color:rgba(255,255,255,0.6);position:relative;letter-spacing:.03em}
-@media(max-width:700px){.el-grid{grid-template-columns:repeat(2,1fr)}.el-card:last-child{grid-column:span 2}}
+@media(max-width:700px){.el-grid-top{grid-template-columns:repeat(2,1fr)}.el-grid{grid-template-columns:1fr}}
+
+/* ── PIN overlay ── */
 #pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:3000;display:none;align-items:center;justify-content:center}
 #pin-overlay.open{display:flex}
 #pin-box{background:#162844;border:1px solid rgba(184,146,46,0.4);border-radius:14px;padding:32px 28px;width:300px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
@@ -49,6 +57,8 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .pin-key.del{font-size:13px;color:rgba(255,255,255,0.6)}
 .pin-cancel{width:100%;background:transparent;border:0.5px solid rgba(255,255,255,0.2);border-radius:8px;color:rgba(255,255,255,0.5);font-size:12px;padding:9px;cursor:pointer;font-family:inherit}
 .pin-cancel:hover{border-color:rgba(255,255,255,0.4);color:rgba(255,255,255,0.8)}
+
+/* ── Nav ── */
 .entity-badge{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:6px;border:0.5px solid #444;cursor:pointer;margin-right:12px;transition:border-color .15s;flex-shrink:0}
 .entity-badge:hover{border-color:var(--gold)}
 .entity-badge-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
@@ -63,6 +73,8 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .ntag{font-size:10px;padding:1px 6px;border-radius:8px;margin-left:3px;font-weight:600}
 .ntag-p{background:var(--info-bg);color:var(--info-text)}
 .ntag-g{background:var(--success-bg);color:var(--success-text)}
+
+/* ── Loading ── */
 #loading{position:fixed;inset:0;background:var(--nav-bg);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:12px}
 #loading .logo{font-size:22px;font-weight:700;color:var(--nav-text);letter-spacing:.04em}
 #loading .logo span{color:var(--gold)}
@@ -70,6 +82,8 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 #loading .bar{width:200px;height:2px;background:#333;border-radius:2px;overflow:hidden}
 #loading .bar-inner{height:100%;background:var(--gold);border-radius:2px;animation:load 1.2s ease-out forwards}
 @keyframes load{from{width:0}to{width:100%}}
+
+/* ── Pages ── */
 .page{display:none;padding:20px;max-width:1160px;margin:0 auto}
 .page.active{display:block}
 .pg-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
@@ -150,17 +164,59 @@ tr:hover td{background:var(--gold-bg)}
 .toast{position:fixed;bottom:22px;right:22px;background:var(--success-bg);color:var(--success-text);border:0.5px solid #b0d88a;padding:11px 18px;border-radius:var(--radius);font-size:12px;font-weight:500;z-index:9999;transform:translateY(60px);opacity:0;transition:all .22s;pointer-events:none}
 .toast.err{background:var(--danger-bg);color:var(--danger-text);border-color:#f09595}
 .toast.show{transform:translateY(0);opacity:1}
+
+/* ── Admin Config Page ── */
+#admin-config-page{position:fixed;inset:0;background:#0f1e35;z-index:2500;display:none;flex-direction:column;overflow:hidden}
+#admin-config-page.open{display:flex}
+.acfg-nav{height:52px;background:#0a1525;border-bottom:1px solid rgba(74,63,107,0.5);display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0}
+.acfg-nav-title{font-size:14px;font-weight:700;color:#9b8fd4;letter-spacing:.04em}
+.acfg-nav-sub{font-size:11px;color:rgba(255,255,255,0.4)}
+.acfg-close{margin-left:auto;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.15);border-radius:8px;color:rgba(255,255,255,0.6);font-size:12px;padding:6px 14px;cursor:pointer;font-family:inherit;transition:all .15s}
+.acfg-close:hover{background:rgba(255,255,255,0.12);color:#fff}
+.acfg-body{flex:1;overflow-y:auto;padding:28px 32px;display:flex;flex-direction:column;gap:20px;max-width:1100px;margin:0 auto;width:100%}
+.acfg-entity-block{background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden}
+.acfg-entity-hdr{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:0.5px solid rgba(255,255,255,0.08)}
+.acfg-entity-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.acfg-entity-name{font-size:13px;font-weight:700;color:#fff;letter-spacing:.02em}
+.acfg-entity-count{font-size:11px;color:rgba(255,255,255,0.4);margin-left:auto}
+.acfg-dept-list{padding:14px 18px;display:flex;flex-direction:column;gap:6px;min-height:48px}
+.acfg-dept-item{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:7px;padding:7px 10px;transition:background .12s;cursor:grab}
+.acfg-dept-item:hover{background:rgba(255,255,255,0.09)}
+.acfg-dept-item.dragging{opacity:0.4;cursor:grabbing}
+.acfg-dept-item.drag-over{border-color:#9b8fd4;background:rgba(155,143,212,0.12)}
+.acfg-drag-handle{color:rgba(255,255,255,0.25);font-size:13px;cursor:grab;padding:0 2px;user-select:none}
+.acfg-dept-name{font-size:12px;color:#e8e6e0;flex:1;font-weight:500}
+.acfg-dept-del{background:none;border:none;color:rgba(220,80,80,0.5);cursor:pointer;font-size:14px;padding:2px 5px;border-radius:4px;transition:color .12s;line-height:1}
+.acfg-dept-del:hover{color:#e05c5c}
+.acfg-add-row{display:flex;gap:8px;padding:0 18px 14px;align-items:center}
+.acfg-add-input{flex:1;font-size:12px;padding:7px 10px;border:0.5px solid rgba(255,255,255,0.15);border-radius:7px;background:rgba(255,255,255,0.06);color:#e8e6e0;font-family:inherit;outline:none}
+.acfg-add-input:focus{border-color:#9b8fd4}
+.acfg-add-input::placeholder{color:rgba(255,255,255,0.25)}
+.acfg-add-btn{font-size:12px;padding:7px 14px;border-radius:7px;border:0.5px solid rgba(155,143,212,0.5);background:rgba(155,143,212,0.12);color:#9b8fd4;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .13s}
+.acfg-add-btn:hover{background:rgba(155,143,212,0.22);border-color:#9b8fd4}
+.acfg-footer{flex-shrink:0;padding:16px 32px;background:#0a1525;border-top:1px solid rgba(74,63,107,0.4);display:flex;align-items:center;gap:14px}
+.acfg-save-btn{padding:10px 28px;background:#4a3f6b;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.acfg-save-btn:hover{background:#5c4f8a}
+.acfg-save-btn:disabled{background:#333;color:#666;cursor:not-allowed}
+.acfg-status{font-size:12px;color:rgba(255,255,255,0.4)}
+.acfg-status.ok{color:#5dca8a}
+.acfg-status.err{color:#e05c5c}
+.acfg-empty{font-size:12px;color:rgba(255,255,255,0.3);font-style:italic;padding:4px 0}
+
 @media print{.nav,.fbar,.abtn,.submitbtn,.add-row-btn{display:none!important}.page{display:block!important}}
 </style>
 </head>
 <body>
 
+<!-- ══════════════════════════════════════════════ ENTITY LANDING -->
 <div id="entity-landing">
   <div class="el-brand">
     <h1>Procurement Hub</h1>
     <p>Samsons Group of Companies &nbsp;&middot;&nbsp; Select Entity to Continue</p>
   </div>
-  <div class="el-grid">
+
+  <!-- Top row: 5 entity cards -->
+  <div class="el-grid-top">
     <div class="el-card" style="--entity-color:#b8922e" onclick="promptEntityPin('MJSR')">
       <span class="el-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 72" width="48" height="48" style="display:block"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a3a5c"/><stop offset="100%" stop-color="#4a7fbf"/></linearGradient><linearGradient id="p1L" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#3a5a7a"/><stop offset="100%" stop-color="#5a7fa0"/></linearGradient><linearGradient id="p1R" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#2a4560"/><stop offset="100%" stop-color="#3a5a7a"/></linearGradient><linearGradient id="gnd" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2d5a2d"/><stop offset="100%" stop-color="#1a3a1a"/></linearGradient></defs><rect x="0" y="0" width="80" height="72" fill="url(#sky)"/><polygon points="0,50 15,22 30,50" fill="#3a5878" opacity="0.6"/><polygon points="20,50 38,18 56,50" fill="#405f80" opacity="0.5"/><polygon points="45,50 62,25 80,50" fill="#3a5070" opacity="0.6"/><polygon points="40,5 8,58 40,58" fill="url(#p1L)"/><polygon points="40,5 40,58 72,58" fill="url(#p1R)"/><polygon points="40,5 24,30 40,30" fill="#f0f4f8"/><polygon points="40,5 40,30 54,30" fill="#c8d8e8"/><polygon points="24,30 26,36 30,30" fill="#e0ecf8"/><polygon points="52,30 53,35 56,30" fill="#b8ccd8"/><polygon points="18,35 6,58 30,58" fill="#3a5070"/><polygon points="18,35 13,44 23,44" fill="#e8f0f8"/><polygon points="62,38 50,58 74,58" fill="#2a4060"/><polygon points="62,38 57,47 67,47" fill="#c8d8e8"/><rect x="0" y="55" width="80" height="17" fill="url(#gnd)"/><polygon points="10,55 7,62 13,62" fill="#1a3a1a"/><polygon points="15,54 12,62 18,62" fill="#1e421e"/><polygon points="68,55 65,62 71,62" fill="#1a3a1a"/><polygon points="73,54 70,62 76,62" fill="#1e421e"/><circle cx="40" cy="5" r="1.2" fill="#ffffff"/></svg></span>
       <div class="el-name">MJSR</div>
@@ -187,8 +243,18 @@ tr:hover td{background:var(--gold-bg)}
       <div class="el-desc">Corporate Affairs</div>
     </div>
   </div>
+
+  <!-- Bottom row: Admin tile centered -->
+  <div style="max-width:900px;width:100%;display:flex;justify-content:center">
+    <div class="el-card admin-card" style="--entity-color:#9b8fd4;width:200px" onclick="promptAdminPin()">
+      <span class="el-icon" style="font-size:32px;margin-bottom:10px">&#9881;&#65039;</span>
+      <div class="el-name" style="font-size:15px;color:#9b8fd4">Admin</div>
+      <div class="el-desc" style="font-size:11px">System Configuration</div>
+    </div>
+  </div>
 </div>
 
+<!-- ══════════════════════════════════════════════ PIN OVERLAY -->
 <div id="pin-overlay">
   <div id="pin-box">
     <div id="pin-entity-name"></div>
@@ -208,6 +274,27 @@ tr:hover td{background:var(--gold-bg)}
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════ ADMIN CONFIG PAGE -->
+<div id="admin-config-page">
+  <div class="acfg-nav">
+    <div>
+      <div class="acfg-nav-title">&#9881; System Administration</div>
+      <div class="acfg-nav-sub">Samsons Group — Procurement Portal Configuration</div>
+    </div>
+    <button class="acfg-close" onclick="closeAdminConfig()">&#x2715; Close</button>
+  </div>
+
+  <div class="acfg-body" id="acfg-body">
+    <!-- populated by renderAdminConfig() -->
+  </div>
+
+  <div class="acfg-footer">
+    <button class="acfg-save-btn" id="acfg-save-btn" onclick="saveAdminConfig()">Save All Changes to Sheets</button>
+    <div class="acfg-status" id="acfg-status">Changes are saved to Google Sheets and take effect immediately for all users.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ MAIN NAV -->
 <div class="nav" id="main-nav">
   <div class="entity-badge" onclick="returnToLanding()" title="Switch entity">
     <div class="entity-badge-dot" id="eb-dot"></div>
@@ -315,23 +402,15 @@ tr:hover td{background:var(--gold-bg)}
   <div class="fcard">
     <div class="fc-title">Purchase Requisition Form</div>
     <div class="fc-sub" id="prf-form-sub">Samsons Group of Companies (Pvt) Ltd &nbsp;|&nbsp; Accounts Copy</div>
-
     <div class="fsec">Header Details</div>
     <div class="frow fr4">
       <div class="field"><label>PRF No.</label><input type="text" id="prf-no" readonly placeholder="Auto-assigned"></div>
       <div class="field req"><label>Date</label><input type="date" id="prf-date"></div>
       <div class="field req"><label>Name of Requester</label><input type="text" id="prf-req" placeholder="Full name"></div>
       <div class="field req"><label>Department</label>
-        <select id="prf-dept">
-          <option value="">Select department...</option>
-          <option>Technical</option><option>Operations</option><option>F&amp;B</option>
-          <option>Maintenance</option><option>Housekeeping</option><option>Security</option>
-          <option>Admin</option><option>Finance</option><option>Sales &amp; Marketing</option>
-          <option>HR</option><option>Management</option>
-        </select>
+        <select id="prf-dept"><option value="">Select department...</option></select>
       </div>
     </div>
-
     <div class="fsec">Description of Items</div>
     <table class="itable">
       <thead><tr>
@@ -344,17 +423,15 @@ tr:hover td{background:var(--gold-bg)}
       <tbody id="prf-ibody"></tbody>
     </table>
     <button class="addrow" onclick="addPRFRow()">+ Add Item Row</button>
-
     <div class="fsec">Reason for Purchase</div>
     <div class="frow fr1">
       <div class="field req"><label>Reason for purchase</label>
         <textarea id="prf-reason" placeholder="State the purpose and justification for this requisition..."></textarea>
       </div>
     </div>
-
     <div class="fsec">Signatures &amp; Authorisation</div>
     <div style="font-size:11px;color:var(--text2);margin-bottom:12px;padding:10px 13px;background:var(--surface2);border-radius:6px;border-left:3px solid var(--gold);line-height:1.5">
-      All three signature fields are required before a PRF can be submitted. It is the responsibility of the Procurement Executive to obtain H.O.D and Store Incharge authorisation prior to submission.
+      All three signature fields are required before a PRF can be submitted.
     </div>
     <div class="sig-grid">
       <div class="sig-box">
@@ -383,27 +460,19 @@ tr:hover td{background:var(--gold-bg)}
   <div class="fcard">
     <div class="fc-title">Goods / Material Received Note (GRN)</div>
     <div class="fc-sub" id="grn-form-sub">Samsons Group of Companies (Pvt) Ltd &nbsp;|&nbsp; Accounts Copy</div>
-
     <div class="fsec">Header Details</div>
     <div class="frow fr4">
       <div class="field"><label>GRN No.</label><input type="text" id="grn-no" readonly placeholder="Auto-assigned"></div>
       <div class="field req"><label>Date</label><input type="date" id="grn-date"></div>
       <div class="field"><label>PRF No.</label><input type="text" id="grn-prf" placeholder="e.g. 11542"></div>
       <div class="field req"><label>Department</label>
-        <select id="grn-dept">
-          <option value="">Select department...</option>
-          <option>Technical</option><option>Operations</option><option>F&amp;B</option>
-          <option>Maintenance</option><option>Housekeeping</option><option>Security</option>
-          <option>Admin</option><option>Finance</option><option>Sales &amp; Marketing</option>
-          <option>HR</option><option>Management</option>
-        </select>
+        <select id="grn-dept"><option value="">Select department...</option></select>
       </div>
     </div>
     <div class="frow fr2">
       <div class="field req"><label>Supplier / Vendor</label><input type="text" id="grn-supplier" placeholder="Supplier name"></div>
       <div class="field"><label>Invoice / Challan Ref.</label><input type="text" id="grn-challan" placeholder="e.g. 432"></div>
     </div>
-
     <div class="fsec">Items Received</div>
     <table class="itable">
       <thead><tr>
@@ -420,48 +489,22 @@ tr:hover td{background:var(--gold-bg)}
     </table>
     <button class="addrow" onclick="addGRNRow()">+ Add Item Row</button>
     <div class="tot-row"><span>Total Amount</span><strong id="grn-tot">Rs 0</strong></div>
-
     <div class="fsec">Remarks</div>
     <div class="frow fr1">
       <div class="field"><label>Remarks</label>
-        <textarea id="grn-remarks" placeholder="e.g. Tools for annual inspection of Zipline, Giant Swing and Human Slingshot"></textarea>
+        <textarea id="grn-remarks" placeholder="e.g. Tools for annual inspection"></textarea>
       </div>
     </div>
-
     <div class="fsec">Verification &amp; Signatures</div>
     <div class="sig-grid">
-      <div class="sig-box">
-        <div class="sig-role">Quantity Checked by</div>
-        <label>Name</label><input type="text" id="grn-qty" placeholder="">
-        <label>Sign</label><input type="text" id="grn-qty-s" placeholder="">
-      </div>
-      <div class="sig-box">
-        <div class="sig-role">Receiving Incharge</div>
-        <label>Name</label><input type="text" id="grn-rec" placeholder="e.g. Bilal Tariq">
-        <label>Sign</label><input type="text" id="grn-rec-s" placeholder="">
-      </div>
-      <div class="sig-box">
-        <div class="sig-role">Quality Checked by</div>
-        <label>Name</label><input type="text" id="grn-qual" placeholder="">
-        <label>Sign</label><input type="text" id="grn-qual-s" placeholder="">
-      </div>
+      <div class="sig-box"><div class="sig-role">Quantity Checked by</div><label>Name</label><input type="text" id="grn-qty" placeholder=""><label>Sign</label><input type="text" id="grn-qty-s" placeholder=""></div>
+      <div class="sig-box"><div class="sig-role">Receiving Incharge</div><label>Name</label><input type="text" id="grn-rec" placeholder="e.g. Bilal Tariq"><label>Sign</label><input type="text" id="grn-rec-s" placeholder=""></div>
+      <div class="sig-box"><div class="sig-role">Quality Checked by</div><label>Name</label><input type="text" id="grn-qual" placeholder=""><label>Sign</label><input type="text" id="grn-qual-s" placeholder=""></div>
     </div>
     <div class="sig-grid" style="margin-top:8px">
-      <div class="sig-box">
-        <div class="sig-role">Rate Checked by</div>
-        <label>Name</label><input type="text" id="grn-rate" placeholder="">
-        <label>Sign</label><input type="text" id="grn-rate-s" placeholder="">
-      </div>
-      <div class="sig-box">
-        <div class="sig-role">Store Keeper / Others</div>
-        <label>Name</label><input type="text" id="grn-store" placeholder="e.g. Nasir">
-        <label>Sign</label><input type="text" id="grn-store-s" placeholder="">
-      </div>
-      <div class="sig-box">
-        <div class="sig-role">Accounts Officer</div>
-        <label>Name</label><input type="text" id="grn-acct" placeholder="">
-        <label>Sign</label><input type="text" id="grn-acct-s" placeholder="">
-      </div>
+      <div class="sig-box"><div class="sig-role">Rate Checked by</div><label>Name</label><input type="text" id="grn-rate" placeholder=""><label>Sign</label><input type="text" id="grn-rate-s" placeholder=""></div>
+      <div class="sig-box"><div class="sig-role">Store Keeper / Others</div><label>Name</label><input type="text" id="grn-store" placeholder="e.g. Nasir"><label>Sign</label><input type="text" id="grn-store-s" placeholder=""></div>
+      <div class="sig-box"><div class="sig-role">Accounts Officer</div><label>Name</label><input type="text" id="grn-acct" placeholder=""><label>Sign</label><input type="text" id="grn-acct-s" placeholder=""></div>
     </div>
     <button class="submitbtn" onclick="subGRN()">Submit GRN</button>
   </div>
@@ -471,22 +514,14 @@ tr:hover td{background:var(--gold-bg)}
 <div class="page" id="page-status" style="display:none">
   <div class="pg-hdr"><h2>Update Submission Status</h2></div>
   <div class="sform">
-    <div class="field"><label>Reference Number</label>
-      <input type="text" id="us-ref" placeholder="e.g. PRF-2026-11542 or GRN-2026-0178">
-    </div>
-    <div class="field"><label>New Status</label>
-      <select id="us-st"><option value="">Select...</option><option>Approved</option><option>Rejected</option><option>Pending</option></select>
-    </div>
-    <div class="field"><label>Notes (optional)</label>
-      <input type="text" id="us-notes" placeholder="e.g. Approved by GM — 13 Apr 2026">
-    </div>
+    <div class="field"><label>Reference Number</label><input type="text" id="us-ref" placeholder="e.g. PRF-2026-11542 or GRN-2026-0178"></div>
+    <div class="field"><label>New Status</label><select id="us-st"><option value="">Select...</option><option>Approved</option><option>Rejected</option><option>Pending</option></select></div>
+    <div class="field"><label>Notes (optional)</label><input type="text" id="us-notes" placeholder="e.g. Approved by GM — 13 Apr 2026"></div>
     <button class="submitbtn" style="margin-top:0;align-self:flex-end" onclick="doStatus()">Update</button>
   </div>
   <div class="tcard">
     <div class="tcard-hdr"><h3>Status Update Log</h3></div>
-    <table><thead><tr>
-      <th>Reference</th><th>Type</th><th>Previous Status</th><th>New Status</th><th>Notes</th><th>Updated At</th>
-    </tr></thead>
+    <table><thead><tr><th>Reference</th><th>Type</th><th>Previous Status</th><th>New Status</th><th>Notes</th><th>Updated At</th></tr></thead>
     <tbody id="slog-tbody"><tr><td colspan="6" class="empty">No status updates logged yet</td></tr></tbody>
   </div>
 </div>
@@ -517,13 +552,8 @@ tr:hover td{background:var(--gold-bg)}
       </div>
       <button class="mclose" onclick="closeApprD()">&#x2715;</button>
     </div>
-
-    <!-- PRF summary card — populated by openApprovalPanel() -->
     <div id="appr-summary" style="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:13px 15px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"></div>
-
     <input type="hidden" id="appr-ref">
-
-    <!-- Finance + GM selects -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
       <div>
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:5px">Finance Approval <span style="color:var(--danger-text)">*</span></div>
@@ -545,12 +575,10 @@ tr:hover td{background:var(--gold-bg)}
         <input type="text" id="appr-gm-by" style="width:100%;font-size:11px;padding:5px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;margin-top:6px" placeholder="GM approver name...">
       </div>
     </div>
-
     <div style="margin-bottom:16px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:5px">Notes (optional)</div>
-      <textarea id="appr-notes" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical;min-height:54px" placeholder="e.g. Approved by Finance Manager on site visit — 13 Apr 2026"></textarea>
+      <textarea id="appr-notes" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical;min-height:54px" placeholder="e.g. Approved by Finance Manager — 13 Apr 2026"></textarea>
     </div>
-
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <button class="submitbtn" style="margin-top:0;background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)" onclick="closeApprD()">Cancel</button>
       <button class="submitbtn" id="appr-save-btn" style="margin-top:0" onclick="saveApproval()">Save Approval</button>
@@ -586,24 +614,18 @@ tr:hover td{background:var(--gold-bg)}
   </div>
 </div>
 
-
-
-
-
-
-
-
-
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast2"></div>
 
 <script>
-
 // ═══════════════════════════════════════════════════════ CONFIGURATION
-// REPLACE THIS URL with your deployed Google Apps Script Web App URL
 const GAS_URL = 'https://script.google.com/macros/s/AKfycby_M0NW85JpZBvJXCAoIM0p70V4YmD_ohwO1maXYjWme6_49rRKBp5JbSSPFiR0cQno/exec';
+
+// Admin PIN — change this to your preferred code
+const ADMIN_PIN = '9999';
 
 // ═══════════════════════════════════════════════════════ STATE
 let STATE = { prfs: [], grns: [], slog: [], loaded: false };
+let DEPT_CONFIG = {}; // { MJSR: ['Technical','F&B',...], Healthcare: [...], ... }
 let curRec = null;
 let prfRowN = 0, grnRowN = 0;
 
@@ -615,6 +637,16 @@ const ENTITIES = {
   'Construction': { color: '#7b4fa6', icon: '🏗',  desc: 'Samsons Construction' },
   'CORA':         { color: '#c0392b', icon: '⚖️',  desc: 'Corporate Affairs' }
 };
+
+// Default departments used as fallback if Sheets has none yet
+const DEFAULT_DEPTS = {
+  'MJSR':         ['Technical','Operations','F&B','Maintenance','Housekeeping','Security','Admin','Finance','Sales & Marketing','HR','Management'],
+  'Healthcare':   ['Medical','Nursing','Pharmacy','Administration','Maintenance','Finance','HR','IT','Procurement','Management'],
+  'ALIF':         ['Academic','Administration','Maintenance','Finance','HR','IT','Student Services','Management'],
+  'Construction': ['Civil','Electrical','Mechanical','Administration','Finance','HR','Procurement','HSE','Management'],
+  'CORA':         ['Legal','Corporate Affairs','Administration','Finance','HR','Communications','Management']
+};
+
 const ENTITY_PINS = {
   'MJSR':         '1234',
   'Healthcare':   '1999',
@@ -622,17 +654,34 @@ const ENTITY_PINS = {
   'Construction': '2100',
   'CORA':         '2200'
 };
-let ACTIVE_ENTITY = null;
-let PIN_TARGET = null;
-let PIN_ENTRY  = '';
 
+let ACTIVE_ENTITY = null;
+let PIN_TARGET    = null;
+let PIN_MODE      = 'entity'; // 'entity' | 'admin'
+let PIN_ENTRY     = '';
+
+// ═══════════════════════════════════════════════════════ PIN SYSTEM
 function promptEntityPin(name) {
+  PIN_MODE   = 'entity';
   PIN_TARGET = name;
   PIN_ENTRY  = '';
   const cfg = ENTITIES[name];
-  document.getElementById('pin-entity-name').textContent = name;
-  document.getElementById('pin-entity-name').style.color = cfg.color;
-  document.getElementById('pin-error').textContent = '';
+  document.getElementById('pin-entity-name').textContent  = name;
+  document.getElementById('pin-entity-name').style.color  = cfg.color;
+  document.getElementById('pin-subtitle').textContent     = 'Enter Access Code';
+  document.getElementById('pin-error').textContent        = '';
+  updatePinDots();
+  document.getElementById('pin-overlay').classList.add('open');
+}
+
+function promptAdminPin() {
+  PIN_MODE   = 'admin';
+  PIN_TARGET = 'Admin';
+  PIN_ENTRY  = '';
+  document.getElementById('pin-entity-name').textContent = '⚙ Admin Config';
+  document.getElementById('pin-entity-name').style.color = '#9b8fd4';
+  document.getElementById('pin-subtitle').textContent    = 'Administrator Access Code';
+  document.getElementById('pin-error').textContent       = '';
   updatePinDots();
   document.getElementById('pin-overlay').classList.add('open');
 }
@@ -642,34 +691,24 @@ function updatePinDots() {
     document.getElementById('pd' + i).classList.toggle('filled', i < PIN_ENTRY.length);
   }
 }
-
 function pinKey(digit) {
   if (PIN_ENTRY.length >= 4) return;
   PIN_ENTRY += digit;
   updatePinDots();
   document.getElementById('pin-error').textContent = '';
-  if (PIN_ENTRY.length === 4) {
-    setTimeout(validatePin, 120); // brief delay so last dot fills visibly
-  }
+  if (PIN_ENTRY.length === 4) setTimeout(validatePin, 120);
 }
-
-function pinDel() {
-  PIN_ENTRY = PIN_ENTRY.slice(0, -1);
-  updatePinDots();
-  document.getElementById('pin-error').textContent = '';
-}
-
-function pinClear() {
-  PIN_ENTRY = '';
-  updatePinDots();
-  document.getElementById('pin-error').textContent = '';
-}
+function pinDel()   { PIN_ENTRY = PIN_ENTRY.slice(0,-1); updatePinDots(); document.getElementById('pin-error').textContent=''; }
+function pinClear() { PIN_ENTRY = ''; updatePinDots(); document.getElementById('pin-error').textContent=''; }
+function pinCancel(){ document.getElementById('pin-overlay').classList.remove('open'); PIN_ENTRY=''; PIN_TARGET=null; }
 
 function validatePin() {
-  if (PIN_ENTRY === ENTITY_PINS[PIN_TARGET]) {
+  const correct = PIN_MODE === 'admin' ? ADMIN_PIN : ENTITY_PINS[PIN_TARGET];
+  if (PIN_ENTRY === correct) {
     document.getElementById('pin-overlay').classList.remove('open');
     PIN_ENTRY = '';
-    selectEntity(PIN_TARGET);
+    if (PIN_MODE === 'admin') openAdminConfig();
+    else selectEntity(PIN_TARGET);
   } else {
     document.getElementById('pin-error').textContent = 'Incorrect code — please try again';
     PIN_ENTRY = '';
@@ -677,30 +716,21 @@ function validatePin() {
   }
 }
 
-function pinCancel() {
-  document.getElementById('pin-overlay').classList.remove('open');
-  PIN_ENTRY  = '';
-  PIN_TARGET = null;
-}
-
+// ═══════════════════════════════════════════════════════ ENTITY SELECT
 function selectEntity(name) {
   ACTIVE_ENTITY = name;
   const cfg = ENTITIES[name];
-  // Update nav badge
   document.getElementById('eb-name').textContent = name;
   document.getElementById('eb-dot').style.background = cfg.color;
-  // Update nav brand
   document.querySelector('.nav-brand').innerHTML = '<span style="color:' + cfg.color + '">' + name + '</span> <span style="color:#aaa;font-weight:400">Procurement</span>';
-  // Update page title and form subtitles
   document.title = name + ' — Procurement Portal';
   const subText = 'Samsons Group of Companies (Pvt) Ltd — ' + name + ' &nbsp;|&nbsp; Accounts Copy';
   document.getElementById('prf-form-sub').innerHTML = subText;
   document.getElementById('grn-form-sub').innerHTML = subText;
-  // Hide landing, show nav + pages
   document.getElementById('entity-landing').style.display = 'none';
   document.getElementById('main-nav').style.display = 'flex';
-  // Clear and reload data for this entity
-  STATE = { prfs: [], grns: [], slog: [], loaded: false };
+  populateDeptDropdowns(name);
+  STATE = { prfs:[], grns:[], slog:[], loaded:false };
   go('dashboard');
   document.getElementById('loading').style.display = 'flex';
   loadAll();
@@ -708,13 +738,219 @@ function selectEntity(name) {
 
 function returnToLanding() {
   ACTIVE_ENTITY = null;
-  STATE = { prfs: [], grns: [], slog: [], loaded: false };
+  STATE = { prfs:[], grns:[], slog:[], loaded:false };
   document.getElementById('entity-landing').style.display = 'flex';
   document.getElementById('main-nav').style.display = 'none';
   document.querySelectorAll('.page').forEach(p => p.style.display='none');
 }
 
-// ═══════════════════════════════════════════════════════ GAS FETCH (text/plain to avoid CORS preflight)
+// ═══════════════════════════════════════════════════════ DEPT DROPDOWNS
+function getDeptsForEntity(entity) {
+  if (DEPT_CONFIG[entity] && DEPT_CONFIG[entity].length) return DEPT_CONFIG[entity];
+  return DEFAULT_DEPTS[entity] || ['Administration','Operations','Finance','HR','Management'];
+}
+
+function populateDeptDropdowns(entity) {
+  const depts = getDeptsForEntity(entity);
+  ['prf-dept', 'grn-dept'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">Select department...</option>';
+    depts.forEach(d => {
+      const o = document.createElement('option');
+      o.value = d; o.textContent = d;
+      sel.appendChild(o);
+    });
+    if (cur) sel.value = cur;
+  });
+}
+
+// ═══════════════════════════════════════════════════════ ADMIN CONFIG
+function openAdminConfig() {
+  renderAdminConfig();
+  document.getElementById('admin-config-page').classList.add('open');
+  // Load latest dept config from Sheets in background
+  loadDeptConfig();
+}
+
+function closeAdminConfig() {
+  document.getElementById('admin-config-page').classList.remove('open');
+}
+
+async function loadDeptConfig() {
+  setAdminStatus('Loading department config from Sheets...', '');
+  try {
+    const res = await gasPost({ action: 'getDeptConfig' });
+    if (res.ok && res.deptConfig) {
+      // Merge: only overwrite if Sheets has data for that entity
+      Object.entries(res.deptConfig).forEach(([ent, depts]) => {
+        if (Array.isArray(depts) && depts.length) DEPT_CONFIG[ent] = depts;
+      });
+      renderAdminConfig();
+      setAdminStatus('Loaded from Sheets.', 'ok');
+    } else {
+      // Use defaults if Sheets has nothing yet
+      Object.keys(ENTITIES).forEach(e => {
+        if (!DEPT_CONFIG[e] || !DEPT_CONFIG[e].length) DEPT_CONFIG[e] = [...DEFAULT_DEPTS[e]];
+      });
+      renderAdminConfig();
+      setAdminStatus('Using defaults — save to push to Sheets.', '');
+    }
+  } catch(e) {
+    Object.keys(ENTITIES).forEach(ent => {
+      if (!DEPT_CONFIG[ent] || !DEPT_CONFIG[ent].length) DEPT_CONFIG[ent] = [...DEFAULT_DEPTS[ent]];
+    });
+    renderAdminConfig();
+    setAdminStatus('Could not reach Sheets — editing defaults locally.', 'err');
+  }
+}
+
+function renderAdminConfig() {
+  const body = document.getElementById('acfg-body');
+  body.innerHTML = '';
+
+  // Section title
+  const hdr = document.createElement('div');
+  hdr.innerHTML = `
+    <div style="margin-bottom:4px">
+      <span style="font-size:15px;font-weight:700;color:#9b8fd4">Department Configuration</span>
+      <span style="font-size:12px;color:rgba(255,255,255,0.35);margin-left:12px">Drag to reorder &nbsp;&middot;&nbsp; Click + to add &nbsp;&middot;&nbsp; Click &#x2715; to remove</span>
+    </div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-bottom:8px">Changes affect PRF and GRN department dropdowns for all users immediately after saving.</div>`;
+  body.appendChild(hdr);
+
+  Object.entries(ENTITIES).forEach(([entity, cfg]) => {
+    const depts = DEPT_CONFIG[entity] ? [...DEPT_CONFIG[entity]] : [...DEFAULT_DEPTS[entity]];
+    if (!DEPT_CONFIG[entity]) DEPT_CONFIG[entity] = depts;
+
+    const block = document.createElement('div');
+    block.className = 'acfg-entity-block';
+    block.dataset.entity = entity;
+
+    block.innerHTML = `
+      <div class="acfg-entity-hdr">
+        <div class="acfg-entity-dot" style="background:${cfg.color}"></div>
+        <div class="acfg-entity-name">${entity}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-left:6px">${cfg.desc}</div>
+        <div class="acfg-entity-count" id="acfg-count-${entity}">${depts.length} department${depts.length!==1?'s':''}</div>
+      </div>
+      <div class="acfg-dept-list" id="acfg-list-${entity}"></div>
+      <div class="acfg-add-row">
+        <input class="acfg-add-input" id="acfg-new-${entity}" placeholder="New department name..." onkeydown="if(event.key==='Enter')addDept('${entity}')">
+        <button class="acfg-add-btn" onclick="addDept('${entity}')">+ Add</button>
+      </div>`;
+
+    body.appendChild(block);
+    renderDeptList(entity);
+  });
+}
+
+function renderDeptList(entity) {
+  const list = document.getElementById('acfg-list-' + entity);
+  const depts = DEPT_CONFIG[entity] || [];
+  list.innerHTML = '';
+
+  if (!depts.length) {
+    list.innerHTML = '<div class="acfg-empty">No departments configured — add one below.</div>';
+    return;
+  }
+
+  depts.forEach((dept, idx) => {
+    const item = document.createElement('div');
+    item.className = 'acfg-dept-item';
+    item.draggable = true;
+    item.dataset.idx = idx;
+    item.dataset.entity = entity;
+    item.innerHTML = `
+      <span class="acfg-drag-handle" title="Drag to reorder">&#8801;</span>
+      <span class="acfg-dept-name">${escHtml(dept)}</span>
+      <button class="acfg-dept-del" title="Remove" onclick="removeDept('${entity}',${idx})">&#x2715;</button>`;
+
+    // Drag-and-drop handlers
+    item.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', idx);
+      item.classList.add('dragging');
+    });
+    item.addEventListener('dragend', () => item.classList.remove('dragging'));
+    item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
+    item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      item.classList.remove('drag-over');
+      const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+      const toIdx   = parseInt(item.dataset.idx);
+      if (fromIdx === toIdx) return;
+      const arr = DEPT_CONFIG[entity];
+      const moved = arr.splice(fromIdx, 1)[0];
+      arr.splice(toIdx, 0, moved);
+      renderDeptList(entity);
+      updateDeptCount(entity);
+    });
+
+    list.appendChild(item);
+  });
+}
+
+function addDept(entity) {
+  const inp = document.getElementById('acfg-new-' + entity);
+  const name = inp.value.trim();
+  if (!name) return;
+  if (!DEPT_CONFIG[entity]) DEPT_CONFIG[entity] = [];
+  if (DEPT_CONFIG[entity].includes(name)) {
+    inp.style.borderColor = '#e05c5c';
+    setTimeout(() => inp.style.borderColor = '', 1200);
+    return;
+  }
+  DEPT_CONFIG[entity].push(name);
+  inp.value = '';
+  renderDeptList(entity);
+  updateDeptCount(entity);
+}
+
+function removeDept(entity, idx) {
+  if (!DEPT_CONFIG[entity]) return;
+  DEPT_CONFIG[entity].splice(idx, 1);
+  renderDeptList(entity);
+  updateDeptCount(entity);
+}
+
+function updateDeptCount(entity) {
+  const el = document.getElementById('acfg-count-' + entity);
+  if (!el) return;
+  const n = (DEPT_CONFIG[entity] || []).length;
+  el.textContent = n + ' department' + (n!==1?'s':'');
+}
+
+function setAdminStatus(msg, type) {
+  const el = document.getElementById('acfg-status');
+  el.textContent = msg;
+  el.className = 'acfg-status' + (type ? ' ' + type : '');
+}
+
+async function saveAdminConfig() {
+  const btn = document.getElementById('acfg-save-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  setAdminStatus('Saving to Google Sheets...', '');
+  try {
+    const res = await gasPost({ action: 'saveDeptConfig', deptConfig: DEPT_CONFIG });
+    if (res.ok) {
+      setAdminStatus('Saved successfully — all portals will use updated departments.', 'ok');
+      // Refresh dropdowns for currently active entity if applicable
+      if (ACTIVE_ENTITY) populateDeptDropdowns(ACTIVE_ENTITY);
+      showToast('Department config saved to Sheets');
+    } else {
+      setAdminStatus('Save failed: ' + (res.error || 'unknown'), 'err');
+      showToast('Save failed: ' + (res.error || 'unknown'), true);
+    }
+  } catch(e) {
+    setAdminStatus('Network error — could not save.', 'err');
+    showToast('Network error — could not save.', true);
+  }
+  btn.disabled = false; btn.textContent = 'Save All Changes to Sheets';
+}
+
+// ═══════════════════════════════════════════════════════ GAS FETCH
 async function gasPost(payload) {
   const res = await fetch(GAS_URL, {
     method: 'POST',
@@ -733,11 +969,18 @@ async function loadAll() {
       STATE.grns = res.grns || [];
       STATE.slog = res.slog || [];
       STATE.loaded = true;
+      // Merge dept config returned from getAll if present
+      if (res.deptConfig) {
+        Object.entries(res.deptConfig).forEach(([ent, depts]) => {
+          if (Array.isArray(depts) && depts.length) DEPT_CONFIG[ent] = depts;
+        });
+        populateDeptDropdowns(ACTIVE_ENTITY);
+      }
     } else {
-      toast('Error loading data: ' + (res.error || 'unknown'), true);
+      showToast('Error loading data: ' + (res.error || 'unknown'), true);
     }
-  } catch (e) {
-    toast('Could not connect to server. Check GAS_URL in config.', true);
+  } catch(e) {
+    showToast('Could not connect to server. Check GAS_URL in config.', true);
   }
   counts(); depts(); rdash();
   document.getElementById('loading').style.display = 'none';
@@ -752,10 +995,7 @@ function go(id) {
   const idx = order.indexOf(id);
   if (idx >= 0) document.querySelectorAll('.nav-tab')[idx].classList.add('active');
   counts(); depts();
-  if (id === 'dashboard') {
-    document.getElementById('dash-title').textContent = (ACTIVE_ENTITY || '') + ' — All Submissions';
-    rdash();
-  }
+  if (id === 'dashboard') { document.getElementById('dash-title').textContent = (ACTIVE_ENTITY||'') + ' — All Submissions'; rdash(); }
   if (id === 'sub-prf' && !document.getElementById('prf-ibody').hasChildNodes()) addPRFRow();
   if (id === 'sub-grn' && !document.getElementById('grn-ibody').hasChildNodes()) addGRNRow();
   if (id === 'prf-tracker') rprf();
@@ -770,152 +1010,121 @@ function counts() {
   if (se('prf-cnt')) se('prf-cnt').textContent = STATE.prfs.length;
   if (se('grn-cnt')) se('grn-cnt').textContent = STATE.grns.length;
   if (se('k-total')) se('k-total').textContent = all.length;
-  if (se('k-pend')) se('k-pend').textContent = all.filter(r => r.status === 'Pending').length;
-  if (se('k-appr')) se('k-appr').textContent = all.filter(r => r.status === 'Approved').length;
-  const gv = STATE.grns.reduce((s, r) => s + (r.total || 0), 0);
-  if (se('k-val')) se('k-val').textContent = 'PKR ' + gv.toLocaleString();
+  if (se('k-pend'))  se('k-pend').textContent  = all.filter(r => r.status==='Pending').length;
+  if (se('k-appr'))  se('k-appr').textContent  = all.filter(r => r.status==='Approved').length;
+  const gv2 = STATE.grns.reduce((s,r)=>s+(r.total||0),0);
+  if (se('k-val'))   se('k-val').textContent   = 'PKR ' + gv2.toLocaleString();
 }
 function depts() {
-  const ds = [...new Set([...STATE.prfs, ...STATE.grns].map(r => r.dept))].filter(Boolean).sort();
+  const ds = [...new Set([...STATE.prfs,...STATE.grns].map(r=>r.dept))].filter(Boolean).sort();
   ['df-dept','pf-d','gf-d'].forEach(id => {
     const el = document.getElementById(id); if (!el) return;
     const v = el.value;
     el.innerHTML = '<option value="">All</option>';
-    ds.forEach(d => { const o = document.createElement('option'); o.value = d; o.textContent = d; el.appendChild(o); });
+    ds.forEach(d => { const o = document.createElement('option'); o.value=d; o.textContent=d; el.appendChild(o); });
     el.value = v;
   });
 }
 
 // ═══════════════════════════════════════════════════════ DASHBOARD
 function rdash() {
-  const tp = gv('df-type'), st = gv('df-status'), dp = gv('df-dept'), q = gv('df-q').toLowerCase();
-  let rows = [];
-  STATE.prfs.forEach(r => rows.push({ ...r, _t: 'PRF', person: r.reqName, valStr: '—' }));
-  STATE.grns.forEach(r => rows.push({ ...r, _t: 'GRN', person: r.recBy || '—', valStr: 'PKR ' + (r.total || 0).toLocaleString() }));
-  rows.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-  if (tp) rows = rows.filter(r => r._t === tp);
-  if (st) rows = rows.filter(r => r.status === st);
-  if (dp) rows = rows.filter(r => r.dept === dp);
-  if (q) rows = rows.filter(r =>
-    (r.ref || '').toLowerCase().includes(q) ||
-    (r.person || '').toLowerCase().includes(q) ||
-    (r.supplier || '').toLowerCase().includes(q) ||
-    (r.prfRef || '').toLowerCase().includes(q)
-  );
-  document.getElementById('d-cnt').textContent = rows.length + ' record' + (rows.length !== 1 ? 's' : '');
+  const tp=gv('df-type'),st=gv('df-status'),dp=gv('df-dept'),q=gv('df-q').toLowerCase();
+  let rows=[];
+  STATE.prfs.forEach(r=>rows.push({...r,_t:'PRF',person:r.reqName,valStr:'—'}));
+  STATE.grns.forEach(r=>rows.push({...r,_t:'GRN',person:r.recBy||'—',valStr:'PKR '+(r.total||0).toLocaleString()}));
+  rows.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  if(tp) rows=rows.filter(r=>r._t===tp);
+  if(st) rows=rows.filter(r=>r.status===st);
+  if(dp) rows=rows.filter(r=>r.dept===dp);
+  if(q)  rows=rows.filter(r=>(r.ref||'').toLowerCase().includes(q)||(r.person||'').toLowerCase().includes(q)||(r.supplier||'').toLowerCase().includes(q)||(r.prfRef||'').toLowerCase().includes(q));
+  document.getElementById('d-cnt').textContent = rows.length+' record'+(rows.length!==1?'s':'');
   const tb = document.getElementById('d-tbody');
-  if (!rows.length) { tb.innerHTML = '<tr><td colspan="10" class="empty">No records match current filters</td></tr>'; return; }
-  tb.innerHTML = rows.map(r => {
-    const enc = btoa(r._t + '|' + r.ref);
-    const encRef = btoa(r.ref);
-    const approveBtn = r._t === 'PRF'
-      ? `<button class="abtn" onclick="approveRecord('${encRef}')" style="margin-left:3px">Approve</button>`
-      : '';
-    return `<tr>
+  if(!rows.length){tb.innerHTML='<tr><td colspan="10" class="empty">No records match current filters</td></tr>';return;}
+  tb.innerHTML=rows.map(r=>{
+    const enc=btoa(r._t+'|'+r.ref);
+    const encRef=btoa(r.ref);
+    const approveBtn=r._t==='PRF'?`<button class="abtn" onclick="approveRecord('${encRef}')" style="margin-left:3px">Approve</button>`:'';
+    return`<tr>
       <td><span class="ref-link" style="cursor:pointer;font-weight:600;text-decoration:underline" onclick="viewRecord('${enc}')">${r.ref}</span></td>
       <td><span class="badge b-${r._t.toLowerCase()}">${r._t}</span></td>
-      <td>${r.date || '—'}</td>
-      <td>${r.dept || '—'}</td>
-      <td>${r.person || '—'}</td>
-      <td>${r.supplier || '—'}</td>
-      <td>${(r.items || []).length}</td>
-      <td>${r.valStr}</td>
-      <td><span class="badge b-${(r.status || '').toLowerCase()}">${r.status || '—'}</span></td>
-      <td>
-        <button class="abtn gold" onclick="viewRecord('${enc}')">View</button>${approveBtn}
-        <button class="abtn" onclick="moveRecord('${enc}')" style="margin-left:3px" title="Move to different entity">Move</button>
-      </td>
+      <td>${r.date||'—'}</td><td>${r.dept||'—'}</td><td>${r.person||'—'}</td><td>${r.supplier||'—'}</td>
+      <td>${(r.items||[]).length}</td><td>${r.valStr}</td>
+      <td><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'—'}</span></td>
+      <td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button>${approveBtn}
+        <button class="abtn" onclick="moveRecord('${enc}')" style="margin-left:3px">Move</button></td>
     </tr>`;
   }).join('');
 }
-function clrDash() { ['df-type','df-status','df-dept'].forEach(id => document.getElementById(id).value = ''); document.getElementById('df-q').value = ''; rdash(); }
+function clrDash(){['df-type','df-status','df-dept'].forEach(id=>document.getElementById(id).value='');document.getElementById('df-q').value='';rdash();}
 
 // ═══════════════════════════════════════════════════════ PRF TRACKER
-function approvalBadge(val) {
-  if (!val || val === 'Pending')      return '<span class="badge b-pending">Pending</span>';
-  if (val === 'Approved')             return '<span class="badge b-approved">Approved</span>';
-  if (val === 'Rejected')             return '<span class="badge b-rejected">Rejected</span>';
-  if (val === 'Not Required')         return '<span class="badge" style="background:#f0ede8;color:var(--text2)">Not Required</span>';
-  return '<span class="badge b-pending">' + val + '</span>';
+function approvalBadge(val){
+  if(!val||val==='Pending')   return'<span class="badge b-pending">Pending</span>';
+  if(val==='Approved')        return'<span class="badge b-approved">Approved</span>';
+  if(val==='Rejected')        return'<span class="badge b-rejected">Rejected</span>';
+  if(val==='Not Required')    return'<span class="badge" style="background:#f0ede8;color:var(--text2)">Not Required</span>';
+  return'<span class="badge b-pending">'+val+'</span>';
 }
-function rprf() {
-  const st = gv('pf-s'), fin = gv('pf-fin'), gm = gv('pf-gm'), dp = gv('pf-d'), q = gv('pf-q').toLowerCase();
-  let rows = [...STATE.prfs].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-  if (st)  rows = rows.filter(r => r.status === st);
-  if (fin) rows = rows.filter(r => (r.financeApproval || 'Pending') === fin);
-  if (gm)  rows = rows.filter(r => (r.gmApproval || 'Pending') === gm);
-  if (dp)  rows = rows.filter(r => r.dept === dp);
-  if (q)   rows = rows.filter(r => (r.ref || '').toLowerCase().includes(q) || (r.reqName || '').toLowerCase().includes(q));
-  document.getElementById('prf-tcnt').textContent = rows.length + ' record' + (rows.length !== 1 ? 's' : '');
-  const tb = document.getElementById('prf-tbody');
-  if (!rows.length) { tb.innerHTML = '<tr><td colspan="10" class="empty">No PRFs match filters</td></tr>'; return; }
-  tb.innerHTML = rows.map(r => {
-    const reason = r.reason ? r.reason.slice(0, 50) + (r.reason.length > 50 ? '…' : '') : '—';
-    const itemCount = (r.items || []).length;
-    const enc = btoa('PRF|' + r.ref);
-    const encRef = btoa(r.ref);
-    return `<tr>
+function rprf(){
+  const st=gv('pf-s'),fin=gv('pf-fin'),gm=gv('pf-gm'),dp=gv('pf-d'),q=gv('pf-q').toLowerCase();
+  let rows=[...STATE.prfs].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  if(st)  rows=rows.filter(r=>r.status===st);
+  if(fin) rows=rows.filter(r=>(r.financeApproval||'Pending')===fin);
+  if(gm)  rows=rows.filter(r=>(r.gmApproval||'Pending')===gm);
+  if(dp)  rows=rows.filter(r=>r.dept===dp);
+  if(q)   rows=rows.filter(r=>(r.ref||'').toLowerCase().includes(q)||(r.reqName||'').toLowerCase().includes(q));
+  document.getElementById('prf-tcnt').textContent=rows.length+' record'+(rows.length!==1?'s':'');
+  const tb=document.getElementById('prf-tbody');
+  if(!rows.length){tb.innerHTML='<tr><td colspan="10" class="empty">No PRFs match filters</td></tr>';return;}
+  tb.innerHTML=rows.map(r=>{
+    const reason=r.reason?r.reason.slice(0,50)+(r.reason.length>50?'…':''):'—';
+    const enc=btoa('PRF|'+r.ref);const encRef=btoa(r.ref);
+    return`<tr>
       <td><span class="ref-link" style="cursor:pointer;font-weight:600;text-decoration:underline" onclick="viewRecord('${enc}')">${r.ref}</span></td>
-      <td>${r.date || '—'}</td>
-      <td>${r.dept || '—'}</td>
-      <td>${r.reqName || '—'}</td>
-      <td>${itemCount} item${itemCount !== 1 ? 's' : ''}</td>
+      <td>${r.date||'—'}</td><td>${r.dept||'—'}</td><td>${r.reqName||'—'}</td>
+      <td>${(r.items||[]).length} item${(r.items||[]).length!==1?'s':''}</td>
       <td style="max-width:130px;font-size:11px;color:var(--text2)">${reason}</td>
-      <td>${approvalBadge(r.financeApproval)}</td>
-      <td>${approvalBadge(r.gmApproval)}</td>
-      <td><span class="badge b-${(r.status || '').toLowerCase()}">${r.status || '—'}</span></td>
-      <td>
-        <button class="abtn gold" onclick="viewRecord('${enc}')">View</button>
-        <button class="abtn" onclick="approveRecord('${encRef}')">Approve</button>
-        <button class="abtn" onclick="moveRecord('${enc}')" title="Move to different entity">Move</button>
-      </td>
+      <td>${approvalBadge(r.financeApproval)}</td><td>${approvalBadge(r.gmApproval)}</td>
+      <td><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'—'}</span></td>
+      <td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button>
+          <button class="abtn" onclick="approveRecord('${encRef}')">Approve</button>
+          <button class="abtn" onclick="moveRecord('${enc}')">Move</button></td>
     </tr>`;
   }).join('');
 }
-function clrPRF() { ['pf-s','pf-fin','pf-gm','pf-d'].forEach(id => document.getElementById(id).value = ''); document.getElementById('pf-q').value = ''; rprf(); }
+function clrPRF(){['pf-s','pf-fin','pf-gm','pf-d'].forEach(id=>document.getElementById(id).value='');document.getElementById('pf-q').value='';rprf();}
 
 // ═══════════════════════════════════════════════════════ GRN TRACKER
-function rgrn() {
-  const st = gv('gf-s'), dp = gv('gf-d'), q = gv('gf-q').toLowerCase();
-  let rows = [...STATE.grns].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-  if (st) rows = rows.filter(r => r.status === st);
-  if (dp) rows = rows.filter(r => r.dept === dp);
-  if (q) rows = rows.filter(r =>
-    (r.ref || '').toLowerCase().includes(q) ||
-    (r.supplier || '').toLowerCase().includes(q) ||
-    (r.prfRef || '').toLowerCase().includes(q)
-  );
-  document.getElementById('grn-tcnt').textContent = rows.length + ' record' + (rows.length !== 1 ? 's' : '');
-  const tb = document.getElementById('grn-tbody');
-  if (!rows.length) { tb.innerHTML = '<tr><td colspan="11" class="empty">No GRNs match filters</td></tr>'; return; }
-  tb.innerHTML = rows.map(r => {
-    const enc = btoa('GRN|' + r.ref);
-    return `<tr>
+function rgrn(){
+  const st=gv('gf-s'),dp=gv('gf-d'),q=gv('gf-q').toLowerCase();
+  let rows=[...STATE.grns].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  if(st) rows=rows.filter(r=>r.status===st);
+  if(dp) rows=rows.filter(r=>r.dept===dp);
+  if(q)  rows=rows.filter(r=>(r.ref||'').toLowerCase().includes(q)||(r.supplier||'').toLowerCase().includes(q)||(r.prfRef||'').toLowerCase().includes(q));
+  document.getElementById('grn-tcnt').textContent=rows.length+' record'+(rows.length!==1?'s':'');
+  const tb=document.getElementById('grn-tbody');
+  if(!rows.length){tb.innerHTML='<tr><td colspan="11" class="empty">No GRNs match filters</td></tr>';return;}
+  tb.innerHTML=rows.map(r=>{
+    const enc=btoa('GRN|'+r.ref);
+    return`<tr>
       <td><span class="ref-link" style="cursor:pointer;font-weight:600;text-decoration:underline" onclick="viewRecord('${enc}')">${r.ref}</span></td>
-      <td>${r.date || '—'}</td>
-      <td>${r.prfRef || '—'}</td>
-      <td>${r.dept || '—'}</td>
-      <td>${r.supplier || '—'}</td>
-      <td>${r.invoiceRef || '—'}</td>
-      <td>${(r.items || []).length}</td>
-      <td>PKR ${(r.total || 0).toLocaleString()}</td>
-      <td>${r.recBy || '—'}</td>
-      <td><span class="badge b-${(r.status || '').toLowerCase()}">${r.status || '—'}</span></td>
-      <td>
-        <button class="abtn gold" onclick="viewRecord('${enc}')">View</button>
-        <button class="abtn" onclick="moveRecord('${enc}')" title="Move to different entity">Move</button>
-      </td>
+      <td>${r.date||'—'}</td><td>${r.prfRef||'—'}</td><td>${r.dept||'—'}</td>
+      <td>${r.supplier||'—'}</td><td>${r.invoiceRef||'—'}</td>
+      <td>${(r.items||[]).length}</td><td>PKR ${(r.total||0).toLocaleString()}</td>
+      <td>${r.recBy||'—'}</td>
+      <td><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'—'}</span></td>
+      <td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button>
+          <button class="abtn" onclick="moveRecord('${enc}')">Move</button></td>
     </tr>`;
   }).join('');
 }
-function clrGRN() { ['gf-s','gf-d'].forEach(id => document.getElementById(id).value = ''); document.getElementById('gf-q').value = ''; rgrn(); }
+function clrGRN(){['gf-s','gf-d'].forEach(id=>document.getElementById(id).value='');document.getElementById('gf-q').value='';rgrn();}
 
 // ═══════════════════════════════════════════════════════ PRF FORM
-function addPRFRow() {
+function addPRFRow(){
   prfRowN++;
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td><input type="text" value="${prfRowN}" style="width:36px;text-align:center"></td>
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><input type="text" value="${prfRowN}" style="width:36px;text-align:center"></td>
     <td><input type="text" placeholder="Description of item"></td>
     <td><input type="text" placeholder="e.g. LTR, No, Set, KG, Pcs"></td>
     <td><input type="number" min="0" placeholder="Qty"></td>
@@ -923,57 +1132,38 @@ function addPRFRow() {
   document.getElementById('prf-ibody').appendChild(tr);
 }
 
-async function subPRF() {
-  const date = gv('prf-date'), req = gv('prf-req'), dept = gv('prf-dept'), reason = gv('prf-reason');
-  if (!date || !req || !dept) { toast('Complete all required fields (Date, Requester, Department).', true); return; }
-  const rows = document.querySelectorAll('#prf-ibody tr');
-  if (!rows.length) { toast('Add at least one item.', true); return; }
-  const sigReq = gv('prf-s-req'), sigHOD = gv('prf-s-hod'), sigStore = gv('prf-s-store');
-  if (!sigReq)   { toast('Requested By name is required in the Signatures section.', true); document.getElementById('prf-s-req').focus(); return; }
-  if (!sigHOD)   { toast('H.O.D name is required — obtain approval before submitting.', true); document.getElementById('prf-s-hod').focus(); return; }
-  if (!sigStore) { toast('Store Incharge name is required — obtain confirmation before submitting.', true); document.getElementById('prf-s-store').focus(); return; }
-  const items = [];
-  rows.forEach((tr, i) => {
-    const c = tr.querySelectorAll('input');
-    items.push({ sr: i + 1, desc: c[1].value || '—', unit: c[2].value || '—', qty: parseFloat(c[3].value) || 0 });
-  });
-  const payload = {
-    action: 'submitPRF',
-    entity: ACTIVE_ENTITY,
-    date, reqName: req, dept, reason, items,
-    sigReq, sigHOD, sigStore
-  };
-  const btn = document.querySelector('#page-sub-prf .submitbtn');
-  btn.disabled = true; btn.textContent = 'Submitting...';
-  try {
-    const res = await gasPost(payload);
-    if (res.ok) {
-      if (!res.record.entity) res.record.entity = ACTIVE_ENTITY;
-      STATE.prfs.unshift(res.record);
-      counts();
-      toast('PRF submitted: ' + res.record.ref);
-      resetPRF();
-      setTimeout(() => go('prf-tracker'), 1400);
-    } else {
-      toast('Submit failed: ' + (res.error || 'unknown'), true);
-    }
-  } catch (e) { toast('Network error — could not submit.', true); }
-  btn.disabled = false; btn.textContent = 'Submit PRF';
+async function subPRF(){
+  const date=gv('prf-date'),req=gv('prf-req'),dept=gv('prf-dept'),reason=gv('prf-reason');
+  if(!date||!req||!dept){showToast('Complete all required fields (Date, Requester, Department).',true);return;}
+  const rows=document.querySelectorAll('#prf-ibody tr');
+  if(!rows.length){showToast('Add at least one item.',true);return;}
+  const sigReq=gv('prf-s-req'),sigHOD=gv('prf-s-hod'),sigStore=gv('prf-s-store');
+  if(!sigReq){showToast('Requested By name is required.',true);document.getElementById('prf-s-req').focus();return;}
+  if(!sigHOD){showToast('H.O.D name is required.',true);document.getElementById('prf-s-hod').focus();return;}
+  if(!sigStore){showToast('Store Incharge name is required.',true);document.getElementById('prf-s-store').focus();return;}
+  const items=[];
+  rows.forEach((tr,i)=>{const c=tr.querySelectorAll('input');items.push({sr:i+1,desc:c[1].value||'—',unit:c[2].value||'—',qty:parseFloat(c[3].value)||0});});
+  const payload={action:'submitPRF',entity:ACTIVE_ENTITY,date,reqName:req,dept,reason,items,sigReq,sigHOD,sigStore};
+  const btn=document.querySelector('#page-sub-prf .submitbtn');
+  btn.disabled=true;btn.textContent='Submitting...';
+  try{
+    const res=await gasPost(payload);
+    if(res.ok){if(!res.record.entity)res.record.entity=ACTIVE_ENTITY;STATE.prfs.unshift(res.record);counts();showToast('PRF submitted: '+res.record.ref);resetPRF();setTimeout(()=>go('prf-tracker'),1400);}
+    else showToast('Submit failed: '+(res.error||'unknown'),true);
+  }catch(e){showToast('Network error — could not submit.',true);}
+  btn.disabled=false;btn.textContent='Submit PRF';
 }
-
-function resetPRF() {
-  ['prf-date','prf-req','prf-reason','prf-s-req','prf-s-req-sign','prf-s-hod','prf-s-hod-sign','prf-s-store','prf-s-store-sign'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
-  document.getElementById('prf-dept').value = '';
-  document.getElementById('prf-ibody').innerHTML = '';
-  prfRowN = 0;
+function resetPRF(){
+  ['prf-date','prf-req','prf-reason','prf-s-req','prf-s-req-sign','prf-s-hod','prf-s-hod-sign','prf-s-store','prf-s-store-sign'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('prf-dept').value='';
+  document.getElementById('prf-ibody').innerHTML='';prfRowN=0;
 }
 
 // ═══════════════════════════════════════════════════════ GRN FORM
-function addGRNRow() {
+function addGRNRow(){
   grnRowN++;
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td><input type="text" value="${grnRowN}" style="width:36px;text-align:center"></td>
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><input type="text" value="${grnRowN}" style="width:36px;text-align:center"></td>
     <td><input type="text" placeholder="Item description" oninput="calcGRN()"></td>
     <td><input type="text" placeholder="Inv. ref."></td>
     <td><input type="text" placeholder="No/Set/LTR"></td>
@@ -983,123 +1173,81 @@ function addGRNRow() {
     <td><button class="delrow" onclick="this.closest('tr').remove();calcGRN()">&#x2715;</button></td>`;
   document.getElementById('grn-ibody').appendChild(tr);
 }
-
-function calcGRN() {
-  let tot = 0;
-  document.querySelectorAll('#grn-ibody tr').forEach(tr => {
-    const c = tr.querySelectorAll('input');
-    const qty = parseFloat(c[4].value) || 0;
-    const up = parseFloat(c[5].value) || 0;
-    const line = qty * up;
-    c[6].value = line > 0 ? 'Rs ' + line.toLocaleString() : '';
-    tot += line;
+function calcGRN(){
+  let tot=0;
+  document.querySelectorAll('#grn-ibody tr').forEach(tr=>{
+    const c=tr.querySelectorAll('input');
+    const qty=parseFloat(c[4].value)||0;const up=parseFloat(c[5].value)||0;const line=qty*up;
+    c[6].value=line>0?'Rs '+line.toLocaleString():'';tot+=line;
   });
-  document.getElementById('grn-tot').textContent = 'Rs ' + tot.toLocaleString();
+  document.getElementById('grn-tot').textContent='Rs '+tot.toLocaleString();
 }
-
-async function subGRN() {
-  const date = gv('grn-date'), dept = gv('grn-dept'), supplier = gv('grn-supplier');
-  if (!date || !dept || !supplier) { toast('Complete all required fields (Date, Department, Supplier).', true); return; }
-  const rows = document.querySelectorAll('#grn-ibody tr');
-  if (!rows.length) { toast('Add at least one item.', true); return; }
-  const items = [];
-  rows.forEach((tr, i) => {
-    const c = tr.querySelectorAll('input');
-    const qty = parseFloat(c[4].value) || 0;
-    const up = parseFloat(c[5].value) || 0;
-    items.push({ sr: i + 1, desc: c[1].value || '—', invRef: c[2].value || '', uom: c[3].value || '—', qty, up, total: qty * up });
-  });
-  const total = items.reduce((s, x) => s + x.total, 0);
-  const payload = {
-    action: 'submitGRN',
-    entity: ACTIVE_ENTITY,
-    date, prfRef: gv('grn-prf'), dept, supplier,
-    invoiceRef: gv('grn-challan'), items, total,
-    remarks: gv('grn-remarks'),
-    recBy: gv('grn-rec'), qtyBy: gv('grn-qty'), qualBy: gv('grn-qual'),
-    rateBy: gv('grn-rate'), storeBy: gv('grn-store'), acctBy: gv('grn-acct')
-  };
-  const btn = document.querySelector('#page-sub-grn .submitbtn');
-  btn.disabled = true; btn.textContent = 'Submitting...';
-  try {
-    const res = await gasPost(payload);
-    if (res.ok) {
-      if (!res.record.entity) res.record.entity = ACTIVE_ENTITY;
-      STATE.grns.unshift(res.record);
-      counts();
-      toast('GRN submitted: ' + res.record.ref);
-      resetGRN();
-      setTimeout(() => go('grn-tracker'), 1400);
-    } else {
-      toast('Submit failed: ' + (res.error || 'unknown'), true);
-    }
-  } catch (e) { toast('Network error — could not submit.', true); }
-  btn.disabled = false; btn.textContent = 'Submit GRN';
+async function subGRN(){
+  const date=gv('grn-date'),dept=gv('grn-dept'),supplier=gv('grn-supplier');
+  if(!date||!dept||!supplier){showToast('Complete all required fields (Date, Department, Supplier).',true);return;}
+  const rows=document.querySelectorAll('#grn-ibody tr');
+  if(!rows.length){showToast('Add at least one item.',true);return;}
+  const items=[];
+  rows.forEach((tr,i)=>{const c=tr.querySelectorAll('input');const qty=parseFloat(c[4].value)||0;const up=parseFloat(c[5].value)||0;items.push({sr:i+1,desc:c[1].value||'—',invRef:c[2].value||'',uom:c[3].value||'—',qty,up,total:qty*up});});
+  const total=items.reduce((s,x)=>s+x.total,0);
+  const payload={action:'submitGRN',entity:ACTIVE_ENTITY,date,prfRef:gv('grn-prf'),dept,supplier,invoiceRef:gv('grn-challan'),items,total,remarks:gv('grn-remarks'),recBy:gv('grn-rec'),qtyBy:gv('grn-qty'),qualBy:gv('grn-qual'),rateBy:gv('grn-rate'),storeBy:gv('grn-store'),acctBy:gv('grn-acct')};
+  const btn=document.querySelector('#page-sub-grn .submitbtn');
+  btn.disabled=true;btn.textContent='Submitting...';
+  try{
+    const res=await gasPost(payload);
+    if(res.ok){if(!res.record.entity)res.record.entity=ACTIVE_ENTITY;STATE.grns.unshift(res.record);counts();showToast('GRN submitted: '+res.record.ref);resetGRN();setTimeout(()=>go('grn-tracker'),1400);}
+    else showToast('Submit failed: '+(res.error||'unknown'),true);
+  }catch(e){showToast('Network error — could not submit.',true);}
+  btn.disabled=false;btn.textContent='Submit GRN';
 }
-
-function resetGRN() {
-  ['grn-date','grn-prf','grn-supplier','grn-challan','grn-remarks',
-   'grn-rec','grn-rec-s','grn-qty','grn-qty-s','grn-qual','grn-qual-s',
-   'grn-rate','grn-rate-s','grn-store','grn-store-s','grn-acct','grn-acct-s'
-  ].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
-  document.getElementById('grn-dept').value = '';
-  document.getElementById('grn-ibody').innerHTML = '';
-  grnRowN = 0;
-  calcGRN();
+function resetGRN(){
+  ['grn-date','grn-prf','grn-supplier','grn-challan','grn-remarks','grn-rec','grn-rec-s','grn-qty','grn-qty-s','grn-qual','grn-qual-s','grn-rate','grn-rate-s','grn-store','grn-store-s','grn-acct','grn-acct-s'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('grn-dept').value='';
+  document.getElementById('grn-ibody').innerHTML='';grnRowN=0;calcGRN();
 }
 
 // ═══════════════════════════════════════════════════════ STATUS UPDATE
-async function doStatus() {
-  const ref = gv('us-ref').toUpperCase();
-  const ns = gv('us-st');
-  const notes = gv('us-notes');
-  if (!ref || !ns) { toast('Enter a reference number and select new status.', true); return; }
-  const res = await gasPost({ action: 'updateStatus', entity: ACTIVE_ENTITY, ref, status: ns, notes });
-  if (res.ok) {
-    // Update local state
-    const arr = ref.startsWith('PRF') ? STATE.prfs : STATE.grns;
-    const rec = arr.find(r => r.ref === ref);
-    if (rec) { const old = rec.status; rec.status = ns; STATE.slog.unshift({ ref, type: ref.startsWith('PRF') ? 'PRF' : 'GRN', old, ns, notes, at: new Date().toLocaleString() }); }
-    ['us-ref','us-notes'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('us-st').value = '';
-    renderSlog(); counts();
-    toast(ref + ' updated to ' + ns);
-  } else {
-    toast('Update failed: ' + (res.error || 'Ref not found'), true);
-  }
+async function doStatus(){
+  const ref=gv('us-ref').toUpperCase();const ns=gv('us-st');const notes=gv('us-notes');
+  if(!ref||!ns){showToast('Enter a reference number and select new status.',true);return;}
+  const res=await gasPost({action:'updateStatus',entity:ACTIVE_ENTITY,ref,status:ns,notes});
+  if(res.ok){
+    const arr=ref.startsWith('PRF')?STATE.prfs:STATE.grns;
+    const rec=arr.find(r=>r.ref===ref);
+    if(rec){const old=rec.status;rec.status=ns;STATE.slog.unshift({ref,type:ref.startsWith('PRF')?'PRF':'GRN',old,ns,notes,at:new Date().toLocaleString()});}
+    ['us-ref','us-notes'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('us-st').value='';
+    renderSlog();counts();showToast(ref+' updated to '+ns);
+  }else showToast('Update failed: '+(res.error||'Ref not found'),true);
 }
-
-function renderSlog() {
-  const tb = document.getElementById('slog-tbody');
-  if (!STATE.slog.length) { tb.innerHTML = '<tr><td colspan="6" class="empty">No status updates logged yet</td></tr>'; return; }
-  tb.innerHTML = STATE.slog.slice(0, 40).map(l => `<tr>
+function renderSlog(){
+  const tb=document.getElementById('slog-tbody');
+  if(!STATE.slog.length){tb.innerHTML='<tr><td colspan="6" class="empty">No status updates logged yet</td></tr>';return;}
+  tb.innerHTML=STATE.slog.slice(0,40).map(l=>`<tr>
     <td><strong>${l.ref}</strong></td>
-    <td><span class="badge b-${(l.type || '').toLowerCase()}">${l.type || '—'}</span></td>
-    <td><span class="badge b-${(l.old || '').toLowerCase()}">${l.old || '—'}</span></td>
-    <td><span class="badge b-${(l.ns || '').toLowerCase()}">${l.ns || '—'}</span></td>
-    <td style="font-size:11px;color:var(--text2)">${l.notes || '—'}</td>
-    <td style="font-size:11px">${l.at || '—'}</td>
+    <td><span class="badge b-${(l.type||'').toLowerCase()}">${l.type||'—'}</span></td>
+    <td><span class="badge b-${(l.old||'').toLowerCase()}">${l.old||'—'}</span></td>
+    <td><span class="badge b-${(l.ns||'').toLowerCase()}">${l.ns||'—'}</span></td>
+    <td style="font-size:11px;color:var(--text2)">${l.notes||'—'}</td>
+    <td style="font-size:11px">${l.at||'—'}</td>
   </tr>`).join('');
 }
 
-// ═══════════════════════════════════════════════════════ MODAL
-function openM(type, ref) {
-  const r = type === 'PRF'
-    ? STATE.prfs.find(x => x.ref === ref)
-    : STATE.grns.find(x => x.ref === ref);
-  if (!r) return;
-  curRec = { type, ref, r };
-  document.getElementById('m-title').textContent = ref + ' — ' + type + ' Detail';
-  let html = '';
-  if (type === 'PRF') {
-    html = `<div class="dgrid">
+// ═══════════════════════════════════════════════════════ MODAL / VIEW (unchanged)
+function openM(type,ref){
+  const r=type==='PRF'?STATE.prfs.find(x=>x.ref===ref):STATE.grns.find(x=>x.ref===ref);
+  if(!r)return;curRec={type,ref,r};
+  document.getElementById('m-title').textContent=ref+' — '+type+' Detail';
+  let html='';
+  if(type==='PRF'){
+    html=`<div class="dgrid">
       <div class="di"><div class="dk">PRF No.</div><div class="dv">${r.ref}</div></div>
       <div class="di"><div class="dk">Status</div><div class="dv"><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'—'}</span></div></div>
       <div class="di"><div class="dk">Date</div><div class="dv">${r.date||'—'}</div></div>
       <div class="di"><div class="dk">Department</div><div class="dv">${r.dept||'—'}</div></div>
       <div class="di"><div class="dk">Name of Requester</div><div class="dv">${r.reqName||'—'}</div></div>
-      <div class="di"><div class="dk">H.O.D (Rec. &amp; Approved)</div><div class="dv">${r.sigHOD||'—'}</div></div>
-      <div class="di"><div class="dk">Store Incharge / Keeper</div><div class="dv">${r.sigStore||'—'}</div></div>
+      <div class="di"><div class="dk">H.O.D</div><div class="dv">${r.sigHOD||'—'}</div></div>
+      <div class="di"><div class="dk">Store Incharge</div><div class="dv">${r.sigStore||'—'}</div></div>
       <div class="di" style="grid-column:span 2"><div class="dk">Reason for Purchase</div><div class="dv">${r.reason||'—'}</div></div>
     </div>
     <div style="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px">
@@ -1111,25 +1259,30 @@ function openM(type, ref) {
         <div style="border:0.5px solid var(--border);border-radius:6px;padding:10px 12px;background:var(--surface)">
           <div style="font-size:10px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:4px">Finance Approval</div>
           <div style="margin-bottom:4px">${approvalBadge(r.financeApproval)}</div>
-          ${r.financeApprovedBy ? '<div style="font-size:11px;color:var(--text2)">By: <strong>' + r.financeApprovedBy + '</strong></div>' : ''}
+          ${r.financeApprovedBy?'<div style="font-size:11px;color:var(--text2)">By: <strong>'+r.financeApprovedBy+'</strong></div>':''}
         </div>
         <div style="border:0.5px solid var(--border);border-radius:6px;padding:10px 12px;background:var(--surface)">
           <div style="font-size:10px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:4px">GM Approval</div>
-          <div style="margin-bottom:4px">${approvalBadge(r.gmApproval || 'Not Required')}</div>
-          ${r.gmApprovedBy ? '<div style="font-size:11px;color:var(--text2)">By: <strong>' + r.gmApprovedBy + '</strong></div>' : ''}
+          <div style="margin-bottom:4px">${approvalBadge(r.gmApproval||'Not Required')}</div>
+          ${r.gmApprovedBy?'<div style="font-size:11px;color:var(--text2)">By: <strong>'+r.gmApprovedBy+'</strong></div>':''}
         </div>
       </div>
-      ${r.approvalNotes ? '<div style="margin-top:10px;font-size:11px;color:var(--text2)"><strong>Notes:</strong> ' + r.approvalNotes + '</div>' : ''}
+      ${r.approvalNotes?'<div style="margin-top:10px;font-size:11px;color:var(--text2)"><strong>Notes:</strong> '+r.approvalNotes+'</div>':''}
     </div>
+    ${r.rejectionComment?`<div style="background:#fff3f3;border:1px solid #e8b0b0;border-left:4px solid #8b1a1a;border-radius:6px;padding:12px 14px;margin-bottom:16px">
+      <div style="font-size:10px;font-weight:700;color:#8b1a1a;letter-spacing:.05em;margin-bottom:6px">REJECTION COMMENT</div>
+      <div style="font-size:12px;color:#3a0a0a;line-height:1.65">${r.rejectionComment}</div>
+      <div style="font-size:10px;color:#999;margin-top:6px">— ${r.rejectedBy||'Procurement'} &nbsp;|&nbsp; ${r.rejectedAt||''}</div>
+    </div>`:''}
     <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:8px">Description of Items</div>
     <div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse">
       <thead><tr style="background:#162844">
-        <th style="padding:6px 9px;font-size:10px;color:var(--text2);text-align:left">Sr.</th>
-        <th style="padding:6px 9px;font-size:10px;color:var(--text2);text-align:left">Description of Items</th>
-        <th style="padding:6px 9px;font-size:10px;color:var(--text2);text-align:left">Unit</th>
-        <th style="padding:6px 9px;font-size:10px;color:var(--text2);text-align:right">Required Qty</th>
+        <th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:left">Sr.</th>
+        <th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:left">Description</th>
+        <th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:left">Unit</th>
+        <th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:right">Required Qty</th>
       </tr></thead>
-      <tbody>${(r.items||[]).map((it,i) => `<tr style="${i%2?'background:var(--surface2)':''}">
+      <tbody>${(r.items||[]).map((it,i)=>`<tr style="${i%2?'background:var(--surface2)':''}">
         <td style="padding:6px 9px">${it.sr||i+1}</td>
         <td style="padding:6px 9px">${it.desc||'—'}</td>
         <td style="padding:6px 9px">${it.unit||'—'}</td>
@@ -1137,40 +1290,37 @@ function openM(type, ref) {
       </tr>`).join('')}</tbody>
     </table></div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px">
-      ${[['Requested By',r.sigReq],['Rec. &amp; Approved H.O.D',r.sigHOD],['Store Incharge / Keeper',r.sigStore]].map(([l,v])=>`
+      ${[['Requested By',r.sigReq],['Rec. &amp; Approved H.O.D',r.sigHOD],['Store Incharge',r.sigStore]].map(([l,v])=>`
       <div style="border:0.5px solid var(--border);border-radius:6px;padding:9px;font-size:11px">
         <div style="font-size:10px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:3px">${l}</div>
         <div style="font-weight:600">${v||'—'}</div>
       </div>`).join('')}
     </div>`;
   } else {
-    html = `<div class="dgrid">
+    html=`<div class="dgrid">
       <div class="di"><div class="dk">GRN No.</div><div class="dv">${r.ref}</div></div>
       <div class="di"><div class="dk">Status</div><div class="dv"><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'—'}</span></div></div>
       <div class="di"><div class="dk">Date</div><div class="dv">${r.date||'—'}</div></div>
       <div class="di"><div class="dk">PRF No.</div><div class="dv">${r.prfRef||'—'}</div></div>
       <div class="di"><div class="dk">Department</div><div class="dv">${r.dept||'—'}</div></div>
-      <div class="di"><div class="dk">Supplier / Vendor</div><div class="dv">${r.supplier||'—'}</div></div>
-      <div class="di"><div class="dk">Invoice / Challan Ref.</div><div class="dv">${r.invoiceRef||'—'}</div></div>
+      <div class="di"><div class="dk">Supplier</div><div class="dv">${r.supplier||'—'}</div></div>
+      <div class="di"><div class="dk">Invoice Ref.</div><div class="dv">${r.invoiceRef||'—'}</div></div>
       <div class="di"><div class="dk">Receiving Incharge</div><div class="dv">${r.recBy||'—'}</div></div>
       ${r.remarks?`<div class="di" style="grid-column:span 2"><div class="dk">Remarks</div><div class="dv">${r.remarks}</div></div>`:''}
     </div>
-    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:8px">Items Received</div>
     <div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse">
       <thead><tr style="background:#162844">
-        <th style="padding:6px 9px;font-size:10px;color:var(--text2)">Sr.</th>
-        <th style="padding:6px 9px;font-size:10px;color:var(--text2)">Description</th>
-        <th style="padding:6px 9px;font-size:10px;color:var(--text2)">Invoice Ref.</th>
-        <th style="padding:6px 9px;font-size:10px;color:var(--text2)">UoM</th>
-        <th style="padding:6px 9px;font-size:10px;color:var(--text2);text-align:right">Qty</th>
-        <th style="padding:6px 9px;font-size:10px;color:var(--text2);text-align:right">Unit Price (Rs)</th>
-        <th style="padding:6px 9px;font-size:10px;color:var(--text2);text-align:right">Total (Rs)</th>
+        <th style="padding:6px 9px;font-size:10px;color:var(--gold)">Sr.</th>
+        <th style="padding:6px 9px;font-size:10px;color:var(--gold)">Description</th>
+        <th style="padding:6px 9px;font-size:10px;color:var(--gold)">Invoice Ref.</th>
+        <th style="padding:6px 9px;font-size:10px;color:var(--gold)">UoM</th>
+        <th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:right">Qty</th>
+        <th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:right">Unit Price</th>
+        <th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:right">Total</th>
       </tr></thead>
-      <tbody>${(r.items||[]).map((it,i) => `<tr style="${i%2?'background:var(--surface2)':''}">
-        <td style="padding:6px 9px">${it.sr||i+1}</td>
-        <td style="padding:6px 9px">${it.desc||'—'}</td>
-        <td style="padding:6px 9px">${it.invRef||'—'}</td>
-        <td style="padding:6px 9px">${it.uom||'—'}</td>
+      <tbody>${(r.items||[]).map((it,i)=>`<tr style="${i%2?'background:var(--surface2)':''}">
+        <td style="padding:6px 9px">${it.sr||i+1}</td><td style="padding:6px 9px">${it.desc||'—'}</td>
+        <td style="padding:6px 9px">${it.invRef||'—'}</td><td style="padding:6px 9px">${it.uom||'—'}</td>
         <td style="padding:6px 9px;text-align:right">${it.qty||0}</td>
         <td style="padding:6px 9px;text-align:right">Rs ${(it.up||0).toLocaleString()}</td>
         <td style="padding:6px 9px;text-align:right">Rs ${(it.total||0).toLocaleString()}</td>
@@ -1181,259 +1331,125 @@ function openM(type, ref) {
       </tr></tbody>
     </table></div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px">
-      ${[['Qty Checked By',r.qtyBy],['Receiving Incharge',r.recBy],['Quality Checked By',r.qualBy],
-         ['Rate Checked By',r.rateBy],['Store Keeper / Others',r.storeBy],['Accounts Officer',r.acctBy]].map(([l,v])=>`
+      ${[['Qty Checked By',r.qtyBy],['Receiving Incharge',r.recBy],['Quality Checked By',r.qualBy],['Rate Checked By',r.rateBy],['Store Keeper',r.storeBy],['Accounts Officer',r.acctBy]].map(([l,v])=>`
       <div style="border:0.5px solid var(--border);border-radius:6px;padding:8px 10px;font-size:11px">
         <div style="font-size:10px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:2px">${l}</div>
         <div style="font-weight:600">${v||'—'}</div>
       </div>`).join('')}
     </div>`;
   }
-  document.getElementById('m-body').innerHTML = html;
+  document.getElementById('m-body').innerHTML=html;
   document.getElementById('moverlay').classList.add('open');
 }
-function closeMO(e) { if (e.target === document.getElementById('moverlay')) closeMD(); }
-function closeMD() { document.getElementById('moverlay').classList.remove('open'); curRec = null; }
-function closeModalDirect() { document.getElementById('moverlay').classList.remove('open'); }
+function closeMO(e){if(e.target===document.getElementById('moverlay'))closeMD();}
+function closeMD(){document.getElementById('moverlay').classList.remove('open');curRec=null;}
+function closeModalDirect(){document.getElementById('moverlay').classList.remove('open');}
 
-function doPrint() {
-  if (!curRec) return;
-  const { type, ref, r } = curRec;
-  const body = document.getElementById('m-body').innerHTML;
-  const w = window.open('', '_blank', 'width=860,height=720');
+function doPrint(){
+  if(!curRec)return;
+  const{type,ref,r}=curRec;
+  const body=document.getElementById('m-body').innerHTML;
+  const w=window.open('','_blank','width=860,height=720');
   w.document.write(`<html><head><title>${ref}</title>
-  <style>
-    body{font-family:Arial,sans-serif;margin:30px;font-size:12px;color:#000}
-    h1{font-size:17px;margin-bottom:2px;font-weight:700}
-    p.sub{color:#555;font-size:11px;margin:2px 0 18px}
-    .dgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px 20px;margin-bottom:14px}
-    .di .dk{font-size:10px;color:#666;margin-bottom:1px;text-transform:uppercase;font-weight:600}
-    .di .dv{font-weight:600}
-    table{width:100%;border-collapse:collapse;font-size:11px}
-    th,td{padding:6px 9px;border:1px solid #ccc;text-align:left}
-    th{background:#f0eeea;font-weight:700}
-    .badge{font-size:10px;padding:2px 8px;border-radius:9px;border:1px solid #aaa;font-weight:600}
-    .sig-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:36px}
-    .sig-box{border-top:2px solid #333;padding-top:6px;font-size:11px;color:#444}
-    .sig-box .role{font-size:10px;font-weight:700;text-transform:uppercase;color:#222;margin-bottom:4px}
-    @media print{@page{margin:15mm}button{display:none!important}}
-  </style></head><body>
-  <h1>Samsons Group of Companies (Pvt) Ltd — Malam Jabba Ski Resort</h1>
-  <p class="sub">${type === 'PRF' ? 'Purchase Requisition Form (PRF)' : 'Goods / Material Received Note (GRN)'} &nbsp;|&nbsp; ${ref} &nbsp;|&nbsp; Printed: ${new Date().toLocaleString()}</p>
+  <style>body{font-family:Arial,sans-serif;margin:30px;font-size:12px}h1{font-size:17px;margin-bottom:2px}p.sub{color:#555;font-size:11px;margin:2px 0 18px}.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px 20px;margin-bottom:14px}.di .dk{font-size:10px;color:#666;margin-bottom:1px;text-transform:uppercase;font-weight:600}.di .dv{font-weight:600}table{width:100%;border-collapse:collapse;font-size:11px}th,td{padding:6px 9px;border:1px solid #ccc;text-align:left}th{background:#f0eeea;font-weight:700}.badge{font-size:10px;padding:2px 8px;border-radius:9px;border:1px solid #aaa;font-weight:600}@media print{@page{margin:15mm}button{display:none!important}}</style>
+  </head><body>
+  <h1>Samsons Group of Companies (Pvt) Ltd</h1>
+  <p class="sub">${type==='PRF'?'Purchase Requisition Form (PRF)':'Goods / Material Received Note (GRN)'} &nbsp;|&nbsp; ${ref} &nbsp;|&nbsp; Printed: ${new Date().toLocaleString()}</p>
   ${body}
   <script>setTimeout(()=>window.print(),500)<\/script></body></html>`);
   w.document.close();
 }
 
 // ═══════════════════════════════════════════════════════ APPROVAL PANEL
-function openApprovalPanel(ref) {
-  const r = STATE.prfs.find(x => x.ref === ref);
-  if (!r) { toast('PRF not found: ' + ref, true); return; }
-
-  // Header
-  document.getElementById('appr-title').textContent    = 'Approval Update';
-  document.getElementById('appr-subtitle').textContent = ref + '  |  ' + r.dept + '  |  ' + r.reqName;
-  document.getElementById('appr-ref').value = ref;
-
-  // Summary card — 3 info tiles showing key PRF details at a glance
-  const itemList = (r.items || []).slice(0, 3).map(it => it.desc || '—').join(', ')
-    + ((r.items || []).length > 3 ? '  +' + ((r.items||[]).length - 3) + ' more' : '');
-  document.getElementById('appr-summary').innerHTML = [
-    ['Department',   r.dept      || '—'],
-    ['Requested By', r.reqName   || '—'],
-    ['Date',         r.date      || '—'],
-    ['H.O.D',        r.sigHOD    || '—'],
-    ['Store Keeper', r.sigStore  || '—'],
-    ['Items',        ((r.items||[]).length) + ' line item' + ((r.items||[]).length !== 1 ? 's' : '')],
-  ].map(([k, v]) => `
-    <div style="min-width:0">
-      <div style="font-size:10px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:2px;letter-spacing:.04em">${k}</div>
-      <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v}</div>
-    </div>`).join('');
-
-  // Reason banner if present
-  const existing = document.getElementById('appr-reason-banner');
-  if (existing) existing.remove();
-  if (r.reason) {
-    const banner = document.createElement('div');
-    banner.id = 'appr-reason-banner';
-    banner.style.cssText = 'font-size:11px;color:var(--text2);padding:8px 12px;background:var(--surface2);border-radius:6px;border-left:3px solid var(--gold);margin-bottom:14px;line-height:1.5';
-    banner.innerHTML = '<strong style="color:var(--text)">Reason:</strong> ' + r.reason;
-    document.getElementById('appr-summary').insertAdjacentElement('afterend', banner);
-  }
-
-  // Pre-fill current approval values
-  document.getElementById('appr-fin').value    = r.financeApproval   || 'Pending';
-  document.getElementById('appr-gm').value     = r.gmApproval        || 'Not Required';
-  document.getElementById('appr-fin-by').value = r.financeApprovedBy || '';
-  document.getElementById('appr-gm-by').value  = r.gmApprovedBy      || '';
-  document.getElementById('appr-notes').value  = r.approvalNotes     || '';
-
+function openApprovalPanel(ref){
+  const r=STATE.prfs.find(x=>x.ref===ref);if(!r){showToast('PRF not found: '+ref,true);return;}
+  document.getElementById('appr-title').textContent='Approval Update';
+  document.getElementById('appr-subtitle').textContent=ref+'  |  '+r.dept+'  |  '+r.reqName;
+  document.getElementById('appr-ref').value=ref;
+  document.getElementById('appr-summary').innerHTML=[['Department',r.dept||'—'],['Requested By',r.reqName||'—'],['Date',r.date||'—'],['H.O.D',r.sigHOD||'—'],['Store Keeper',r.sigStore||'—'],['Items',((r.items||[]).length)+' line item'+((r.items||[]).length!==1?'s':'')]].map(([k,v])=>`<div style="min-width:0"><div style="font-size:10px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:2px">${k}</div><div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v}</div></div>`).join('');
+  const existing=document.getElementById('appr-reason-banner');if(existing)existing.remove();
+  if(r.reason){const banner=document.createElement('div');banner.id='appr-reason-banner';banner.style.cssText='font-size:11px;color:var(--text2);padding:8px 12px;background:var(--surface2);border-radius:6px;border-left:3px solid var(--gold);margin-bottom:14px;line-height:1.5';banner.innerHTML='<strong style="color:var(--text)">Reason:</strong> '+r.reason;document.getElementById('appr-summary').insertAdjacentElement('afterend',banner);}
+  document.getElementById('appr-fin').value=r.financeApproval||'Pending';
+  document.getElementById('appr-gm').value=r.gmApproval||'Not Required';
+  document.getElementById('appr-fin-by').value=r.financeApprovedBy||'';
+  document.getElementById('appr-gm-by').value=r.gmApprovedBy||'';
+  document.getElementById('appr-notes').value=r.approvalNotes||'';
   document.getElementById('appr-overlay').classList.add('open');
 }
-function closeApprO(e) { if (e.target === document.getElementById('appr-overlay')) closeApprD(); }
-function closeApprD() { document.getElementById('appr-overlay').classList.remove('open'); }
-
-async function saveApproval() {
-  const ref         = document.getElementById('appr-ref').value;
-  const finApproval = document.getElementById('appr-fin').value;
-  const gmApproval  = document.getElementById('appr-gm').value;
-  const finBy       = document.getElementById('appr-fin-by').value.trim();
-  const gmBy        = document.getElementById('appr-gm-by').value.trim();
-  const notes       = document.getElementById('appr-notes').value.trim();
-  if (!ref) return;
-
-  const btn = document.getElementById('appr-save-btn');
-  btn.disabled = true; btn.textContent = 'Saving...';
-
-  try {
-    const res = await gasPost({ action: 'updateApproval', entity: ACTIVE_ENTITY, ref, financeApproval: finApproval, gmApproval, financeApprovedBy: finBy, gmApprovedBy: gmBy, approvalNotes: notes });
-    if (res.ok) {
-      // Update local state immediately so dashboard + tracker refresh without reload
-      const rec = STATE.prfs.find(x => x.ref === ref);
-      if (rec) {
-        rec.financeApproval   = finApproval;
-        rec.gmApproval        = gmApproval;
-        rec.financeApprovedBy = finBy;
-        rec.gmApprovedBy      = gmBy;
-        rec.approvalNotes     = notes;
-      }
-      closeApprD();
-      // Remove reason banner if present
-      const banner = document.getElementById('appr-reason-banner');
-      if (banner) banner.remove();
-      // Refresh whichever tracker is visible
-      rprf();
-      rdash();
-      toast('Approval updated for ' + ref);
-    } else {
-      toast('Update failed: ' + (res.error || 'unknown'), true);
-    }
-  } catch(e) { toast('Network error — could not save.', true); }
-  btn.disabled = false; btn.textContent = 'Save Approval';
+function closeApprO(e){if(e.target===document.getElementById('appr-overlay'))closeApprD();}
+function closeApprD(){document.getElementById('appr-overlay').classList.remove('open');}
+async function saveApproval(){
+  const ref=document.getElementById('appr-ref').value;
+  const finApproval=document.getElementById('appr-fin').value;
+  const gmApproval=document.getElementById('appr-gm').value;
+  const finBy=document.getElementById('appr-fin-by').value.trim();
+  const gmBy=document.getElementById('appr-gm-by').value.trim();
+  const notes=document.getElementById('appr-notes').value.trim();
+  if(!ref)return;
+  const btn=document.getElementById('appr-save-btn');btn.disabled=true;btn.textContent='Saving...';
+  try{
+    const res=await gasPost({action:'updateApproval',entity:ACTIVE_ENTITY,ref,financeApproval:finApproval,gmApproval,financeApprovedBy:finBy,gmApprovedBy:gmBy,approvalNotes:notes});
+    if(res.ok){
+      const rec=STATE.prfs.find(x=>x.ref===ref);
+      if(rec){rec.financeApproval=finApproval;rec.gmApproval=gmApproval;rec.financeApprovedBy=finBy;rec.gmApprovedBy=gmBy;rec.approvalNotes=notes;}
+      closeApprD();const banner=document.getElementById('appr-reason-banner');if(banner)banner.remove();
+      rprf();rdash();showToast('Approval updated for '+ref);
+    }else showToast('Update failed: '+(res.error||'unknown'),true);
+  }catch(e){showToast('Network error — could not save.',true);}
+  btn.disabled=false;btn.textContent='Save Approval';
 }
 
-// ═══════════════════════════════════════════════════════ MOVE ENTITY PANEL
-function openMovePanel(type, ref) {
-  const arr   = type === 'PRF' ? STATE.prfs : STATE.grns;
-  const r     = arr.find(x => x.ref === ref);
-  if (!r) { toast('Record not found: ' + ref, true); return; }
-
-  document.getElementById('move-title').textContent    = 'Move to Different Entity';
-  document.getElementById('move-subtitle').textContent = ref + '  |  Currently: ' + (r.entity || ACTIVE_ENTITY);
-  document.getElementById('move-ref').value  = ref;
-  document.getElementById('move-type').value = type;
-  document.getElementById('move-reason').value = '';
-
-  // Summary of the record
-  const summary = type === 'PRF'
-    ? 'Dept: ' + (r.dept||'—') + '   |   Requester: ' + (r.reqName||'—') + '   |   Date: ' + (r.date||'—') + '   |   Items: ' + (r.items||[]).length
-    : 'Supplier: ' + (r.supplier||'—') + '   |   Dept: ' + (r.dept||'—') + '   |   Date: ' + (r.date||'—') + '   |   Total: PKR ' + (r.total||0).toLocaleString();
-  document.getElementById('move-summary').textContent = summary;
-
-  // Build entity selector buttons — exclude current entity
-  const current = r.entity || ACTIVE_ENTITY;
-  const grid = document.getElementById('move-entity-grid');
-  grid.innerHTML = Object.entries(ENTITIES).map(([name, cfg]) => {
-    if (name === current) return ''; // skip current entity
-    return `<button onclick="selectMoveTarget('${name}')"
-      id="move-target-${name}"
-      style="padding:10px 8px;border-radius:8px;border:0.5px solid var(--border2);background:var(--surface2);cursor:pointer;font-family:inherit;transition:all .15s;text-align:center">
-      <div style="font-size:18px;margin-bottom:4px">${cfg.icon}</div>
-      <div style="font-size:12px;font-weight:600;color:var(--text)">${name}</div>
-      <div style="font-size:10px;color:var(--text2)">${cfg.desc}</div>
-    </button>`;
-  }).join('');
-
-  document.getElementById('move-save-btn').dataset.target = '';
+// ═══════════════════════════════════════════════════════ MOVE ENTITY PANEL (unchanged)
+function openMovePanel(type,ref){
+  const arr=type==='PRF'?STATE.prfs:STATE.grns;const r=arr.find(x=>x.ref===ref);if(!r){showToast('Record not found: '+ref,true);return;}
+  document.getElementById('move-title').textContent='Move to Different Entity';
+  document.getElementById('move-subtitle').textContent=ref+'  |  Currently: '+(r.entity||ACTIVE_ENTITY);
+  document.getElementById('move-ref').value=ref;document.getElementById('move-type').value=type;document.getElementById('move-reason').value='';
+  const summary=type==='PRF'?'Dept: '+(r.dept||'—')+'   |   Requester: '+(r.reqName||'—')+'   |   Date: '+(r.date||'—'):'Supplier: '+(r.supplier||'—')+'   |   Dept: '+(r.dept||'—')+'   |   Total: PKR '+(r.total||0).toLocaleString();
+  document.getElementById('move-summary').textContent=summary;
+  const current=r.entity||ACTIVE_ENTITY;const grid=document.getElementById('move-entity-grid');
+  grid.innerHTML=Object.entries(ENTITIES).map(([name,cfg])=>{if(name===current)return'';return`<button onclick="selectMoveTarget('${name}')" id="move-target-${name}" style="padding:10px 8px;border-radius:8px;border:0.5px solid var(--border2);background:var(--surface2);cursor:pointer;font-family:inherit;text-align:center"><div style="font-size:18px;margin-bottom:4px">${cfg.icon}</div><div style="font-size:12px;font-weight:600;color:var(--text)">${name}</div><div style="font-size:10px;color:var(--text2)">${cfg.desc}</div></button>`;}).join('');
+  document.getElementById('move-save-btn').dataset.target='';
   document.getElementById('move-overlay').classList.add('open');
 }
-
-function selectMoveTarget(name) {
-  // Highlight selected entity button
-  document.querySelectorAll('#move-entity-grid button').forEach(b => {
-    b.style.borderColor = 'var(--border2)';
-    b.style.background  = 'var(--surface2)';
-  });
-  const btn = document.getElementById('move-target-' + name);
-  if (btn) {
-    btn.style.borderColor = ENTITIES[name].color;
-    btn.style.background  = 'rgba(0,0,0,0.04)';
-  }
-  document.getElementById('move-save-btn').dataset.target = name;
-}
-
-function closeMoveO(e) { if (e.target === document.getElementById('move-overlay')) closeMoveD(); }
-function closeMoveD()  { document.getElementById('move-overlay').classList.remove('open'); }
-
-async function saveMove() {
-  const ref    = document.getElementById('move-ref').value;
-  const type   = document.getElementById('move-type').value;
-  const target = document.getElementById('move-save-btn').dataset.target;
-  const reason = document.getElementById('move-reason').value.trim();
-
-  if (!target) { toast('Please select a target entity.', true); return; }
-
-  const btn = document.getElementById('move-save-btn');
-  btn.disabled = true; btn.textContent = 'Moving...';
-
-  try {
-    const res = await gasPost({ action: 'moveRecord', ref, type, fromEntity: ACTIVE_ENTITY, toEntity: target, reason });
-    if (res.ok) {
-      // Remove from local STATE — it now belongs to another entity
-      if (type === 'PRF') STATE.prfs = STATE.prfs.filter(r => r.ref !== ref);
-      else                STATE.grns = STATE.grns.filter(r => r.ref !== ref);
-      closeMoveD();
-      rdash(); rprf(); rgrn(); counts();
-      toast(ref + ' moved to ' + target);
-    } else {
-      toast('Move failed: ' + (res.error || 'unknown'), true);
-    }
-  } catch(e) { toast('Network error — could not move record.', true); }
-  btn.disabled = false; btn.textContent = 'Move Record';
+function selectMoveTarget(name){document.querySelectorAll('#move-entity-grid button').forEach(b=>{b.style.borderColor='var(--border2)';b.style.background='var(--surface2)';});const btn=document.getElementById('move-target-'+name);if(btn){btn.style.borderColor=ENTITIES[name].color;btn.style.background='rgba(0,0,0,0.04)';}document.getElementById('move-save-btn').dataset.target=name;}
+function closeMoveO(e){if(e.target===document.getElementById('move-overlay'))closeMoveD();}
+function closeMoveD(){document.getElementById('move-overlay').classList.remove('open');}
+async function saveMove(){
+  const ref=document.getElementById('move-ref').value;const type=document.getElementById('move-type').value;const target=document.getElementById('move-save-btn').dataset.target;const reason=document.getElementById('move-reason').value.trim();
+  if(!target){showToast('Please select a target entity.',true);return;}
+  const btn=document.getElementById('move-save-btn');btn.disabled=true;btn.textContent='Moving...';
+  try{
+    const res=await gasPost({action:'moveRecord',ref,type,fromEntity:ACTIVE_ENTITY,toEntity:target,reason});
+    if(res.ok){if(type==='PRF')STATE.prfs=STATE.prfs.filter(r=>r.ref!==ref);else STATE.grns=STATE.grns.filter(r=>r.ref!==ref);closeMoveD();rdash();rprf();rgrn();counts();showToast(ref+' moved to '+target);}
+    else showToast('Move failed: '+(res.error||'unknown'),true);
+  }catch(e){showToast('Network error.',true);}
+  btn.disabled=false;btn.textContent='Move Record';
 }
 
 // ═══════════════════════════════════════════════════════ UTILS
-function gv(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
-function esc(s) { return (s || '').replace(/'/g, "\\'"); }
-function toast(msg, isErr) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast' + (isErr ? ' err' : '');
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+function gv(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function showToast(msg,isErr){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast'+(isErr?' err':'');t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
 
 // ═══════════════════════════════════════════════════════ GLOBAL CLICK HELPERS
-// These are called directly from onclick attributes using btoa-encoded refs
-// to safely handle any characters in the ref string.
-window.viewRecord   = function(enc)    { const r=atob(enc).split('|'); openM(r[0], r[1]); };
-window.approveRecord= function(enc)    { openApprovalPanel(atob(enc)); };
-window.openApproval = function(enc)    { closeModalDirect(); openApprovalPanel(atob(enc)); };
-window.moveRecord   = function(enc)    { const r=atob(enc).split('|'); openMovePanel(r[0], r[1]); };
+window.viewRecord    = function(enc){const r=atob(enc).split('|');openM(r[0],r[1]);};
+window.approveRecord = function(enc){openApprovalPanel(atob(enc));};
+window.openApproval  = function(enc){closeModalDirect();openApprovalPanel(atob(enc));};
+window.moveRecord    = function(enc){const r=atob(enc).split('|');openMovePanel(r[0],r[1]);};
 
 // ═══════════════════════════════════════════════════════ INIT
-// rows added on demand
-
-// Move modals to be the very last children of <body> so no sibling
-// stacking context (overflow:hidden, transforms, etc.) can clip them.
-(function hoistModals() {
-  ['moverlay','appr-overlay','move-overlay','pin-overlay'].forEach(function(id) {
-    const el = document.getElementById(id);
-    if (el && el.parentNode !== document.body) {
-      document.body.appendChild(el);
-    } else if (el) {
-      // Even if already in body, move to end to ensure last in stacking order
-      document.body.appendChild(el);
-    }
+(function hoistModals(){
+  ['moverlay','appr-overlay','move-overlay','pin-overlay','admin-config-page'].forEach(function(id){
+    const el=document.getElementById(id);
+    if(el)document.body.appendChild(el);
   });
 })();
-
-// Don't auto-load — wait for entity selection
-// loadAll is called by selectEntity()
-// Keep loading screen hidden on start (entity landing is shown instead)
-document.getElementById('loading').style.display = 'none';
-
+document.getElementById('loading').style.display='none';
 </script>
 </body>
 </html>
