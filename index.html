@@ -528,7 +528,7 @@ tr:hover td{background:var(--gold-bg)}
 </div>
 
 <!-- ════════════════════════════════════════════ REJECTION LOG PAGE -->
-<div class="page" id="page-rejection-log" style="display:none">
+<div id="page-rejection-log" style="display:none;padding:20px;max-width:1160px;margin:0 auto">
   <div class="pg-hdr">
     <h2>Rejection Log — PRF Rejection Tracking</h2>
   </div>
@@ -1083,9 +1083,9 @@ async function loadAll() {
     showToast('Could not connect to server. Check GAS_URL in config.', true);
   }
   counts(); depts(); rdash();
-  // If rejection log is the currently visible page, refresh it now that data is loaded
-  const rjPage = document.getElementById('page-rejection-log');
-  if (rjPage && (rjPage.classList.contains('active') || rjPage.style.display === 'block')) {
+  // If rejection log is visible, refresh it now that data is loaded
+  var rjPage = document.getElementById('page-rejection-log');
+  if (rjPage && rjPage.style.display === 'block') {
     renderRejectionLog();
   }
   document.getElementById('loading').style.display = 'none';
@@ -1093,16 +1093,36 @@ async function loadAll() {
 
 // ═══════════════════════════════════════════════════════ NAVIGATION
 function go(id) {
+  // Hide all standard .page divs
   document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display='none'; });
+  // Hide rejection log separately (not in .page system)
+  var rjPage = document.getElementById('page-rejection-log');
+  if (rjPage) rjPage.style.display = 'none';
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+
+  if (id === 'rejection-log') {
+    // Rejection log is NOT a .page div — show it directly
+    if (rjPage) rjPage.style.display = 'block';
+    var rjTab = document.getElementById('nav-rejection-log');
+    if (rjTab) rjTab.classList.add('active');
+    counts();
+    if (!STATE.loaded) {
+      var tb = document.getElementById('rj-tbody');
+      if (tb) tb.innerHTML = '<tr><td colspan="9" class="empty">Loading data from Sheets...</td></tr>';
+    } else {
+      renderRejectionLog();
+    }
+    return;
+  }
+
+  // Standard page routing
   var pg = document.getElementById('page-' + id);
-  if (!pg) { console.error('Page not found: page-' + id); return; }
+  if (!pg) return;
   pg.classList.add('active');
-  pg.style.setProperty('display', 'block', 'important');
+  pg.style.display = 'block';
   const order = ['sub-prf','sub-grn','dashboard','prf-tracker','grn-tracker','status'];
   const idx = order.indexOf(id);
   if (idx >= 0) document.querySelectorAll('.nav-tab')[idx].classList.add('active');
-  if (id === 'rejection-log') document.getElementById('nav-rejection-log').classList.add('active');
   counts(); depts();
   if (id === 'dashboard') { document.getElementById('dash-title').textContent = (ACTIVE_ENTITY||'') + ' — All Submissions'; rdash(); }
   if (id === 'sub-prf' && !document.getElementById('prf-ibody').hasChildNodes()) addPRFRow();
@@ -1110,14 +1130,6 @@ function go(id) {
   if (id === 'prf-tracker') rprf();
   if (id === 'grn-tracker') rgrn();
   if (id === 'status') renderSlog();
-  if (id === 'rejection-log') {
-    if (!STATE.loaded) {
-      const tb = document.getElementById('rj-tbody');
-      if (tb) tb.innerHTML = '<tr><td colspan="9" class="empty">Loading data from Sheets...</td></tr>';
-    } else {
-      renderRejectionLog();
-    }
-  }
 }
 
 // ═══════════════════════════════════════════════════════ KPI + DEPTS
