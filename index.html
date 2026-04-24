@@ -85,7 +85,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 
 /* ── Pages ── */
 .page{display:none;padding:20px;max-width:1160px;margin:0 auto}
-.page.active{display:block}
+.page.active{display:block !important}
 .pg-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
 .pg-hdr h2{font-size:15px;font-weight:700;color:#162844}
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
@@ -1084,7 +1084,8 @@ async function loadAll() {
   }
   counts(); depts(); rdash();
   // If rejection log is the currently visible page, refresh it now that data is loaded
-  if (document.getElementById('page-rejection-log').classList.contains('active')) {
+  const rjPage = document.getElementById('page-rejection-log');
+  if (rjPage && (rjPage.classList.contains('active') || rjPage.style.display === 'block')) {
     renderRejectionLog();
   }
   document.getElementById('loading').style.display = 'none';
@@ -1094,7 +1095,10 @@ async function loadAll() {
 function go(id) {
   document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display='none'; });
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  var pg = document.getElementById('page-' + id); pg.classList.add('active'); pg.style.display='block';
+  var pg = document.getElementById('page-' + id);
+  if (!pg) { console.error('Page not found: page-' + id); return; }
+  pg.classList.add('active');
+  pg.style.setProperty('display', 'block', 'important');
   const order = ['sub-prf','sub-grn','dashboard','prf-tracker','grn-tracker','status'];
   const idx = order.indexOf(id);
   if (idx >= 0) document.querySelectorAll('.nav-tab')[idx].classList.add('active');
@@ -1109,8 +1113,7 @@ function go(id) {
   if (id === 'rejection-log') {
     if (!STATE.loaded) {
       const tb = document.getElementById('rj-tbody');
-      if (tb) tb.innerHTML = '<tr><td colspan="9" class="empty">Loading...</td></tr>';
-      // loadAll will call renderRejectionLog when done
+      if (tb) tb.innerHTML = '<tr><td colspan="9" class="empty">Loading data from Sheets...</td></tr>';
     } else {
       renderRejectionLog();
     }
