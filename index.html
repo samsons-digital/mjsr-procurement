@@ -524,13 +524,14 @@ tr:hover td{background:var(--gold-bg)}
     <div class="tcard-hdr"><h3>Status Update Log</h3></div>
     <table><thead><tr><th>Reference</th><th>Type</th><th>Previous Status</th><th>New Status</th><th>Notes</th><th>Updated At</th></tr></thead>
     <tbody id="slog-tbody"><tr><td colspan="6" class="empty">No status updates logged yet</td></tr></tbody>
+    </table>
   </div>
 </div>
 
 <!-- ════════════════════════════════════════════ REJECTION LOG PAGE -->
-<div id="page-rejection-log" style="display:none;padding:20px;max-width:1160px;margin:0 auto">
+<div id="page-rejection-log" style="display:none;padding:20px;max-width:1160px;margin:0 auto;background:#fff;min-height:400px">
   <div class="pg-hdr">
-    <h2>Rejection Log — PRF Rejection Tracking</h2>
+    <h2 style="color:#a32d2d;font-size:22px">Rejection Log — PRF Rejection Tracking</h2>
   </div>
 
   <!-- KPI row -->
@@ -1102,7 +1103,13 @@ function go(id) {
 
   if (id === 'rejection-log') {
     // Rejection log is NOT a .page div — show it directly
-    if (rjPage) rjPage.style.display = 'block';
+    if (rjPage) {
+      rjPage.style.display = 'block';
+      rjPage.style.visibility = 'visible';
+      rjPage.style.opacity = '1';
+      rjPage.style.position = 'relative';
+      rjPage.style.zIndex = '1';
+    }
     var rjTab = document.getElementById('nav-rejection-log');
     if (rjTab) rjTab.classList.add('active');
     counts();
