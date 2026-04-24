@@ -1081,6 +1081,10 @@ async function loadAll() {
     showToast('Could not connect to server. Check GAS_URL in config.', true);
   }
   counts(); depts(); rdash();
+  // If rejection log is the currently visible page, refresh it now that data is loaded
+  if (document.getElementById('page-rejection-log').classList.contains('active')) {
+    renderRejectionLog();
+  }
   document.getElementById('loading').style.display = 'none';
 }
 
@@ -1100,7 +1104,15 @@ function go(id) {
   if (id === 'prf-tracker') rprf();
   if (id === 'grn-tracker') rgrn();
   if (id === 'status') renderSlog();
-  if (id === 'rejection-log') renderRejectionLog();
+  if (id === 'rejection-log') {
+    if (!STATE.loaded) {
+      // Data not ready yet — show a spinner inside the page and let loadAll() call renderRejectionLog() when done
+      document.getElementById('rj-tbody').innerHTML = '<tr><td colspan="9" class="empty">Loading data...</td></tr>';
+      document.getElementById('rj-breakdown').innerHTML = '<div style="color:var(--text3);font-style:italic;font-size:12px">Loading...</div>';
+    } else {
+      renderRejectionLog();
+    }
+  }
 }
 
 // ═══════════════════════════════════════════════════════ KPI + DEPTS
