@@ -1108,9 +1108,9 @@ function go(id) {
   if (id === 'status') renderSlog();
   if (id === 'rejection-log') {
     if (!STATE.loaded) {
-      // Data not ready yet — show a spinner inside the page and let loadAll() call renderRejectionLog() when done
-      document.getElementById('rj-tbody').innerHTML = '<tr><td colspan="9" class="empty">Loading data...</td></tr>';
-      document.getElementById('rj-breakdown').innerHTML = '<div style="color:var(--text3);font-style:italic;font-size:12px">Loading...</div>';
+      const tb = document.getElementById('rj-tbody');
+      if (tb) tb.innerHTML = '<tr><td colspan="9" class="empty">Loading...</td></tr>';
+      // loadAll will call renderRejectionLog when done
     } else {
       renderRejectionLog();
     }
@@ -1674,149 +1674,169 @@ async function submitRejection() {
 
 // ═══════════════════════════════════════════════════════ REJECTION LOG
 function getRejectedPRFs() {
-  return STATE.prfs.filter(r => r.status === 'Rejected');
+  return (STATE.prfs || []).filter(r => (r.status || '').trim() === 'Rejected');
 }
 
 function extractCategory(comment) {
-  // Comments are prefixed [Category Label] by submitRejection()
   const match = (comment || '').match(/^\[([^\]]+)\]/);
   return match ? match[1] : 'Other';
 }
 
 function renderRejectionLog() {
+  // Safety: if STATE not loaded yet, show message and bail
+  if (!STATE.loaded) {
+    const tb = document.getElementById('rj-tbody');
+    if (tb) tb.innerHTML = '<tr><td colspan="9" class="empty">Loading data from Sheets — please wait...</td></tr>';
+    return;
+  }
+
   const rejected = getRejectedPRFs();
+  const now = new Date();
 
   // ── KPIs ──
-  const now = new Date();
+  const se = id => document.getElementById(id);
+
   const thisMonth = rejected.filter(r => {
-    const d = r.rejectedAt ? new Date(r.rejectedAt) : null;
-    return d && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    try { const d = new Date(r.rejectedAt||r.approvalUpdatedAt||''); return !isNaN(d) && d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear(); } catch(e){ return false; }
   });
 
-  document.getElementById('rj-k-total').textContent = rejected.length;
-  document.getElementById('rj-k-month').textContent = thisMonth.length;
+  if (se('rj-k-total')) se('rj-k-total').textContent = rejected.length;
+  if (se('rj-k-month')) se('rj-k-month').textContent = thisMonth.length;
 
-  // Top reason category
+  // Category counts — handle both new (rejectionCategory field) and old (status=Rejected, no category) rejections
   const catCounts = {};
   rejected.forEach(r => {
-    const cat = r.rejectionCategory
-      ? (REJECTION_CATEGORIES.find(c => c.id === r.rejectionCategory)?.label || r.rejectionCategory)
-      : extractCategory(r.rejectionComment);
+    let cat = 'Other';
+    if (r.rejectionCategory) {
+      const found = REJECTION_CATEGORIES.find(c => c.id === r.rejectionCategory);
+      cat = found ? found.label : r.rejectionCategory;
+    } else if (r.rejectionComment) {
+      cat = extractCategory(r.rejectionComment);
+    }
     catCounts[cat] = (catCounts[cat] || 0) + 1;
   });
-  const topCat = Object.entries(catCounts).sort((a,b) => b[1]-a[1])[0];
-  document.getElementById('rj-k-topreason').textContent = topCat ? topCat[0] : '—';
 
-  // Top dept
+  const sortedCats = Object.entries(catCounts).sort((a,b) => b[1]-a[1]);
+  if (se('rj-k-topreason')) se('rj-k-topreason').textContent = sortedCats.length ? sortedCats[0][0] : '—';
+
   const deptCounts = {};
-  rejected.forEach(r => { deptCounts[r.dept||'Unknown'] = (deptCounts[r.dept||'Unknown'] || 0) + 1; });
-  const topDept = Object.entries(deptCounts).sort((a,b) => b[1]-a[1])[0];
-  document.getElementById('rj-k-topdept').textContent = topDept ? topDept[0] : '—';
-
-  // Resubmission rate: how many rejected PRF refs also appear as newer Pending/Approved PRFs
-  // Simple proxy: check if same dept+requester has a later submission
-  document.getElementById('rj-k-resub').textContent = '—';
+  rejected.forEach(r => { const d = r.dept||'Unknown'; deptCounts[d]=(deptCounts[d]||0)+1; });
+  const sortedDepts = Object.entries(deptCounts).sort((a,b)=>b[1]-a[1]);
+  if (se('rj-k-topdept')) se('rj-k-topdept').textContent = sortedDepts.length ? sortedDepts[0][0] : '—';
+  if (se('rj-k-resub'))   se('rj-k-resub').textContent   = '—';
 
   // ── Breakdown bar chart ──
-  const breakdown = document.getElementById('rj-breakdown');
+  const breakdown = se('rj-breakdown');
   const total = rejected.length;
-  if (!total) {
-    breakdown.innerHTML = '<div style="color:var(--text3);font-style:italic;font-size:12px">No rejections recorded yet.</div>';
-  } else {
-    document.getElementById('rj-breakdown-sub').textContent = total + ' total rejection' + (total !== 1 ? 's' : '');
-    const sorted = Object.entries(catCounts).sort((a,b) => b[1]-a[1]);
-    breakdown.innerHTML = sorted.map(([cat, count]) => {
-      const pct = Math.round((count / total) * 100);
-      return `<div style="display:flex;align-items:center;gap:12px">
-        <div style="width:190px;font-size:12px;color:var(--text);font-weight:500;flex-shrink:0">${cat}</div>
-        <div style="flex:1;background:var(--surface2);border-radius:4px;height:10px;overflow:hidden;border:0.5px solid var(--border)">
-          <div style="width:${pct}%;height:100%;background:#a32d2d;border-radius:4px;transition:width .3s"></div>
-        </div>
-        <div style="width:50px;font-size:12px;font-weight:600;color:#a32d2d;text-align:right">${count} <span style="font-size:10px;color:var(--text3);font-weight:400">(${pct}%)</span></div>
-      </div>`;
-    }).join('');
+  if (breakdown) {
+    if (!total) {
+      breakdown.innerHTML = '<div style="color:var(--text3);font-style:italic;font-size:12px">No rejections recorded yet.</div>';
+    } else {
+      if (se('rj-breakdown-sub')) se('rj-breakdown-sub').textContent = total + ' total rejection' + (total!==1?'s':'');
+      breakdown.innerHTML = sortedCats.map(([cat, count]) => {
+        const pct = Math.round((count/total)*100);
+        return `<div style="display:flex;align-items:center;gap:12px">
+          <div style="width:190px;font-size:12px;color:var(--text);font-weight:500;flex-shrink:0">${cat}</div>
+          <div style="flex:1;background:var(--surface2);border-radius:4px;height:10px;overflow:hidden;border:0.5px solid var(--border)">
+            <div style="width:${pct}%;height:100%;background:#a32d2d;border-radius:4px"></div>
+          </div>
+          <div style="width:60px;font-size:12px;font-weight:600;color:#a32d2d;text-align:right">${count} <span style="font-size:10px;color:var(--text3);font-weight:400">(${pct}%)</span></div>
+        </div>`;
+      }).join('');
+    }
   }
 
   // ── Populate filter dropdowns ──
-  const cats    = [...new Set(rejected.map(r => r.rejectionCategory
-    ? (REJECTION_CATEGORIES.find(c => c.id === r.rejectionCategory)?.label || r.rejectionCategory)
-    : extractCategory(r.rejectionComment)))].sort();
-  const depts   = [...new Set(rejected.map(r => r.dept||'').filter(Boolean))].sort();
-  const byNames = [...new Set(rejected.map(r => r.rejectedBy||'').filter(Boolean))].sort();
+  const allCatLabels = [...new Set(rejected.map(r => {
+    if (r.rejectionCategory) { const f=REJECTION_CATEGORIES.find(c=>c.id===r.rejectionCategory); return f?f.label:r.rejectionCategory; }
+    return extractCategory(r.rejectionComment);
+  }))].sort();
+  const allDepts   = [...new Set(rejected.map(r=>r.dept||'').filter(Boolean))].sort();
+  const allByNames = [...new Set(rejected.map(r=>r.rejectedBy||'').filter(Boolean))].sort();
 
-  ['rj-f-cat','rj-f-dept','rj-f-by'].forEach(id => {
-    const el = document.getElementById(id); if (!el) return;
-    const v = el.value;
-    el.innerHTML = el.id === 'rj-f-cat'  ? '<option value="">All Categories</option>'  :
-                   el.id === 'rj-f-dept' ? '<option value="">All Departments</option>' :
-                                           '<option value="">Anyone</option>';
-    (el.id === 'rj-f-cat' ? cats : el.id === 'rj-f-dept' ? depts : byNames).forEach(x => {
-      const o = document.createElement('option'); o.value = x; o.textContent = x; el.appendChild(o);
-    });
-    el.value = v;
-  });
+  const buildSelect = (id, opts, placeholder) => {
+    const el = se(id); if (!el) return;
+    const cur = el.value;
+    el.innerHTML = `<option value="">${placeholder}</option>`;
+    opts.forEach(x => { const o=document.createElement('option'); o.value=x; o.textContent=x; el.appendChild(o); });
+    if (opts.includes(cur)) el.value = cur;
+  };
+  buildSelect('rj-f-cat',  allCatLabels, 'All Categories');
+  buildSelect('rj-f-dept', allDepts,     'All Departments');
+  buildSelect('rj-f-by',   allByNames,   'Anyone');
 
   rrejlog();
 }
 
 function rrejlog() {
-  const catF  = document.getElementById('rj-f-cat')?.value  || '';
-  const deptF = document.getElementById('rj-f-dept')?.value || '';
-  const byF   = document.getElementById('rj-f-by')?.value   || '';
-  const q     = (document.getElementById('rj-f-q')?.value   || '').toLowerCase();
+  const catF  = (document.getElementById('rj-f-cat')?.value  || '').trim();
+  const deptF = (document.getElementById('rj-f-dept')?.value || '').trim();
+  const byF   = (document.getElementById('rj-f-by')?.value   || '').trim();
+  const q     = (document.getElementById('rj-f-q')?.value    || '').toLowerCase().trim();
 
   let rows = getRejectedPRFs();
 
-  if (catF)  rows = rows.filter(r => {
-    const cat = r.rejectionCategory
-      ? (REJECTION_CATEGORIES.find(c => c.id === r.rejectionCategory)?.label || r.rejectionCategory)
-      : extractCategory(r.rejectionComment);
+  if (catF) rows = rows.filter(r => {
+    let cat = 'Other';
+    if (r.rejectionCategory) { const f=REJECTION_CATEGORIES.find(c=>c.id===r.rejectionCategory); cat=f?f.label:r.rejectionCategory; }
+    else cat = extractCategory(r.rejectionComment);
     return cat === catF;
   });
-  if (deptF) rows = rows.filter(r => r.dept === deptF);
-  if (byF)   rows = rows.filter(r => r.rejectedBy === byF);
+  if (deptF) rows = rows.filter(r => (r.dept||'') === deptF);
+  if (byF)   rows = rows.filter(r => (r.rejectedBy||'') === byF);
   if (q)     rows = rows.filter(r =>
-    (r.ref             || '').toLowerCase().includes(q) ||
-    (r.reqName         || '').toLowerCase().includes(q) ||
-    (r.rejectionComment|| '').toLowerCase().includes(q) ||
-    (r.dept            || '').toLowerCase().includes(q)
+    (r.ref||'').toLowerCase().includes(q) ||
+    (r.reqName||'').toLowerCase().includes(q) ||
+    (r.rejectionComment||'').toLowerCase().includes(q) ||
+    (r.dept||'').toLowerCase().includes(q)
   );
 
-  // Sort newest first
-  rows.sort((a,b) => new Date(b.rejectedAt||0) - new Date(a.rejectedAt||0));
+  rows.sort((a,b) => {
+    const da = new Date(a.rejectedAt||a.approvalUpdatedAt||0);
+    const db = new Date(b.rejectedAt||b.approvalUpdatedAt||0);
+    return db - da;
+  });
 
-  document.getElementById('rj-tcnt').textContent = rows.length + ' record' + (rows.length !== 1 ? 's' : '');
+  const cntEl = document.getElementById('rj-tcnt');
+  if (cntEl) cntEl.textContent = rows.length + ' record' + (rows.length!==1?'s':'');
+
   const tb = document.getElementById('rj-tbody');
+  if (!tb) return;
 
   if (!rows.length) {
     tb.innerHTML = '<tr><td colspan="9" class="empty">No rejections match current filters.</td></tr>';
     return;
   }
 
-  tb.innerHTML = rows.map(r => {
-    const cat = r.rejectionCategory
-      ? (REJECTION_CATEGORIES.find(c => c.id === r.rejectionCategory)?.label || r.rejectionCategory)
-      : extractCategory(r.rejectionComment);
-    // Strip the [Category] prefix from the displayed comment
-    const commentDisplay = (r.rejectionComment || '').replace(/^\[[^\]]+\]\s*/, '');
-    const commentShort   = commentDisplay.slice(0, 80) + (commentDisplay.length > 80 ? '…' : '');
+  tb.innerHTML = rows.map((r,i) => {
+    let cat = 'Other';
+    if (r.rejectionCategory) { const f=REJECTION_CATEGORIES.find(c=>c.id===r.rejectionCategory); cat=f?f.label:r.rejectionCategory; }
+    else cat = extractCategory(r.rejectionComment);
+
+    // Strip [Category] prefix from displayed comment
+    const rawComment     = r.rejectionComment || r.approvalNotes || '—';
+    const commentClean   = rawComment.replace(/^\[[^\]]+\]\s*/,'');
+    const commentShort   = commentClean.length > 80 ? commentClean.slice(0,80)+'…' : commentClean;
+    const rejectedAt     = r.rejectedAt || r.approvalUpdatedAt || '—';
+    const rejectedBy     = r.rejectedBy || r.gmApprovedBy || r.financeApprovedBy || '—';
     const enc = btoa('PRF|' + r.ref);
-    return `<tr>
-      <td><span style="cursor:pointer;font-weight:600;text-decoration:underline;color:var(--info-text)" onclick="viewRecord('${enc}')">${r.ref}</span></td>
-      <td>${r.date || '—'}</td>
-      <td>${r.dept || '—'}</td>
-      <td>${r.reqName || '—'}</td>
-      <td><span style="font-size:10px;padding:2px 8px;border-radius:9px;background:#fcebeb;color:#a32d2d;font-weight:700;white-space:nowrap">${cat}</span></td>
-      <td style="font-size:11px;color:var(--text2);max-width:200px" title="${escHtml(commentDisplay)}">${escHtml(commentShort)||'—'}</td>
-      <td style="font-size:11px">${r.rejectedBy || '—'}</td>
-      <td style="font-size:11px;color:var(--text3)">${r.rejectedAt || '—'}</td>
+
+    return `<tr style="${i%2===1?'background:var(--surface2)':''}">
+      <td><span style="cursor:pointer;font-weight:600;text-decoration:underline;color:var(--info-text)" onclick="viewRecord('${enc}')">${r.ref||'—'}</span></td>
+      <td>${r.date||'—'}</td>
+      <td>${r.dept||'—'}</td>
+      <td>${r.reqName||'—'}</td>
+      <td><span style="font-size:10px;padding:2px 9px;border-radius:9px;background:#fcebeb;color:#a32d2d;font-weight:700;white-space:nowrap">${cat}</span></td>
+      <td style="font-size:11px;color:var(--text2);max-width:200px" title="${escHtml(commentClean)}">${escHtml(commentShort)||'—'}</td>
+      <td style="font-size:11px">${escHtml(rejectedBy)}</td>
+      <td style="font-size:11px;color:var(--text3)">${rejectedAt}</td>
       <td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button></td>
     </tr>`;
   }).join('');
 }
 
 function clrRejLog() {
-  ['rj-f-cat','rj-f-dept','rj-f-by'].forEach(id => { const e = document.getElementById(id); if(e) e.value=''; });
+  ['rj-f-cat','rj-f-dept','rj-f-by'].forEach(id => { const e=document.getElementById(id); if(e) e.value=''; });
   const q = document.getElementById('rj-f-q'); if(q) q.value='';
   rrejlog();
 }
