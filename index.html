@@ -309,6 +309,7 @@ tr:hover td{background:var(--gold-bg)}
     <button class="nav-tab" onclick="go('prf-tracker')">PRF Tracker <span class="ntag ntag-p" id="prf-cnt">0</span></button>
     <button class="nav-tab" onclick="go('grn-tracker')">GRN Tracker <span class="ntag ntag-g" id="grn-cnt">0</span></button>
     <button class="nav-tab" onclick="go('status')">Update Status</button>
+    <button class="nav-tab" onclick="go('rejection-log')" id="nav-rejection-log">Rejection Log <span class="ntag" id="rj-cnt" style="background:#fcebeb;color:#a32d2d">0</span></button>
   </div>
 </div>
 
@@ -583,6 +584,10 @@ tr:hover td{background:var(--gold-bg)}
       <button class="submitbtn" style="margin-top:0;background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)" onclick="closeApprD()">Cancel</button>
       <button class="submitbtn" id="appr-save-btn" style="margin-top:0" onclick="saveApproval()">Save Approval</button>
     </div>
+    <div style="margin-top:14px;padding-top:14px;border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:11px;color:var(--text3)">Incorrectly submitted PRF? Reject it and record the reason.</span>
+      <button onclick="openRejectPanel(document.getElementById('appr-ref').value)" style="font-size:11px;padding:6px 14px;border-radius:6px;border:0.5px solid #f09595;background:#fcebeb;color:#a32d2d;cursor:pointer;font-family:inherit;font-weight:600;transition:all .13s" onmouseover="this.style.background='#f9d8d8'" onmouseout="this.style.background='#fcebeb'">&#10007; Reject this PRF</button>
+    </div>
   </div>
 </div>
 
@@ -614,7 +619,100 @@ tr:hover td{background:var(--gold-bg)}
   </div>
 </div>
 
-<div class="toast" id="toast2"></div>
+<!-- ═══════════════════════════════════════════════════ REJECT PRF MODAL -->
+<div class="moverlay" id="reject-overlay" onclick="closeRejectO(event)">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-hdr" style="border-bottom-color:#f09595">
+      <div>
+        <h3 id="reject-title" style="margin-bottom:2px;color:#a32d2d">Reject PRF</h3>
+        <div id="reject-subtitle" style="font-size:11px;color:var(--text2)"></div>
+      </div>
+      <button class="mclose" onclick="closeRejectD()">&#x2715;</button>
+    </div>
+
+    <!-- PRF summary strip -->
+    <div id="reject-summary" style="background:#fff8f8;border:0.5px solid #f09595;border-radius:8px;padding:11px 14px;margin-bottom:16px;font-size:12px;color:#6b2020;line-height:1.6"></div>
+
+    <input type="hidden" id="reject-ref">
+
+    <!-- Rejection reason category -->
+    <div style="margin-bottom:12px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:6px">Rejection Reason Category <span style="color:var(--danger-text)">*</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px" id="reject-category-grid">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- Free-text comment -->
+    <div style="margin-bottom:12px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:5px">Detailed Comment <span style="color:var(--danger-text)">*</span></div>
+      <textarea id="reject-comment" rows="4" style="width:100%;font-size:12px;padding:8px 10px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical;line-height:1.6" placeholder="Explain clearly what is wrong and what the requester must correct before resubmitting..."></textarea>
+      <div style="font-size:10px;color:var(--text3);margin-top:3px">This comment will appear on the PRF record and in the Rejection Log.</div>
+    </div>
+
+    <!-- Rejected by -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:5px">Rejected By <span style="color:var(--danger-text)">*</span></div>
+      <input type="text" id="reject-by" style="width:100%;font-size:12px;padding:7px 10px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit" placeholder="Your name — e.g. Moiz Azam, Procurement Manager">
+    </div>
+
+    <div id="reject-error" style="font-size:11px;color:#a32d2d;background:#fcebeb;border:0.5px solid #f09595;border-radius:6px;padding:7px 10px;margin-bottom:12px;display:none"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="submitbtn" style="margin-top:0;background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)" onclick="closeRejectD()">Cancel</button>
+      <button class="submitbtn" id="reject-save-btn" style="margin-top:0;background:#a32d2d" onclick="submitRejection()">Confirm Rejection</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ REJECTION LOG PAGE -->
+<div class="page" id="page-rejection-log" style="display:none">
+  <div class="pg-hdr">
+    <h2>Rejection Log — PRF Rejection Tracking</h2>
+  </div>
+
+  <!-- KPI row -->
+  <div class="kpi-row" style="grid-template-columns:repeat(5,1fr)">
+    <div class="kpi"><div class="kpi-lbl">Total Rejections</div><div class="kpi-val" id="rj-k-total" style="color:#a32d2d">—</div><div class="kpi-sub">All time</div></div>
+    <div class="kpi"><div class="kpi-lbl">This Month</div><div class="kpi-val" id="rj-k-month" style="color:#a32d2d">—</div><div class="kpi-sub">Current calendar month</div></div>
+    <div class="kpi"><div class="kpi-lbl">Top Reason</div><div class="kpi-val" id="rj-k-topreason" style="font-size:13px;line-height:1.3;padding-top:2px">—</div><div class="kpi-sub">Most common category</div></div>
+    <div class="kpi"><div class="kpi-lbl">Top Department</div><div class="kpi-val" id="rj-k-topdept" style="font-size:13px;line-height:1.3;padding-top:2px">—</div><div class="kpi-sub">Most rejections</div></div>
+    <div class="kpi"><div class="kpi-lbl">Resubmission Rate</div><div class="kpi-val" id="rj-k-resub">—</div><div class="kpi-sub">Rejected PRFs later resubmitted</div></div>
+  </div>
+
+  <!-- Category breakdown bar chart -->
+  <div class="tcard" style="margin-bottom:14px">
+    <div class="tcard-hdr"><h3>Rejection Reasons Breakdown</h3><span class="sub" id="rj-breakdown-sub">All time</span></div>
+    <div id="rj-breakdown" style="padding:16px 20px;display:flex;flex-direction:column;gap:10px">
+      <div style="color:var(--text3);font-style:italic;font-size:12px">No rejections recorded yet.</div>
+    </div>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="fbar">
+    <label>Category</label>
+    <select id="rj-f-cat" onchange="rrejlog()"><option value="">All Categories</option></select>
+    <label>Department</label>
+    <select id="rj-f-dept" onchange="rrejlog()"><option value="">All Departments</option></select>
+    <label>Rejected By</label>
+    <select id="rj-f-by" onchange="rrejlog()"><option value="">Anyone</option></select>
+    <input type="text" id="rj-f-q" placeholder="Search PRF ref, requester, comment..." oninput="rrejlog()" style="min-width:220px">
+    <button class="fclear" onclick="clrRejLog()">Clear</button>
+  </div>
+
+  <!-- Rejection table -->
+  <div class="tcard">
+    <div class="tcard-hdr"><h3>All Rejected PRFs</h3><span class="sub" id="rj-tcnt">0 records</span></div>
+    <div style="overflow-x:auto">
+      <table><thead><tr>
+        <th>PRF Ref</th><th>Date</th><th>Department</th><th>Requester</th>
+        <th>Reason Category</th><th>Rejection Comment</th><th>Rejected By</th><th>Rejected At</th><th></th>
+      </tr></thead>
+      <tbody id="rj-tbody"><tr><td colspan="9" class="empty">No rejections recorded.</td></tr></tbody>
+    </table>
+    </div>
+  </div>
+</div>
 
 <script>
 // ═══════════════════════════════════════════════════════ CONFIGURATION
@@ -994,6 +1092,7 @@ function go(id) {
   const order = ['sub-prf','sub-grn','dashboard','prf-tracker','grn-tracker','status'];
   const idx = order.indexOf(id);
   if (idx >= 0) document.querySelectorAll('.nav-tab')[idx].classList.add('active');
+  if (id === 'rejection-log') document.getElementById('nav-rejection-log').classList.add('active');
   counts(); depts();
   if (id === 'dashboard') { document.getElementById('dash-title').textContent = (ACTIVE_ENTITY||'') + ' — All Submissions'; rdash(); }
   if (id === 'sub-prf' && !document.getElementById('prf-ibody').hasChildNodes()) addPRFRow();
@@ -1001,6 +1100,7 @@ function go(id) {
   if (id === 'prf-tracker') rprf();
   if (id === 'grn-tracker') rgrn();
   if (id === 'status') renderSlog();
+  if (id === 'rejection-log') renderRejectionLog();
 }
 
 // ═══════════════════════════════════════════════════════ KPI + DEPTS
@@ -1014,6 +1114,10 @@ function counts() {
   if (se('k-appr'))  se('k-appr').textContent  = all.filter(r => r.status==='Approved').length;
   const gv2 = STATE.grns.reduce((s,r)=>s+(r.total||0),0);
   if (se('k-val'))   se('k-val').textContent   = 'PKR ' + gv2.toLocaleString();
+  // Rejection log badge
+  const rejCount = STATE.prfs.filter(r => r.status === 'Rejected').length;
+  if (se('rj-cnt'))  se('rj-cnt').textContent  = rejCount;
+  if (se('rj-cnt'))  se('rj-cnt').style.display = rejCount > 0 ? '' : 'none';
 }
 function depts() {
   const ds = [...new Set([...STATE.prfs,...STATE.grns].map(r=>r.dept))].filter(Boolean).sort();
@@ -1427,6 +1531,282 @@ async function saveMove(){
   btn.disabled=false;btn.textContent='Move Record';
 }
 
+// ═══════════════════════════════════════════════════════ REJECTION CATEGORIES
+const REJECTION_CATEGORIES = [
+  { id: 'incomplete',    label: 'Incomplete Information',   desc: 'Missing fields, quantities, or descriptions' },
+  { id: 'wrong_entity',  label: 'Wrong Entity / Department',desc: 'Submitted under incorrect entity or dept' },
+  { id: 'no_hod',        label: 'Missing HOD Approval',     desc: 'H.O.D signature or authorisation absent' },
+  { id: 'no_justif',     label: 'Insufficient Justification',desc: 'Reason for purchase too vague or unclear' },
+  { id: 'duplicate',     label: 'Duplicate Submission',     desc: 'Same request already submitted or in progress' },
+  { id: 'budget',        label: 'Budget / Cost Concern',    desc: 'Items exceed budget or lack cost justification' },
+  { id: 'policy',        label: 'Policy Non-Compliance',    desc: 'Does not follow procurement policy or process' },
+  { id: 'other',         label: 'Other',                    desc: 'See detailed comment below' },
+];
+
+let REJECT_SELECTED_CATEGORY = null;
+
+// ═══════════════════════════════════════════════════════ REJECT MODAL
+function openRejectPanel(ref) {
+  if (!ref) return;
+  const r = STATE.prfs.find(x => x.ref === ref);
+  if (!r) { showToast('PRF not found: ' + ref, true); return; }
+
+  REJECT_SELECTED_CATEGORY = null;
+  document.getElementById('reject-ref').value       = ref;
+  document.getElementById('reject-title').textContent = 'Reject PRF — ' + ref;
+  document.getElementById('reject-subtitle').textContent = r.dept + '  |  ' + r.reqName + '  |  ' + (r.date || '');
+  document.getElementById('reject-comment').value   = '';
+  document.getElementById('reject-by').value        = '';
+  document.getElementById('reject-error').style.display = 'none';
+
+  // PRF summary strip
+  document.getElementById('reject-summary').innerHTML =
+    '<strong>' + ref + '</strong> &nbsp;&middot;&nbsp; ' + (r.dept || '—') +
+    ' &nbsp;&middot;&nbsp; Requested by: <strong>' + (r.reqName || '—') + '</strong>' +
+    ' &nbsp;&middot;&nbsp; ' + (r.items || []).length + ' line item' + ((r.items||[]).length !== 1 ? 's' : '') +
+    (r.reason ? '<br><span style="color:#8b3030;font-style:italic">Reason given: "' + r.reason.slice(0, 120) + (r.reason.length > 120 ? '…' : '') + '"</span>' : '');
+
+  // Render category buttons
+  const grid = document.getElementById('reject-category-grid');
+  grid.innerHTML = REJECTION_CATEGORIES.map(cat => `
+    <button id="rjcat-${cat.id}" onclick="selectRejectCat('${cat.id}')"
+      style="text-align:left;padding:9px 12px;border-radius:7px;border:0.5px solid var(--border2);background:var(--surface2);cursor:pointer;font-family:inherit;transition:all .13s">
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px">${cat.label}</div>
+      <div style="font-size:10px;color:var(--text3);line-height:1.4">${cat.desc}</div>
+    </button>`).join('');
+
+  // Close approval panel first, then open reject panel
+  closeApprD();
+  document.getElementById('reject-overlay').classList.add('open');
+}
+
+function selectRejectCat(id) {
+  REJECT_SELECTED_CATEGORY = id;
+  REJECTION_CATEGORIES.forEach(cat => {
+    const btn = document.getElementById('rjcat-' + cat.id);
+    if (!btn) return;
+    if (cat.id === id) {
+      btn.style.borderColor  = '#e05c5c';
+      btn.style.background   = '#fcebeb';
+    } else {
+      btn.style.borderColor  = 'var(--border2)';
+      btn.style.background   = 'var(--surface2)';
+    }
+  });
+  document.getElementById('reject-error').style.display = 'none';
+}
+
+function closeRejectO(e) { if (e.target === document.getElementById('reject-overlay')) closeRejectD(); }
+function closeRejectD()  { document.getElementById('reject-overlay').classList.remove('open'); REJECT_SELECTED_CATEGORY = null; }
+
+async function submitRejection() {
+  const ref     = document.getElementById('reject-ref').value;
+  const comment = document.getElementById('reject-comment').value.trim();
+  const by      = document.getElementById('reject-by').value.trim();
+  const errEl   = document.getElementById('reject-error');
+
+  if (!REJECT_SELECTED_CATEGORY) {
+    errEl.textContent = 'Please select a rejection reason category.';
+    errEl.style.display = 'block'; return;
+  }
+  if (!comment) {
+    errEl.textContent = 'A detailed comment is required.';
+    errEl.style.display = 'block'; return;
+  }
+  if (!by) {
+    errEl.textContent = 'Please enter your name in the "Rejected By" field.';
+    errEl.style.display = 'block'; return;
+  }
+
+  const catLabel = REJECTION_CATEGORIES.find(c => c.id === REJECT_SELECTED_CATEGORY)?.label || REJECT_SELECTED_CATEGORY;
+  // Prefix the comment with the category so it's always visible in the sheet
+  const fullComment = '[' + catLabel + '] ' + comment;
+
+  const btn = document.getElementById('reject-save-btn');
+  btn.disabled = true; btn.textContent = 'Rejecting...';
+  errEl.style.display = 'none';
+
+  try {
+    const res = await gasPost({
+      action: 'rejectPRF',
+      ref,
+      rejectionComment: fullComment,
+      rejectedBy: by,
+      rejectionCategory: REJECT_SELECTED_CATEGORY
+    });
+    if (res.ok) {
+      // Update local state immediately
+      const rec = STATE.prfs.find(x => x.ref === ref);
+      if (rec) {
+        rec.status            = 'Rejected';
+        rec.rejectionComment  = fullComment;
+        rec.rejectionCategory = REJECT_SELECTED_CATEGORY;
+        rec.rejectedBy        = by;
+        rec.rejectedAt        = new Date().toLocaleString();
+      }
+      closeRejectD();
+      counts(); rprf(); rdash();
+      showToast(ref + ' rejected — reason logged');
+    } else {
+      errEl.textContent = 'Rejection failed: ' + (res.error || 'unknown');
+      errEl.style.display = 'block';
+    }
+  } catch(e) {
+    errEl.textContent = 'Network error — could not submit rejection.';
+    errEl.style.display = 'block';
+  }
+  btn.disabled = false; btn.textContent = 'Confirm Rejection';
+}
+
+// ═══════════════════════════════════════════════════════ REJECTION LOG
+function getRejectedPRFs() {
+  return STATE.prfs.filter(r => r.status === 'Rejected');
+}
+
+function extractCategory(comment) {
+  // Comments are prefixed [Category Label] by submitRejection()
+  const match = (comment || '').match(/^\[([^\]]+)\]/);
+  return match ? match[1] : 'Other';
+}
+
+function renderRejectionLog() {
+  const rejected = getRejectedPRFs();
+
+  // ── KPIs ──
+  const now = new Date();
+  const thisMonth = rejected.filter(r => {
+    const d = r.rejectedAt ? new Date(r.rejectedAt) : null;
+    return d && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+
+  document.getElementById('rj-k-total').textContent = rejected.length;
+  document.getElementById('rj-k-month').textContent = thisMonth.length;
+
+  // Top reason category
+  const catCounts = {};
+  rejected.forEach(r => {
+    const cat = r.rejectionCategory
+      ? (REJECTION_CATEGORIES.find(c => c.id === r.rejectionCategory)?.label || r.rejectionCategory)
+      : extractCategory(r.rejectionComment);
+    catCounts[cat] = (catCounts[cat] || 0) + 1;
+  });
+  const topCat = Object.entries(catCounts).sort((a,b) => b[1]-a[1])[0];
+  document.getElementById('rj-k-topreason').textContent = topCat ? topCat[0] : '—';
+
+  // Top dept
+  const deptCounts = {};
+  rejected.forEach(r => { deptCounts[r.dept||'Unknown'] = (deptCounts[r.dept||'Unknown'] || 0) + 1; });
+  const topDept = Object.entries(deptCounts).sort((a,b) => b[1]-a[1])[0];
+  document.getElementById('rj-k-topdept').textContent = topDept ? topDept[0] : '—';
+
+  // Resubmission rate: how many rejected PRF refs also appear as newer Pending/Approved PRFs
+  // Simple proxy: check if same dept+requester has a later submission
+  document.getElementById('rj-k-resub').textContent = '—';
+
+  // ── Breakdown bar chart ──
+  const breakdown = document.getElementById('rj-breakdown');
+  const total = rejected.length;
+  if (!total) {
+    breakdown.innerHTML = '<div style="color:var(--text3);font-style:italic;font-size:12px">No rejections recorded yet.</div>';
+  } else {
+    document.getElementById('rj-breakdown-sub').textContent = total + ' total rejection' + (total !== 1 ? 's' : '');
+    const sorted = Object.entries(catCounts).sort((a,b) => b[1]-a[1]);
+    breakdown.innerHTML = sorted.map(([cat, count]) => {
+      const pct = Math.round((count / total) * 100);
+      return `<div style="display:flex;align-items:center;gap:12px">
+        <div style="width:190px;font-size:12px;color:var(--text);font-weight:500;flex-shrink:0">${cat}</div>
+        <div style="flex:1;background:var(--surface2);border-radius:4px;height:10px;overflow:hidden;border:0.5px solid var(--border)">
+          <div style="width:${pct}%;height:100%;background:#a32d2d;border-radius:4px;transition:width .3s"></div>
+        </div>
+        <div style="width:50px;font-size:12px;font-weight:600;color:#a32d2d;text-align:right">${count} <span style="font-size:10px;color:var(--text3);font-weight:400">(${pct}%)</span></div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Populate filter dropdowns ──
+  const cats    = [...new Set(rejected.map(r => r.rejectionCategory
+    ? (REJECTION_CATEGORIES.find(c => c.id === r.rejectionCategory)?.label || r.rejectionCategory)
+    : extractCategory(r.rejectionComment)))].sort();
+  const depts   = [...new Set(rejected.map(r => r.dept||'').filter(Boolean))].sort();
+  const byNames = [...new Set(rejected.map(r => r.rejectedBy||'').filter(Boolean))].sort();
+
+  ['rj-f-cat','rj-f-dept','rj-f-by'].forEach(id => {
+    const el = document.getElementById(id); if (!el) return;
+    const v = el.value;
+    el.innerHTML = el.id === 'rj-f-cat'  ? '<option value="">All Categories</option>'  :
+                   el.id === 'rj-f-dept' ? '<option value="">All Departments</option>' :
+                                           '<option value="">Anyone</option>';
+    (el.id === 'rj-f-cat' ? cats : el.id === 'rj-f-dept' ? depts : byNames).forEach(x => {
+      const o = document.createElement('option'); o.value = x; o.textContent = x; el.appendChild(o);
+    });
+    el.value = v;
+  });
+
+  rrejlog();
+}
+
+function rrejlog() {
+  const catF  = document.getElementById('rj-f-cat')?.value  || '';
+  const deptF = document.getElementById('rj-f-dept')?.value || '';
+  const byF   = document.getElementById('rj-f-by')?.value   || '';
+  const q     = (document.getElementById('rj-f-q')?.value   || '').toLowerCase();
+
+  let rows = getRejectedPRFs();
+
+  if (catF)  rows = rows.filter(r => {
+    const cat = r.rejectionCategory
+      ? (REJECTION_CATEGORIES.find(c => c.id === r.rejectionCategory)?.label || r.rejectionCategory)
+      : extractCategory(r.rejectionComment);
+    return cat === catF;
+  });
+  if (deptF) rows = rows.filter(r => r.dept === deptF);
+  if (byF)   rows = rows.filter(r => r.rejectedBy === byF);
+  if (q)     rows = rows.filter(r =>
+    (r.ref             || '').toLowerCase().includes(q) ||
+    (r.reqName         || '').toLowerCase().includes(q) ||
+    (r.rejectionComment|| '').toLowerCase().includes(q) ||
+    (r.dept            || '').toLowerCase().includes(q)
+  );
+
+  // Sort newest first
+  rows.sort((a,b) => new Date(b.rejectedAt||0) - new Date(a.rejectedAt||0));
+
+  document.getElementById('rj-tcnt').textContent = rows.length + ' record' + (rows.length !== 1 ? 's' : '');
+  const tb = document.getElementById('rj-tbody');
+
+  if (!rows.length) {
+    tb.innerHTML = '<tr><td colspan="9" class="empty">No rejections match current filters.</td></tr>';
+    return;
+  }
+
+  tb.innerHTML = rows.map(r => {
+    const cat = r.rejectionCategory
+      ? (REJECTION_CATEGORIES.find(c => c.id === r.rejectionCategory)?.label || r.rejectionCategory)
+      : extractCategory(r.rejectionComment);
+    // Strip the [Category] prefix from the displayed comment
+    const commentDisplay = (r.rejectionComment || '').replace(/^\[[^\]]+\]\s*/, '');
+    const commentShort   = commentDisplay.slice(0, 80) + (commentDisplay.length > 80 ? '…' : '');
+    const enc = btoa('PRF|' + r.ref);
+    return `<tr>
+      <td><span style="cursor:pointer;font-weight:600;text-decoration:underline;color:var(--info-text)" onclick="viewRecord('${enc}')">${r.ref}</span></td>
+      <td>${r.date || '—'}</td>
+      <td>${r.dept || '—'}</td>
+      <td>${r.reqName || '—'}</td>
+      <td><span style="font-size:10px;padding:2px 8px;border-radius:9px;background:#fcebeb;color:#a32d2d;font-weight:700;white-space:nowrap">${cat}</span></td>
+      <td style="font-size:11px;color:var(--text2);max-width:200px" title="${escHtml(commentDisplay)}">${escHtml(commentShort)||'—'}</td>
+      <td style="font-size:11px">${r.rejectedBy || '—'}</td>
+      <td style="font-size:11px;color:var(--text3)">${r.rejectedAt || '—'}</td>
+      <td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function clrRejLog() {
+  ['rj-f-cat','rj-f-dept','rj-f-by'].forEach(id => { const e = document.getElementById(id); if(e) e.value=''; });
+  const q = document.getElementById('rj-f-q'); if(q) q.value='';
+  rrejlog();
+}
+
 // ═══════════════════════════════════════════════════════ UTILS
 function gv(id){const e=document.getElementById(id);return e?e.value.trim():'';}
 function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -1444,7 +1824,7 @@ window.moveRecord    = function(enc){const r=atob(enc).split('|');openMovePanel(
 
 // ═══════════════════════════════════════════════════════ INIT
 (function hoistModals(){
-  ['moverlay','appr-overlay','move-overlay','pin-overlay','admin-config-page'].forEach(function(id){
+  ['moverlay','appr-overlay','move-overlay','pin-overlay','admin-config-page','reject-overlay'].forEach(function(id){
     const el=document.getElementById(id);
     if(el)document.body.appendChild(el);
   });
