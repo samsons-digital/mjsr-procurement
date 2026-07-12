@@ -874,6 +874,19 @@ async function loadAll(){
   try{var rjPage=document.getElementById('page-rejection-log');if(rjPage&&rjPage.style.display==='block')renderRejectionLog();}catch(e){}
   try{var rcPage=document.getElementById('page-prf-recon');if(rcPage&&rcPage.style.display!=='none'&&rcPage.style.display!=='')renderPRFRecon();}catch(e){}
   document.getElementById('loading').style.display='none';
+  // Refresh whichever page is currently active
+  try{
+    var active=document.querySelector('.page.active');
+    if(active){
+      var aid=active.id.replace('page-','');
+      if(aid==='dashboard')rdash();
+      else if(aid==='prf-tracker')rprf();
+      else if(aid==='grn-tracker')rgrn();
+      else if(aid==='status')renderSlog();
+    }
+    var rcVisible=document.getElementById('page-prf-recon');
+    if(rcVisible&&rcVisible.style.display==='block')renderPRFRecon();
+  }catch(e){}
 }
 
 function go(id){
@@ -934,8 +947,8 @@ function counts(){
   if(se('rj-cnt'))se('rj-cnt').textContent=rejCount;
   if(se('rj-cnt'))se('rj-cnt').style.display=rejCount>0?'':'none';
   // Reconciliation badge
-  const grnMap={};(STATE.grns||[]).forEach(g=>{const k=(g.prfRef||'').trim().toUpperCase();if(!k)return;if(!grnMap[k])grnMap[k]=[];grnMap[k].push(g.ref);});
-  const openCount=(STATE.prfs||[]).filter(p=>{if((p.status||'').trim().toLowerCase()==='rejected')return false;return getBlocker(p,grnMap[(p.ref||'').toUpperCase()]||[])!==null;}).length;
+  const grnMap={};(STATE.grns||[]).forEach(g=>{const k=String(g.prfRef||'').trim().toUpperCase();if(!k)return;if(!grnMap[k])grnMap[k]=[];grnMap[k].push(g.ref);});
+  const openCount=(STATE.prfs||[]).filter(p=>{if((p.status||'').trim().toLowerCase()==='rejected')return false;return getBlocker(p,grnMap[String(p.ref||'').toUpperCase()]||[])!==null;}).length;
   if(se('recon-cnt'))se('recon-cnt').textContent=openCount;
   if(se('recon-cnt'))se('recon-cnt').style.display=openCount>0?'':'none';
 }
@@ -1048,7 +1061,7 @@ function renderPRFRecon() {
   // Build GRN lookup by PRF ref
   const grnMap = {};
   (STATE.grns || []).forEach(g => {
-    const key = (g.prfRef || '').trim().toUpperCase();
+    const key = String(g.prfRef || '').trim().toUpperCase();
     if (!key) return;
     if (!grnMap[key]) grnMap[key] = [];
     grnMap[key].push(g.ref);
