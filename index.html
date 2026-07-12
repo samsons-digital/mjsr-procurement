@@ -906,6 +906,16 @@ function go(id){
   if(id==='status')renderSlog();
 }
 
+function getBlocker(prf, linkedGRNs) {
+  const finOk = (prf.financeApproval || '').trim() === 'Approved';
+  const gmOk  = (prf.gmApproval || '').trim() === 'Approved' || (prf.gmApproval || '').trim() === 'Not Required';
+  const hasGRN = linkedGRNs.length > 0;
+  if (!finOk)  return 'finance';
+  if (!gmOk)   return 'gm';
+  if (!hasGRN) return 'nogrn';
+  return null;
+}
+
 function counts(){
   const all=[...STATE.prfs,...STATE.grns];const se=id=>document.getElementById(id);
   if(se('prf-cnt'))se('prf-cnt').textContent=STATE.prfs.length;
@@ -1029,16 +1039,6 @@ function renderSlog(){
 }
 
 // ═══════════════════════════════════════════════════════ PRF RECONCILIATION
-function getBlocker(prf, linkedGRNs) {
-  const finOk = (prf.financeApproval || '').trim() === 'Approved';
-  const gmOk  = (prf.gmApproval || '').trim() === 'Approved' || (prf.gmApproval || '').trim() === 'Not Required';
-  const hasGRN = linkedGRNs.length > 0;
-  if (!finOk)  return 'finance';
-  if (!gmOk)   return 'gm';
-  if (!hasGRN) return 'nogrn';
-  return null;
-}
-
 function renderPRFRecon() {
   // Build GRN lookup by PRF ref
   const grnMap = {};
