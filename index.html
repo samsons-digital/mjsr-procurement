@@ -872,7 +872,7 @@ async function loadAll(){
   try{depts();}catch(e){console.error('depts error:',e);}
   try{rdash();}catch(e){console.error('rdash error:',e);}
   try{var rjPage=document.getElementById('page-rejection-log');if(rjPage&&rjPage.style.display==='block')renderRejectionLog();}catch(e){}
-  try{var rcPage=document.getElementById('page-prf-recon');if(rcPage&&rcPage.style.display==='block')renderPRFRecon();}catch(e){}
+  try{var rcPage=document.getElementById('page-prf-recon');if(rcPage&&rcPage.style.display!=='none'&&rcPage.style.display!=='')renderPRFRecon();}catch(e){}
   document.getElementById('loading').style.display='none';
 }
 
@@ -891,9 +891,10 @@ function go(id){
 
   if(id==='prf-recon'){
     if(rcPage){rcPage.style.display='block';rcPage.style.position='relative';rcPage.style.zIndex='1';}
-    // Highlight the PRF Reconciliation nav tab (7th tab, index 6)
     const tabs=document.querySelectorAll('.nav-tab');if(tabs[6])tabs[6].classList.add('active');
-    counts();if(STATE.loaded)renderPRFRecon();else{var tb=document.getElementById('rc-tbody');if(tb)tb.innerHTML='<tr><td colspan="11" class="empty">Loading data from Sheets...</td></tr>';}
+    counts();
+    if(STATE.loaded){renderPRFRecon();}
+    else{var tb=document.getElementById('rc-tbody');if(tb)tb.innerHTML='<tr><td colspan="11" class="empty">Loading data — please wait a moment then click PRF Reconciliation again.</td></tr>';}
     return;
   }
 
