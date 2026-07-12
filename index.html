@@ -776,6 +776,8 @@ function selectEntity(name){
   STATE={prfs:[],grns:[],slog:[],loaded:false};
   go('dashboard');
   document.getElementById('loading').style.display='flex';
+  // Safety: force loading off after 20s regardless
+  setTimeout(function(){document.getElementById('loading').style.display='none';},20000);
   loadAll();
 }
 function returnToLanding(){
@@ -866,9 +868,11 @@ async function loadAll(){
       if(res.deptConfig){Object.entries(res.deptConfig).forEach(([ent,depts])=>{if(Array.isArray(depts)&&depts.length)DEPT_CONFIG[ent]=depts;});populateDeptDropdowns(ACTIVE_ENTITY);}
     }else showToast('Error loading data: '+(res.error||'unknown'),true);
   }catch(e){showToast('Could not connect to server. Check GAS_URL in config.',true);}
-  counts();depts();rdash();
-  var rjPage=document.getElementById('page-rejection-log');if(rjPage&&rjPage.style.display==='block')renderRejectionLog();
-  var rcPage=document.getElementById('page-prf-recon');if(rcPage&&rcPage.style.display==='block')renderPRFRecon();
+  try{counts();}catch(e){console.error('counts error:',e);}
+  try{depts();}catch(e){console.error('depts error:',e);}
+  try{rdash();}catch(e){console.error('rdash error:',e);}
+  try{var rjPage=document.getElementById('page-rejection-log');if(rjPage&&rjPage.style.display==='block')renderRejectionLog();}catch(e){}
+  try{var rcPage=document.getElementById('page-prf-recon');if(rcPage&&rcPage.style.display==='block')renderPRFRecon();}catch(e){}
   document.getElementById('loading').style.display='none';
 }
 
