@@ -349,8 +349,8 @@ tr:hover td{background:var(--gold-bg)}
     <div style="overflow-x:auto">
     <table><thead><tr>
       <th>PRF No.</th><th>Date</th><th>Department</th><th>Name of Requester</th>
-      <th>Items</th><th>Reason for Purchase</th><th>Finance Approval</th><th>GM Approval</th><th>Status</th><th></th>
-    </tr></thead><tbody id="prf-tbody"><tr><td colspan="10" class="empty">Loading...</td></tr></tbody></table>
+      <th>Items</th><th>Reason for Purchase</th><th>Finance Approval</th><th>GM Approval</th><th>Status</th><th>Days Open</th><th></th>
+    </tr></thead><tbody id="prf-tbody"><tr><td colspan="11" class="empty">Loading...</td></tr></tbody></table>
     </div>
   </div>
 </div>
@@ -989,11 +989,16 @@ function rprf(){
   if(st)rows=rows.filter(r=>r.status===st);if(fin)rows=rows.filter(r=>(r.financeApproval||'Pending')===fin);if(gm)rows=rows.filter(r=>(r.gmApproval||'Pending')===gm);if(dp)rows=rows.filter(r=>r.dept===dp);if(q)rows=rows.filter(r=>(r.ref||'').toLowerCase().includes(q)||(r.reqName||'').toLowerCase().includes(q));
   document.getElementById('prf-tcnt').textContent=rows.length+' record'+(rows.length!==1?'s':'');
   const tb=document.getElementById('prf-tbody');
-  if(!rows.length){tb.innerHTML='<tr><td colspan="10" class="empty">No PRFs match filters</td></tr>';return;}
+  if(!rows.length){tb.innerHTML='<tr><td colspan="11" class="empty">No PRFs match filters</td></tr>';return;}
   tb.innerHTML=rows.map(r=>{
     const reason=r.reason?r.reason.slice(0,50)+(r.reason.length>50?'…':''):'—';
     const enc=btoa('PRF|'+r.ref);const encRef=btoa(r.ref);
-    return`<tr><td><span class="ref-link" style="cursor:pointer;font-weight:600;text-decoration:underline" onclick="viewRecord('${enc}')">${r.ref}</span></td><td>${r.date||'—'}</td><td>${r.dept||'—'}</td><td>${r.reqName||'—'}</td><td>${(r.items||[]).length} item${(r.items||[]).length!==1?'s':''}</td><td style="max-width:130px;font-size:11px;color:var(--text2)">${reason}</td><td>${approvalBadge(r.financeApproval)}</td><td>${approvalBadge(r.gmApproval)}</td><td><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'—'}</span></td><td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button><button class="abtn" onclick="approveRecord('${encRef}')">Approve</button><button class="abtn" onclick="moveRecord('${enc}')">Move</button></td></tr>`;
+    const today=new Date();
+    const daysOpen=r.date?Math.floor((today-new Date(r.date))/86400000):'—';
+    const daysStyle=typeof daysOpen==='number'?(daysOpen>=14?'color:#a32d2d;font-weight:700':daysOpen>=7?'color:#854f0b;font-weight:600':''):'';
+    const isClosed=(r.status||'').toLowerCase()==='approved'||(r.status||'').toLowerCase()==='rejected';
+    const daysTd=isClosed?`<td style="font-size:11px;color:var(--text3)">Closed</td>`:`<td style="font-size:12px;${daysStyle}">${daysOpen}</td>`;
+    return`<tr><td><span class="ref-link" style="cursor:pointer;font-weight:600;text-decoration:underline" onclick="viewRecord('${enc}')">${r.ref}</span></td><td>${r.date||'—'}</td><td>${r.dept||'—'}</td><td>${r.reqName||'—'}</td><td>${(r.items||[]).length} item${(r.items||[]).length!==1?'s':''}</td><td style="max-width:130px;font-size:11px;color:var(--text2)">${reason}</td><td>${approvalBadge(r.financeApproval)}</td><td>${approvalBadge(r.gmApproval)}</td><td><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'—'}</span></td>${daysTd}<td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button><button class="abtn" onclick="approveRecord('${encRef}')">Approve</button><button class="abtn" onclick="moveRecord('${enc}')">Move</button></td></tr>`;
   }).join('');
 }
 function clrPRF(){['pf-s','pf-fin','pf-gm','pf-d'].forEach(id=>document.getElementById(id).value='');document.getElementById('pf-q').value='';rprf();}
