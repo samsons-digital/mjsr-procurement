@@ -4,11 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Samsons Procurement Hub</title>
+<style>.proc-lock{margin-left:auto;background:#B8922E;color:#fff;border:none;border-radius:8px;padding:6px 13px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap}.proc-footer{text-align:center;font-size:11px;color:var(--text3);padding:18px 0 24px}</style>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --gold:#b8922e;--gold-light:#d4aa4a;--gold-bg:rgba(184,146,46,0.08);
-  --nav-bg:#162844;--nav-text:#e8e6e0;
+  --nav-bg:#1B2C4D;--nav-text:#e8e6e0;
   --bg:#f5f3ee;--surface:#ffffff;--surface2:#f5f3ee;
   --border:#dedad2;--border2:#ccc8be;
   --text:#1a1908;--text2:#6b6860;--text3:#9b9890;
@@ -19,8 +20,8 @@
   --admin-color:#4a3f6b;
   --radius:8px;--radius-lg:12px;
 }
-body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px}
-#entity-landing{position:fixed;inset:0;background:#162844;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;overflow-y:auto}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px}
+#entity-landing{position:fixed;inset:0;background:#1B2C4D;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;overflow-y:auto}
 #entity-landing.hidden{display:none}
 .el-brand{text-align:center;margin-bottom:32px}
 .el-brand h1{font-size:34px;font-weight:700;color:var(--gold);letter-spacing:.02em;margin-bottom:6px}
@@ -262,7 +263,7 @@ tr:hover td{background:var(--gold-bg)}
   <div class="acfg-nav">
     <div>
       <div class="acfg-nav-title">&#9881; System Administration</div>
-      <div class="acfg-nav-sub">Samsons Group — Procurement Portal Configuration</div>
+      <div class="acfg-nav-sub">Samsons Group - Procurement Portal Configuration</div>
     </div>
     <button class="acfg-close" onclick="closeAdminConfig()">&#x2715; Close</button>
   </div>
@@ -291,6 +292,7 @@ tr:hover td{background:var(--gold-bg)}
     <button class="nav-tab" onclick="go('prf-recon')">PRF Reconciliation <span class="ntag" id="recon-cnt" style="background:#faeeda;color:#854f0b;display:none">0</span></button>
     <button class="nav-tab" onclick="go('rejection-log')" id="nav-rejection-log">Rejection Log <span class="ntag" id="rj-cnt" style="background:#fcebeb;color:#a32d2d">0</span></button>
   </div>
+  <button class="proc-lock" onclick="procLock()">Lock</button>
 </div>
 
 <div id="loading">
@@ -301,12 +303,12 @@ tr:hover td{background:var(--gold-bg)}
 
 <!-- ═══════════════════════════════════════════════════════════ DASHBOARD -->
 <div class="page" id="page-dashboard" style="display:none">
-  <div class="pg-hdr"><h2 id="dash-title">Dashboard — All Submissions</h2></div>
+  <div class="pg-hdr"><h2 id="dash-title">Dashboard - All Submissions</h2></div>
   <div class="kpi-row">
-    <div class="kpi"><div class="kpi-lbl">Total Submissions</div><div class="kpi-val" id="k-total">—</div><div class="kpi-sub">PRF + GRN combined</div></div>
-    <div class="kpi"><div class="kpi-lbl">Pending Review</div><div class="kpi-val" id="k-pend">—</div><div class="kpi-sub">Awaiting action</div></div>
-    <div class="kpi"><div class="kpi-lbl">Approved</div><div class="kpi-val" id="k-appr">—</div><div class="kpi-sub">Processed</div></div>
-    <div class="kpi"><div class="kpi-lbl">Total GRN Value</div><div class="kpi-val" id="k-val">—</div><div class="kpi-sub">PKR, all GRNs</div></div>
+    <div class="kpi"><div class="kpi-lbl">Total Submissions</div><div class="kpi-val" id="k-total">-</div><div class="kpi-sub">PRF + GRN combined</div></div>
+    <div class="kpi"><div class="kpi-lbl">Pending Review</div><div class="kpi-val" id="k-pend">-</div><div class="kpi-sub">Awaiting action</div></div>
+    <div class="kpi"><div class="kpi-lbl">Approved</div><div class="kpi-val" id="k-appr">-</div><div class="kpi-sub">Processed</div></div>
+    <div class="kpi"><div class="kpi-lbl">Total GRN Value</div><div class="kpi-val" id="k-val">-</div><div class="kpi-sub">PKR, all GRNs</div></div>
   </div>
   <div class="fbar">
     <label>Type</label>
@@ -331,7 +333,7 @@ tr:hover td{background:var(--gold-bg)}
 
 <!-- ════════════════════════════════════════════════════════ PRF TRACKER -->
 <div class="page" id="page-prf-tracker" style="display:none">
-  <div class="pg-hdr"><h2>PRF Tracker — Purchase Requisition Forms</h2></div>
+  <div class="pg-hdr"><h2>PRF Tracker - Purchase Requisition Forms</h2></div>
   <div class="fbar">
     <label>Status</label>
     <select id="pf-s" onchange="rprf()"><option value="">All</option><option>Pending</option><option>Approved</option><option>Rejected</option></select>
@@ -357,7 +359,7 @@ tr:hover td{background:var(--gold-bg)}
 
 <!-- ════════════════════════════════════════════════════════ GRN TRACKER -->
 <div class="page" id="page-grn-tracker" style="display:none">
-  <div class="pg-hdr"><h2>GRN Tracker — Goods / Material Received Notes</h2></div>
+  <div class="pg-hdr"><h2>GRN Tracker - Goods / Material Received Notes</h2></div>
   <div class="fbar">
     <label>Status</label>
     <select id="gf-s" onchange="rgrn()"><option value="">All</option><option>Pending</option><option>Approved</option><option>Rejected</option></select>
@@ -412,17 +414,17 @@ tr:hover td{background:var(--gold-bg)}
     <div class="sig-grid">
       <div class="sig-box">
         <div class="sig-role">Requested By <span style="color:var(--danger-text)">*</span></div>
-        <label>Name</label><input type="text" id="prf-s-req" placeholder="Requester name — required">
+        <label>Name</label><input type="text" id="prf-s-req" placeholder="Requester name - required">
         <label>Sign</label><input type="text" id="prf-s-req-sign" placeholder="(acknowledged on submission)">
       </div>
       <div class="sig-box">
         <div class="sig-role">Recommended &amp; Approved by H.O.D <span style="color:var(--danger-text)">*</span></div>
-        <label>Name</label><input type="text" id="prf-s-hod" placeholder="H.O.D name — required">
+        <label>Name</label><input type="text" id="prf-s-hod" placeholder="H.O.D name - required">
         <label>Sign</label><input type="text" id="prf-s-hod-sign" placeholder="">
       </div>
       <div class="sig-box">
         <div class="sig-role">Store Incharge / Keeper <span style="color:var(--danger-text)">*</span></div>
-        <label>Name</label><input type="text" id="prf-s-store" placeholder="Store keeper name — required">
+        <label>Name</label><input type="text" id="prf-s-store" placeholder="Store keeper name - required">
         <label>Sign</label><input type="text" id="prf-s-store-sign" placeholder="">
       </div>
     </div>
@@ -484,7 +486,7 @@ tr:hover td{background:var(--gold-bg)}
   <div class="sform">
     <div class="field"><label>Reference Number</label><input type="text" id="us-ref" placeholder="e.g. PRF-2026-00081 or GRN-2026-0047"></div>
     <div class="field"><label>New Status</label><select id="us-st"><option value="">Select...</option><option>Approved</option><option>Rejected</option><option>Pending</option></select></div>
-    <div class="field"><label>Notes (optional)</label><input type="text" id="us-notes" placeholder="e.g. Approved by GM — 12 Jul 2026"></div>
+    <div class="field"><label>Notes (optional)</label><input type="text" id="us-notes" placeholder="e.g. Approved by GM - 12 Jul 2026"></div>
     <button class="submitbtn" style="margin-top:0;align-self:flex-end" onclick="doStatus()">Update</button>
   </div>
   <div class="tcard">
@@ -498,13 +500,13 @@ tr:hover td{background:var(--gold-bg)}
 <!-- ═══════════════════════════════════════ PRF RECONCILIATION PAGE -->
 <div id="page-prf-recon" style="display:none;padding:20px;max-width:1160px;margin:0 auto">
   <div class="pg-hdr">
-    <h2 style="color:#162844;font-size:18px">PRF Reconciliation — Open Loop Tracker</h2>
+    <h2 style="color:#162844;font-size:18px">PRF Reconciliation - Open Loop Tracker</h2>
   </div>
   <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
-    <div class="kpi"><div class="kpi-lbl">Total Open PRFs</div><div class="kpi-val" id="rc-k-total" style="color:#854f0b">—</div><div class="kpi-sub">Finance / GM / GRN pending</div></div>
-    <div class="kpi"><div class="kpi-lbl">Awaiting Finance</div><div class="kpi-val" id="rc-k-fin" style="color:#a32d2d">—</div><div class="kpi-sub">Finance approval not given</div></div>
-    <div class="kpi"><div class="kpi-lbl">Awaiting GM</div><div class="kpi-val" id="rc-k-gm" style="color:#854f0b">—</div><div class="kpi-sub">GM approval pending</div></div>
-    <div class="kpi"><div class="kpi-lbl">No GRN Submitted</div><div class="kpi-val" id="rc-k-nogrn" style="color:#185fa5">—</div><div class="kpi-sub">Approved but unreconciled</div></div>
+    <div class="kpi"><div class="kpi-lbl">Total Open PRFs</div><div class="kpi-val" id="rc-k-total" style="color:#854f0b">-</div><div class="kpi-sub">Finance / GM / GRN pending</div></div>
+    <div class="kpi"><div class="kpi-lbl">Awaiting Finance</div><div class="kpi-val" id="rc-k-fin" style="color:#a32d2d">-</div><div class="kpi-sub">Finance approval not given</div></div>
+    <div class="kpi"><div class="kpi-lbl">Awaiting GM</div><div class="kpi-val" id="rc-k-gm" style="color:#854f0b">-</div><div class="kpi-sub">GM approval pending</div></div>
+    <div class="kpi"><div class="kpi-lbl">No GRN Submitted</div><div class="kpi-val" id="rc-k-nogrn" style="color:#185fa5">-</div><div class="kpi-sub">Approved but unreconciled</div></div>
   </div>
   <div class="fbar">
     <label>Blocker</label>
@@ -521,7 +523,7 @@ tr:hover td{background:var(--gold-bg)}
   </div>
   <div class="tcard">
     <div class="tcard-hdr">
-      <h3>Open PRFs — Pending Closure</h3>
+      <h3>Open PRFs - Pending Closure</h3>
       <span class="sub" id="rc-cnt">0 records</span>
     </div>
     <div style="overflow-x:auto">
@@ -537,14 +539,14 @@ tr:hover td{background:var(--gold-bg)}
 <!-- ════════════════════════════════════════════ REJECTION LOG PAGE -->
 <div id="page-rejection-log" style="display:none;padding:20px;max-width:1160px;margin:0 auto;background:#fff;min-height:400px">
   <div class="pg-hdr">
-    <h2 style="color:#a32d2d;font-size:22px">Rejection Log — PRF Rejection Tracking</h2>
+    <h2 style="color:#a32d2d;font-size:22px">Rejection Log - PRF Rejection Tracking</h2>
   </div>
   <div class="kpi-row" style="grid-template-columns:repeat(5,1fr)">
-    <div class="kpi"><div class="kpi-lbl">Total Rejections</div><div class="kpi-val" id="rj-k-total" style="color:#a32d2d">—</div><div class="kpi-sub">All time</div></div>
-    <div class="kpi"><div class="kpi-lbl">This Month</div><div class="kpi-val" id="rj-k-month" style="color:#a32d2d">—</div><div class="kpi-sub">Current calendar month</div></div>
-    <div class="kpi"><div class="kpi-lbl">Top Reason</div><div class="kpi-val" id="rj-k-topreason" style="font-size:13px;line-height:1.3;padding-top:2px">—</div><div class="kpi-sub">Most common category</div></div>
-    <div class="kpi"><div class="kpi-lbl">Top Department</div><div class="kpi-val" id="rj-k-topdept" style="font-size:13px;line-height:1.3;padding-top:2px">—</div><div class="kpi-sub">Most rejections</div></div>
-    <div class="kpi"><div class="kpi-lbl">Resubmission Rate</div><div class="kpi-val" id="rj-k-resub">—</div><div class="kpi-sub">Rejected PRFs later resubmitted</div></div>
+    <div class="kpi"><div class="kpi-lbl">Total Rejections</div><div class="kpi-val" id="rj-k-total" style="color:#a32d2d">-</div><div class="kpi-sub">All time</div></div>
+    <div class="kpi"><div class="kpi-lbl">This Month</div><div class="kpi-val" id="rj-k-month" style="color:#a32d2d">-</div><div class="kpi-sub">Current calendar month</div></div>
+    <div class="kpi"><div class="kpi-lbl">Top Reason</div><div class="kpi-val" id="rj-k-topreason" style="font-size:13px;line-height:1.3;padding-top:2px">-</div><div class="kpi-sub">Most common category</div></div>
+    <div class="kpi"><div class="kpi-lbl">Top Department</div><div class="kpi-val" id="rj-k-topdept" style="font-size:13px;line-height:1.3;padding-top:2px">-</div><div class="kpi-sub">Most rejections</div></div>
+    <div class="kpi"><div class="kpi-lbl">Resubmission Rate</div><div class="kpi-val" id="rj-k-resub">-</div><div class="kpi-sub">Rejected PRFs later resubmitted</div></div>
   </div>
   <div class="tcard" style="margin-bottom:14px">
     <div class="tcard-hdr"><h3>Rejection Reasons Breakdown</h3><span class="sub" id="rj-breakdown-sub">All time</span></div>
@@ -614,14 +616,14 @@ tr:hover td{background:var(--gold-bg)}
       <div>
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:5px">GM Approval</div>
         <select id="appr-gm" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit;font-weight:600">
-          <option value="Not Required">— Not Required</option><option value="Pending">&#9679; Pending</option><option value="Approved">&#10003; Approved</option><option value="Rejected">&#10007; Rejected</option>
+          <option value="Not Required">- Not Required</option><option value="Pending">&#9679; Pending</option><option value="Approved">&#10003; Approved</option><option value="Rejected">&#10007; Rejected</option>
         </select>
         <input type="text" id="appr-gm-by" style="width:100%;font-size:11px;padding:5px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;margin-top:6px" placeholder="GM approver name...">
       </div>
     </div>
     <div style="margin-bottom:16px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:5px">Notes (optional)</div>
-      <textarea id="appr-notes" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical;min-height:54px" placeholder="e.g. Approved by Finance Manager — 12 Jul 2026"></textarea>
+      <textarea id="appr-notes" style="width:100%;font-size:12px;padding:7px 9px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit;resize:vertical;min-height:54px" placeholder="e.g. Approved by Finance Manager - 12 Jul 2026"></textarea>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <button class="submitbtn" style="margin-top:0;background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)" onclick="closeApprD()">Cancel</button>
@@ -684,7 +686,7 @@ tr:hover td{background:var(--gold-bg)}
     </div>
     <div style="margin-bottom:16px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:5px">Rejected By <span style="color:var(--danger-text)">*</span></div>
-      <input type="text" id="reject-by" style="width:100%;font-size:12px;padding:7px 10px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit" placeholder="Your name — e.g. Moiz Azam, Procurement Manager">
+      <input type="text" id="reject-by" style="width:100%;font-size:12px;padding:7px 10px;border:0.5px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text);font-family:inherit" placeholder="Your name - e.g. Moiz Azam, Procurement Manager">
     </div>
     <div id="reject-error" style="font-size:11px;color:#a32d2d;background:#fcebeb;border:0.5px solid #f09595;border-radius:6px;padding:7px 10px;margin-bottom:12px;display:none"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
@@ -698,7 +700,6 @@ tr:hover td{background:var(--gold-bg)}
 
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycby_M0NW85JpZBvJXCAoIM0p70V4YmD_ohwO1maXYjWme6_49rRKBp5JbSSPFiR0cQno/exec';
-const ADMIN_PIN = '9999';
 let STATE = { prfs: [], grns: [], slog: [], loaded: false };
 let DEPT_CONFIG = {};
 let curRec = null;
@@ -706,7 +707,7 @@ let prfRowN = 0, grnRowN = 0;
 const ENTITIES = {
   'MJSR':         { color: '#b8922e', icon: '🏔️', desc: 'Malam Jabba Ski Resort' },
   'Healthcare':   { color: '#2d8a6e', icon: '🏥', desc: 'Samsons Healthcare' },
-  'ALIF':         { color: '#185fa5', icon: '🎓', desc: 'ALIF — Education' },
+  'ALIF':         { color: '#185fa5', icon: '🎓', desc: 'ALIF - Education' },
   'Construction': { color: '#7b4fa6', icon: '🏗',  desc: 'Samsons Construction' },
   'CORA':         { color: '#c0392b', icon: '⚖️',  desc: 'Corporate Affairs' }
 };
@@ -717,13 +718,9 @@ const DEFAULT_DEPTS = {
   'Construction': ['Civil','Electrical','Mechanical','Administration','Finance','HR','Procurement','HSE','Management'],
   'CORA':         ['Legal','Corporate Affairs','Administration','Finance','HR','Communications','Management']
 };
-const ENTITY_PINS = {
-  'MJSR':         '1234',
-  'Healthcare':   '1999',
-  'ALIF':         '2000',
-  'Construction': '2100',
-  'CORA':         '2200'
-};
+// v2.4: entity and admin codes are checked by the backend, not in this page
+let PROC_TOKEN = '';
+let _pinBusy = false;
 let ACTIVE_ENTITY = null;
 let PIN_TARGET    = null;
 let PIN_MODE      = 'entity';
@@ -749,16 +746,22 @@ function promptAdminPin() {
   document.getElementById('pin-overlay').classList.add('open');
 }
 function updatePinDots(){for(let i=0;i<4;i++)document.getElementById('pd'+i).classList.toggle('filled',i<PIN_ENTRY.length);}
-function pinKey(digit){if(PIN_ENTRY.length>=4)return;PIN_ENTRY+=digit;updatePinDots();document.getElementById('pin-error').textContent='';if(PIN_ENTRY.length===4)setTimeout(validatePin,120);}
+function pinKey(digit){if(_pinBusy||PIN_ENTRY.length>=4)return;PIN_ENTRY+=digit;updatePinDots();document.getElementById('pin-error').textContent='';if(PIN_ENTRY.length===4)setTimeout(validatePin,120);}
 function pinDel(){PIN_ENTRY=PIN_ENTRY.slice(0,-1);updatePinDots();document.getElementById('pin-error').textContent='';}
 function pinClear(){PIN_ENTRY='';updatePinDots();document.getElementById('pin-error').textContent='';}
 function pinCancel(){document.getElementById('pin-overlay').classList.remove('open');PIN_ENTRY='';PIN_TARGET=null;}
-function validatePin(){
-  const correct=PIN_MODE==='admin'?ADMIN_PIN:ENTITY_PINS[PIN_TARGET];
-  if(PIN_ENTRY===correct){
-    document.getElementById('pin-overlay').classList.remove('open');PIN_ENTRY='';
+async function validatePin(){
+  _pinBusy=true;
+  const err=document.getElementById('pin-error');
+  err.style.color='rgba(255,255,255,0.6)';err.textContent='Checking...';
+  let res=null;
+  try{res=await gasRaw({action:'unlock',mode:PIN_MODE,entity:PIN_TARGET,pin:PIN_ENTRY,token:PROC_TOKEN});}catch(e){res=null;}
+  _pinBusy=false;err.style.color='';
+  if(res&&res.ok&&res.token){
+    PROC_TOKEN=res.token;
+    document.getElementById('pin-overlay').classList.remove('open');PIN_ENTRY='';err.textContent='';
     if(PIN_MODE==='admin')openAdminConfig();else selectEntity(PIN_TARGET);
-  }else{document.getElementById('pin-error').textContent='Incorrect code — please try again';PIN_ENTRY='';updatePinDots();}
+  }else{err.textContent=res?(res.error||'Incorrect code, please try again'):'Could not reach the server. Try again.';PIN_ENTRY='';updatePinDots();}
 }
 
 function selectEntity(name){
@@ -766,8 +769,8 @@ function selectEntity(name){
   document.getElementById('eb-name').textContent=name;
   document.getElementById('eb-dot').style.background=cfg.color;
   document.querySelector('.nav-brand').innerHTML='<span style="color:'+cfg.color+'">'+name+'</span> <span style="color:#aaa;font-weight:400">Procurement</span>';
-  document.title=name+' — Procurement Portal';
-  const subText='Samsons Group of Companies (Pvt) Ltd — '+name+' &nbsp;|&nbsp; Accounts Copy';
+  document.title=name+' - Procurement Portal';
+  const subText='Samsons Group of Companies (Pvt) Ltd - '+name+' &nbsp;|&nbsp; Accounts Copy';
   document.getElementById('prf-form-sub').innerHTML=subText;
   document.getElementById('grn-form-sub').innerHTML=subText;
   document.getElementById('entity-landing').style.display='none';
@@ -780,7 +783,11 @@ function selectEntity(name){
   setTimeout(function(){document.getElementById('loading').style.display='none';},20000);
   loadAll();
 }
-function returnToLanding(){
+function procLock(){returnToLanding();}
+function returnToLanding(msg){
+  if(PROC_TOKEN){const t=PROC_TOKEN;PROC_TOKEN='';gasRaw({action:'lock',token:t}).catch(function(){});}
+  closeAdminConfig&&document.getElementById('admin-config-page')&&closeAdminConfig();
+  if(msg)showToast(msg,true);
   ACTIVE_ENTITY=null;STATE={prfs:[],grns:[],slog:[],loaded:false};
   document.getElementById('entity-landing').style.display='flex';
   document.getElementById('main-nav').style.display='none';
@@ -811,11 +818,11 @@ async function loadDeptConfig(){
       renderAdminConfig();setAdminStatus('Loaded from Sheets.','ok');
     }else{
       Object.keys(ENTITIES).forEach(e=>{if(!DEPT_CONFIG[e]||!DEPT_CONFIG[e].length)DEPT_CONFIG[e]=[...DEFAULT_DEPTS[e]];});
-      renderAdminConfig();setAdminStatus('Using defaults — save to push to Sheets.','');
+      renderAdminConfig();setAdminStatus('Using defaults - save to push to Sheets.','');
     }
   }catch(e){
     Object.keys(ENTITIES).forEach(ent=>{if(!DEPT_CONFIG[ent]||!DEPT_CONFIG[ent].length)DEPT_CONFIG[ent]=[...DEFAULT_DEPTS[ent]];});
-    renderAdminConfig();setAdminStatus('Could not reach Sheets — editing defaults locally.','err');
+    renderAdminConfig();setAdminStatus('Could not reach Sheets - editing defaults locally.','err');
   }
 }
 function renderAdminConfig(){
@@ -833,7 +840,7 @@ function renderAdminConfig(){
 }
 function renderDeptList(entity){
   const list=document.getElementById('acfg-list-'+entity);const depts=DEPT_CONFIG[entity]||[];list.innerHTML='';
-  if(!depts.length){list.innerHTML='<div class="acfg-empty">No departments configured — add one below.</div>';return;}
+  if(!depts.length){list.innerHTML='<div class="acfg-empty">No departments configured - add one below.</div>';return;}
   depts.forEach((dept,idx)=>{
     const item=document.createElement('div');item.className='acfg-dept-item';item.draggable=true;item.dataset.idx=idx;item.dataset.entity=entity;
     item.innerHTML=`<span class="acfg-drag-handle" title="Drag to reorder">&#8801;</span><span class="acfg-dept-name">${escHtml(dept)}</span><button class="acfg-dept-del" title="Remove" onclick="removeDept('${entity}',${idx})">&#x2715;</button>`;
@@ -851,13 +858,30 @@ function updateDeptCount(entity){const el=document.getElementById('acfg-count-'+
 function setAdminStatus(msg,type){const el=document.getElementById('acfg-status');el.textContent=msg;el.className='acfg-status'+(type?' '+type:'');}
 async function saveAdminConfig(){
   const btn=document.getElementById('acfg-save-btn');btn.disabled=true;btn.textContent='Saving...';setAdminStatus('Saving to Google Sheets...','');
-  try{const res=await gasPost({action:'saveDeptConfig',deptConfig:DEPT_CONFIG});if(res.ok){setAdminStatus('Saved successfully — all portals will use updated departments.','ok');if(ACTIVE_ENTITY)populateDeptDropdowns(ACTIVE_ENTITY);showToast('Department config saved to Sheets');}else{setAdminStatus('Save failed: '+(res.error||'unknown'),'err');showToast('Save failed: '+(res.error||'unknown'),true);}}catch(e){setAdminStatus('Network error — could not save.','err');showToast('Network error — could not save.',true);}
+  try{const res=await gasPost({action:'saveDeptConfig',deptConfig:DEPT_CONFIG});if(res.ok){setAdminStatus('Saved successfully - all portals will use updated departments.','ok');if(ACTIVE_ENTITY)populateDeptDropdowns(ACTIVE_ENTITY);showToast('Department config saved to Sheets');}else{setAdminStatus('Save failed: '+(res.error||'unknown'),'err');showToast('Save failed: '+(res.error||'unknown'),true);}}catch(e){setAdminStatus('Network error - could not save.','err');showToast('Network error - could not save.',true);}
   btn.disabled=false;btn.textContent='Save All Changes to Sheets';
 }
 
-async function gasPost(payload){
-  const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+async function gasRaw(payload){
+  const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
   return res.json();
+}
+// Every call carries the session token. Reads retry on cold starts (1.5 s then 3 s),
+// writes are sent once so nothing is saved twice. An expired session returns to the entity screen.
+async function gasPost(payload){
+  payload=Object.assign({},payload,{token:PROC_TOKEN});
+  const isRead=/^get/.test(payload.action||'');
+  const delays=[0,1500,3000];
+  let lastErr=null;
+  for(let i=0;i<(isRead?3:1);i++){
+    if(delays[i])await new Promise(r=>setTimeout(r,delays[i]));
+    try{
+      const j=await gasRaw(payload);
+      if(j&&j.auth){returnToLanding('Session expired. Choose your entity and enter the code again.');}
+      return j;
+    }catch(e){lastErr=e;}
+  }
+  throw lastErr;
 }
 
 async function loadAll(){
@@ -907,7 +931,7 @@ function go(id){
     const tabs=document.querySelectorAll('.nav-tab');if(tabs[6])tabs[6].classList.add('active');
     counts();
     if(STATE.loaded){renderPRFRecon();}
-    else{var tb=document.getElementById('rc-tbody');if(tb)tb.innerHTML='<tr><td colspan="11" class="empty">Loading data — please wait a moment then click PRF Reconciliation again.</td></tr>';}
+    else{var tb=document.getElementById('rc-tbody');if(tb)tb.innerHTML='<tr><td colspan="11" class="empty">Loading data - please wait a moment then click PRF Reconciliation again.</td></tr>';}
     return;
   }
 
@@ -916,7 +940,7 @@ function go(id){
   const order=['sub-prf','sub-grn','dashboard','prf-tracker','grn-tracker','status'];
   const idx=order.indexOf(id);if(idx>=0)document.querySelectorAll('.nav-tab')[idx].classList.add('active');
   counts();depts();
-  if(id==='dashboard'){document.getElementById('dash-title').textContent=(ACTIVE_ENTITY||'')+' — All Submissions';rdash();}
+  if(id==='dashboard'){document.getElementById('dash-title').textContent=(ACTIVE_ENTITY||'')+' - All Submissions';rdash();}
   if(id==='sub-prf'&&!document.getElementById('prf-ibody').hasChildNodes())addPRFRow();
   if(id==='sub-grn'&&!document.getElementById('grn-ibody').hasChildNodes())addGRNRow();
   if(id==='prf-tracker')rprf();
@@ -960,8 +984,8 @@ function depts(){
 function rdash(){
   const tp=gv('df-type'),st=gv('df-status'),dp=gv('df-dept'),q=gv('df-q').toLowerCase();
   let rows=[];
-  STATE.prfs.forEach(r=>rows.push({...r,_t:'PRF',person:r.reqName,valStr:'—'}));
-  STATE.grns.forEach(r=>rows.push({...r,_t:'GRN',person:r.recBy||'—',valStr:'PKR '+(r.total||0).toLocaleString()}));
+  STATE.prfs.forEach(r=>rows.push({...r,_t:'PRF',person:r.reqName,valStr:'-'}));
+  STATE.grns.forEach(r=>rows.push({...r,_t:'GRN',person:r.recBy||'-',valStr:'PKR '+(r.total||0).toLocaleString()}));
   rows.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
   if(tp)rows=rows.filter(r=>r._t===tp);if(st)rows=rows.filter(r=>r.status===st);if(dp)rows=rows.filter(r=>r.dept===dp);
   if(q)rows=rows.filter(r=>(r.ref||'').toLowerCase().includes(q)||(r.person||'').toLowerCase().includes(q)||(r.supplier||'').toLowerCase().includes(q)||(r.prfRef||'').toLowerCase().includes(q));
@@ -971,7 +995,7 @@ function rdash(){
   tb.innerHTML=rows.map(r=>{
     const enc=btoa(r._t+'|'+r.ref);const encRef=btoa(r.ref);
     const approveBtn=r._t==='PRF'?`<button class="abtn" onclick="approveRecord('${encRef}')" style="margin-left:3px">Approve</button>`:'';
-    return`<tr><td><span class="ref-link" style="cursor:pointer;font-weight:600;text-decoration:underline" onclick="viewRecord('${enc}')">${r.ref}</span></td><td><span class="badge b-${r._t.toLowerCase()}">${r._t}</span></td><td>${r.date||'—'}</td><td>${r.dept||'—'}</td><td>${r.person||'—'}</td><td>${r.supplier||'—'}</td><td>${(r.items||[]).length}</td><td>${r.valStr}</td><td><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'—'}</span></td><td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button>${approveBtn}<button class="abtn" onclick="moveRecord('${enc}')" style="margin-left:3px">Move</button></td></tr>`;
+    return`<tr><td><span class="ref-link" style="cursor:pointer;font-weight:600;text-decoration:underline" onclick="viewRecord('${enc}')">${r.ref}</span></td><td><span class="badge b-${r._t.toLowerCase()}">${r._t}</span></td><td>${r.date||'-'}</td><td>${r.dept||'-'}</td><td>${r.person||'-'}</td><td>${r.supplier||'-'}</td><td>${(r.items||[]).length}</td><td>${r.valStr}</td><td><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'-'}</span></td><td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button>${approveBtn}<button class="abtn" onclick="moveRecord('${enc}')" style="margin-left:3px">Move</button></td></tr>`;
   }).join('');
 }
 function clrDash(){['df-type','df-status','df-dept'].forEach(id=>document.getElementById(id).value='');document.getElementById('df-q').value='';rdash();}
@@ -991,14 +1015,14 @@ function rprf(){
   const tb=document.getElementById('prf-tbody');
   if(!rows.length){tb.innerHTML='<tr><td colspan="11" class="empty">No PRFs match filters</td></tr>';return;}
   tb.innerHTML=rows.map(r=>{
-    const reason=r.reason?r.reason.slice(0,50)+(r.reason.length>50?'…':''):'—';
+    const reason=r.reason?r.reason.slice(0,50)+(r.reason.length>50?'…':''):'-';
     const enc=btoa('PRF|'+r.ref);const encRef=btoa(r.ref);
     const today=new Date();
-    const daysOpen=r.date?Math.floor((today-new Date(r.date))/86400000):'—';
+    const daysOpen=r.date?Math.floor((today-new Date(r.date))/86400000):'-';
     const daysStyle=typeof daysOpen==='number'?(daysOpen>=14?'color:#a32d2d;font-weight:700':daysOpen>=7?'color:#854f0b;font-weight:600':''):'';
     const isClosed=(r.status||'').toLowerCase()==='approved'||(r.status||'').toLowerCase()==='rejected';
     const daysTd=isClosed?`<td style="font-size:11px;color:var(--text3)">Closed</td>`:`<td style="font-size:12px;${daysStyle}">${daysOpen}</td>`;
-    return`<tr><td><span class="ref-link" style="cursor:pointer;font-weight:600;text-decoration:underline" onclick="viewRecord('${enc}')">${r.ref}</span></td><td>${r.date||'—'}</td><td>${r.dept||'—'}</td><td>${r.reqName||'—'}</td><td>${(r.items||[]).length} item${(r.items||[]).length!==1?'s':''}</td><td style="max-width:130px;font-size:11px;color:var(--text2)">${reason}</td><td>${approvalBadge(r.financeApproval)}</td><td>${approvalBadge(r.gmApproval)}</td><td><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'—'}</span></td>${daysTd}<td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button><button class="abtn" onclick="approveRecord('${encRef}')">Approve</button><button class="abtn" onclick="moveRecord('${enc}')">Move</button></td></tr>`;
+    return`<tr><td><span class="ref-link" style="cursor:pointer;font-weight:600;text-decoration:underline" onclick="viewRecord('${enc}')">${r.ref}</span></td><td>${r.date||'-'}</td><td>${r.dept||'-'}</td><td>${r.reqName||'-'}</td><td>${(r.items||[]).length} item${(r.items||[]).length!==1?'s':''}</td><td style="max-width:130px;font-size:11px;color:var(--text2)">${reason}</td><td>${approvalBadge(r.financeApproval)}</td><td>${approvalBadge(r.gmApproval)}</td><td><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'-'}</span></td>${daysTd}<td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button><button class="abtn" onclick="approveRecord('${encRef}')">Approve</button><button class="abtn" onclick="moveRecord('${enc}')">Move</button></td></tr>`;
   }).join('');
 }
 function clrPRF(){['pf-s','pf-fin','pf-gm','pf-d'].forEach(id=>document.getElementById(id).value='');document.getElementById('pf-q').value='';rprf();}
@@ -1012,7 +1036,7 @@ function rgrn(){
   if(!rows.length){tb.innerHTML='<tr><td colspan="11" class="empty">No GRNs match filters</td></tr>';return;}
   tb.innerHTML=rows.map(r=>{
     const enc=btoa('GRN|'+r.ref);
-    return`<tr><td><span class="ref-link" style="cursor:pointer;font-weight:600;text-decoration:underline" onclick="viewRecord('${enc}')">${r.ref}</span></td><td>${r.date||'—'}</td><td>${r.prfRef||'—'}</td><td>${r.dept||'—'}</td><td>${r.supplier||'—'}</td><td>${r.invoiceRef||'—'}</td><td>${(r.items||[]).length}</td><td>PKR ${(r.total||0).toLocaleString()}</td><td>${r.recBy||'—'}</td><td><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'—'}</span></td><td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button><button class="abtn" onclick="moveRecord('${enc}')">Move</button></td></tr>`;
+    return`<tr><td><span class="ref-link" style="cursor:pointer;font-weight:600;text-decoration:underline" onclick="viewRecord('${enc}')">${r.ref}</span></td><td>${r.date||'-'}</td><td>${r.prfRef||'-'}</td><td>${r.dept||'-'}</td><td>${r.supplier||'-'}</td><td>${r.invoiceRef||'-'}</td><td>${(r.items||[]).length}</td><td>PKR ${(r.total||0).toLocaleString()}</td><td>${r.recBy||'-'}</td><td><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'-'}</span></td><td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button><button class="abtn" onclick="moveRecord('${enc}')">Move</button></td></tr>`;
   }).join('');
 }
 function clrGRN(){['gf-s','gf-d'].forEach(id=>document.getElementById(id).value='');document.getElementById('gf-q').value='';rgrn();}
@@ -1026,25 +1050,25 @@ async function subPRF(){
   if(!sigReq){showToast('Requested By name is required.',true);document.getElementById('prf-s-req').focus();return;}
   if(!sigHOD){showToast('H.O.D name is required.',true);document.getElementById('prf-s-hod').focus();return;}
   if(!sigStore){showToast('Store Incharge name is required.',true);document.getElementById('prf-s-store').focus();return;}
-  const items=[];rows.forEach((tr,i)=>{const c=tr.querySelectorAll('input');items.push({sr:i+1,desc:c[1].value||'—',unit:c[2].value||'—',qty:parseFloat(c[3].value)||0});});
+  const items=[];rows.forEach((tr,i)=>{const c=tr.querySelectorAll('input');items.push({sr:i+1,desc:c[1].value||'-',unit:c[2].value||'-',qty:parseFloat(c[3].value)||0});});
   const payload={action:'submitPRF',entity:ACTIVE_ENTITY,date,reqName:req,dept,reason,items,sigReq,sigHOD,sigStore};
   const btn=document.querySelector('#page-sub-prf .submitbtn');btn.disabled=true;btn.textContent='Submitting...';
-  try{const res=await gasPost(payload);if(res.ok){if(!res.record.entity)res.record.entity=ACTIVE_ENTITY;STATE.prfs.unshift(res.record);counts();showToast('PRF submitted: '+res.record.ref);resetPRF();setTimeout(()=>go('prf-tracker'),1400);}else showToast('Submit failed: '+(res.error||'unknown'),true);}catch(e){showToast('Network error — could not submit.',true);}
+  try{const res=await gasPost(payload);if(res.ok){if(!res.record.entity)res.record.entity=ACTIVE_ENTITY;STATE.prfs.unshift(res.record);counts();showToast('PRF submitted: '+res.record.ref);resetPRF();setTimeout(()=>go('prf-tracker'),1400);}else showToast('Submit failed: '+(res.error||'unknown'),true);}catch(e){showToast('Network error - could not submit.',true);}
   btn.disabled=false;btn.textContent='Submit PRF';
 }
 function resetPRF(){['prf-date','prf-req','prf-reason','prf-s-req','prf-s-req-sign','prf-s-hod','prf-s-hod-sign','prf-s-store','prf-s-store-sign'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('prf-dept').value='';document.getElementById('prf-ibody').innerHTML='';prfRowN=0;}
 
-function addGRNRow(){grnRowN++;const tr=document.createElement('tr');tr.innerHTML=`<td><input type="text" value="${grnRowN}" style="width:36px;text-align:center"></td><td><input type="text" placeholder="Item description" oninput="calcGRN()"></td><td><input type="text" placeholder="Inv. ref."></td><td><input type="text" placeholder="No/Set/LTR"></td><td><input type="number" min="0" placeholder="Qty" oninput="calcGRN()"></td><td><input type="number" min="0" placeholder="0.00" oninput="calcGRN()"></td><td><input type="text" readonly placeholder="—"></td><td><button class="delrow" onclick="this.closest('tr').remove();calcGRN()">&#x2715;</button></td>`;document.getElementById('grn-ibody').appendChild(tr);}
+function addGRNRow(){grnRowN++;const tr=document.createElement('tr');tr.innerHTML=`<td><input type="text" value="${grnRowN}" style="width:36px;text-align:center"></td><td><input type="text" placeholder="Item description" oninput="calcGRN()"></td><td><input type="text" placeholder="Inv. ref."></td><td><input type="text" placeholder="No/Set/LTR"></td><td><input type="number" min="0" placeholder="Qty" oninput="calcGRN()"></td><td><input type="number" min="0" placeholder="0.00" oninput="calcGRN()"></td><td><input type="text" readonly placeholder="-"></td><td><button class="delrow" onclick="this.closest('tr').remove();calcGRN()">&#x2715;</button></td>`;document.getElementById('grn-ibody').appendChild(tr);}
 function calcGRN(){let tot=0;document.querySelectorAll('#grn-ibody tr').forEach(tr=>{const c=tr.querySelectorAll('input');const qty=parseFloat(c[4].value)||0;const up=parseFloat(c[5].value)||0;const line=qty*up;c[6].value=line>0?'Rs '+line.toLocaleString():'';tot+=line;});document.getElementById('grn-tot').textContent='Rs '+tot.toLocaleString();}
 async function subGRN(){
   const date=gv('grn-date'),dept=gv('grn-dept'),supplier=gv('grn-supplier');
   if(!date||!dept||!supplier){showToast('Complete all required fields (Date, Department, Supplier).',true);return;}
   const rows=document.querySelectorAll('#grn-ibody tr');if(!rows.length){showToast('Add at least one item.',true);return;}
-  const items=[];rows.forEach((tr,i)=>{const c=tr.querySelectorAll('input');const qty=parseFloat(c[4].value)||0;const up=parseFloat(c[5].value)||0;items.push({sr:i+1,desc:c[1].value||'—',invRef:c[2].value||'',uom:c[3].value||'—',qty,up,total:qty*up});});
+  const items=[];rows.forEach((tr,i)=>{const c=tr.querySelectorAll('input');const qty=parseFloat(c[4].value)||0;const up=parseFloat(c[5].value)||0;items.push({sr:i+1,desc:c[1].value||'-',invRef:c[2].value||'',uom:c[3].value||'-',qty,up,total:qty*up});});
   const total=items.reduce((s,x)=>s+x.total,0);
   const payload={action:'submitGRN',entity:ACTIVE_ENTITY,date,prfRef:gv('grn-prf'),dept,supplier,invoiceRef:gv('grn-challan'),items,total,remarks:gv('grn-remarks'),recBy:gv('grn-rec'),qtyBy:gv('grn-qty'),qualBy:gv('grn-qual'),rateBy:gv('grn-rate'),storeBy:gv('grn-store'),acctBy:gv('grn-acct')};
   const btn=document.querySelector('#page-sub-grn .submitbtn');btn.disabled=true;btn.textContent='Submitting...';
-  try{const res=await gasPost(payload);if(res.ok){if(!res.record.entity)res.record.entity=ACTIVE_ENTITY;STATE.grns.unshift(res.record);counts();showToast('GRN submitted: '+res.record.ref);resetGRN();setTimeout(()=>go('grn-tracker'),1400);}else showToast('Submit failed: '+(res.error||'unknown'),true);}catch(e){showToast('Network error — could not submit.',true);}
+  try{const res=await gasPost(payload);if(res.ok){if(!res.record.entity)res.record.entity=ACTIVE_ENTITY;STATE.grns.unshift(res.record);counts();showToast('GRN submitted: '+res.record.ref);resetGRN();setTimeout(()=>go('grn-tracker'),1400);}else showToast('Submit failed: '+(res.error||'unknown'),true);}catch(e){showToast('Network error - could not submit.',true);}
   btn.disabled=false;btn.textContent='Submit GRN';
 }
 function resetGRN(){['grn-date','grn-prf','grn-supplier','grn-challan','grn-remarks','grn-rec','grn-rec-s','grn-qty','grn-qty-s','grn-qual','grn-qual-s','grn-rate','grn-rate-s','grn-store','grn-store-s','grn-acct','grn-acct-s'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('grn-dept').value='';document.getElementById('grn-ibody').innerHTML='';grnRowN=0;calcGRN();}
@@ -1058,7 +1082,7 @@ async function doStatus(){
 function renderSlog(){
   const tb=document.getElementById('slog-tbody');
   if(!STATE.slog.length){tb.innerHTML='<tr><td colspan="6" class="empty">No status updates logged yet</td></tr>';return;}
-  tb.innerHTML=STATE.slog.slice(0,40).map(l=>`<tr><td><strong>${l.ref}</strong></td><td><span class="badge b-${(l.type||'').toLowerCase()}">${l.type||'—'}</span></td><td><span class="badge b-${(l.old||'').toLowerCase()}">${l.old||'—'}</span></td><td><span class="badge b-${(l.ns||'').toLowerCase()}">${l.ns||'—'}</span></td><td style="font-size:11px;color:var(--text2)">${l.notes||'—'}</td><td style="font-size:11px">${l.at||'—'}</td></tr>`).join('');
+  tb.innerHTML=STATE.slog.slice(0,40).map(l=>`<tr><td><strong>${l.ref}</strong></td><td><span class="badge b-${(l.type||'').toLowerCase()}">${l.type||'-'}</span></td><td><span class="badge b-${(l.old||'').toLowerCase()}">${l.old||'-'}</span></td><td><span class="badge b-${(l.ns||'').toLowerCase()}">${l.ns||'-'}</span></td><td style="font-size:11px;color:var(--text2)">${l.notes||'-'}</td><td style="font-size:11px">${l.at||'-'}</td></tr>`).join('');
 }
 
 // ═══════════════════════════════════════════════════════ PRF RECONCILIATION
@@ -1117,7 +1141,7 @@ function renderPRFRecon() {
 
   const tb = se('rc-tbody');
   if (!tb) return;
-  if (!rows.length) { tb.innerHTML = '<tr><td colspan="11" class="empty">No open PRFs — all reconciled.</td></tr>'; return; }
+  if (!rows.length) { tb.innerHTML = '<tr><td colspan="11" class="empty">No open PRFs - all reconciled.</td></tr>'; return; }
 
   const today = new Date();
   const blockerBadge = {
@@ -1131,7 +1155,7 @@ function renderPRFRecon() {
     const blocker = getBlocker(prf, linked);
     const enc     = btoa('PRF|' + prf.ref);
     const encRef  = btoa(prf.ref);
-    const daysOpen = prf.date ? Math.floor((today - new Date(prf.date)) / 86400000) : '—';
+    const daysOpen = prf.date ? Math.floor((today - new Date(prf.date)) / 86400000) : '-';
     const daysStyle = typeof daysOpen === 'number' ? (daysOpen >= 14 ? 'color:#a32d2d;font-weight:700' : daysOpen >= 7 ? 'color:#854f0b;font-weight:600' : '') : '';
 
     const finVal = (prf.financeApproval || 'Pending').trim();
@@ -1148,14 +1172,14 @@ function renderPRFRecon() {
 
     return `<tr>
       <td><span style="cursor:pointer;font-weight:600;text-decoration:underline;color:var(--info-text)" onclick="viewRecord('${enc}')">${prf.ref}</span></td>
-      <td>${prf.date || '—'}</td>
-      <td>${prf.dept || '—'}</td>
-      <td><strong>${prf.reqName || '—'}</strong></td>
+      <td>${prf.date || '-'}</td>
+      <td>${prf.dept || '-'}</td>
+      <td><strong>${prf.reqName || '-'}</strong></td>
       <td>${(prf.items || []).length}</td>
       <td>${finBadge}</td>
       <td>${gmBadge}</td>
       <td>${grnCell}</td>
-      <td>${blockerBadge[blocker] || '—'}</td>
+      <td>${blockerBadge[blocker] || '-'}</td>
       <td style="${daysStyle}">${daysOpen}</td>
       <td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button>
           <button class="abtn" onclick="approveRecord('${encRef}')" style="margin-left:3px">Approve</button></td>
@@ -1174,19 +1198,19 @@ function clrRecon() {
 function openM(type,ref){
   const r=type==='PRF'?STATE.prfs.find(x=>x.ref===ref):STATE.grns.find(x=>x.ref===ref);
   if(!r)return;curRec={type,ref,r};
-  document.getElementById('m-title').textContent=ref+' — '+type+' Detail';
+  document.getElementById('m-title').textContent=ref+' - '+type+' Detail';
   let html='';
   if(type==='PRF'){
-    html=`<div class="dgrid"><div class="di"><div class="dk">PRF No.</div><div class="dv">${r.ref}</div></div><div class="di"><div class="dk">Status</div><div class="dv"><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'—'}</span></div></div><div class="di"><div class="dk">Date</div><div class="dv">${r.date||'—'}</div></div><div class="di"><div class="dk">Department</div><div class="dv">${r.dept||'—'}</div></div><div class="di"><div class="dk">Name of Requester</div><div class="dv">${r.reqName||'—'}</div></div><div class="di"><div class="dk">H.O.D</div><div class="dv">${r.sigHOD||'—'}</div></div><div class="di"><div class="dk">Store Incharge</div><div class="dv">${r.sigStore||'—'}</div></div><div class="di" style="grid-column:span 2"><div class="dk">Reason for Purchase</div><div class="dv">${r.reason||'—'}</div></div></div>
+    html=`<div class="dgrid"><div class="di"><div class="dk">PRF No.</div><div class="dv">${r.ref}</div></div><div class="di"><div class="dk">Status</div><div class="dv"><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'-'}</span></div></div><div class="di"><div class="dk">Date</div><div class="dv">${r.date||'-'}</div></div><div class="di"><div class="dk">Department</div><div class="dv">${r.dept||'-'}</div></div><div class="di"><div class="dk">Name of Requester</div><div class="dv">${r.reqName||'-'}</div></div><div class="di"><div class="dk">H.O.D</div><div class="dv">${r.sigHOD||'-'}</div></div><div class="di"><div class="dk">Store Incharge</div><div class="dv">${r.sigStore||'-'}</div></div><div class="di" style="grid-column:span 2"><div class="dk">Reason for Purchase</div><div class="dv">${r.reason||'-'}</div></div></div>
     <div style="background:var(--surface2);border:0.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span>Approval Stages</span><button class="abtn" style="font-size:11px;padding:3px 10px" onclick="openApproval('${btoa(r.ref)}')">Update Approvals</button></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div style="border:0.5px solid var(--border);border-radius:6px;padding:10px 12px;background:var(--surface)"><div style="font-size:10px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:4px">Finance Approval</div><div style="margin-bottom:4px">${approvalBadge(r.financeApproval)}</div>${r.financeApprovedBy?'<div style="font-size:11px;color:var(--text2)">By: <strong>'+r.financeApprovedBy+'</strong></div>':''}</div><div style="border:0.5px solid var(--border);border-radius:6px;padding:10px 12px;background:var(--surface)"><div style="font-size:10px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:4px">GM Approval</div><div style="margin-bottom:4px">${approvalBadge(r.gmApproval||'Not Required')}</div>${r.gmApprovedBy?'<div style="font-size:11px;color:var(--text2)">By: <strong>'+r.gmApprovedBy+'</strong></div>':''}</div></div>${r.approvalNotes?'<div style="margin-top:10px;font-size:11px;color:var(--text2)"><strong>Notes:</strong> '+r.approvalNotes+'</div>':''}</div>
-    ${r.rejectionComment?`<div style="background:#fff3f3;border:1px solid #e8b0b0;border-left:4px solid #8b1a1a;border-radius:6px;padding:12px 14px;margin-bottom:16px"><div style="font-size:10px;font-weight:700;color:#8b1a1a;letter-spacing:.05em;margin-bottom:6px">REJECTION COMMENT</div><div style="font-size:12px;color:#3a0a0a;line-height:1.65">${r.rejectionComment}</div><div style="font-size:10px;color:#999;margin-top:6px">— ${r.rejectedBy||'Procurement'} &nbsp;|&nbsp; ${r.rejectedAt||''}</div></div>`:''}
+    ${r.rejectionComment?`<div style="background:#fff3f3;border:1px solid #e8b0b0;border-left:4px solid #8b1a1a;border-radius:6px;padding:12px 14px;margin-bottom:16px"><div style="font-size:10px;font-weight:700;color:#8b1a1a;letter-spacing:.05em;margin-bottom:6px">REJECTION COMMENT</div><div style="font-size:12px;color:#3a0a0a;line-height:1.65">${r.rejectionComment}</div><div style="font-size:10px;color:#999;margin-top:6px">- ${r.rejectedBy||'Procurement'} &nbsp;|&nbsp; ${r.rejectedAt||''}</div></div>`:''}
     <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:8px">Description of Items</div>
-    <div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse"><thead><tr style="background:#162844"><th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:left">Sr.</th><th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:left">Description</th><th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:left">Unit</th><th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:right">Required Qty</th></tr></thead><tbody>${(r.items||[]).map((it,i)=>`<tr style="${i%2?'background:var(--surface2)':''}"><td style="padding:6px 9px">${it.sr||i+1}</td><td style="padding:6px 9px">${it.desc||'—'}</td><td style="padding:6px 9px">${it.unit||'—'}</td><td style="padding:6px 9px;text-align:right">${it.qty||0}</td></tr>`).join('')}</tbody></table></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px">${[['Requested By',r.sigReq],['Rec. &amp; Approved H.O.D',r.sigHOD],['Store Incharge',r.sigStore]].map(([l,v])=>`<div style="border:0.5px solid var(--border);border-radius:6px;padding:9px;font-size:11px"><div style="font-size:10px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:3px">${l}</div><div style="font-weight:600">${v||'—'}</div></div>`).join('')}</div>`;
+    <div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse"><thead><tr style="background:#162844"><th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:left">Sr.</th><th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:left">Description</th><th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:left">Unit</th><th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:right">Required Qty</th></tr></thead><tbody>${(r.items||[]).map((it,i)=>`<tr style="${i%2?'background:var(--surface2)':''}"><td style="padding:6px 9px">${it.sr||i+1}</td><td style="padding:6px 9px">${it.desc||'-'}</td><td style="padding:6px 9px">${it.unit||'-'}</td><td style="padding:6px 9px;text-align:right">${it.qty||0}</td></tr>`).join('')}</tbody></table></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px">${[['Requested By',r.sigReq],['Rec. &amp; Approved H.O.D',r.sigHOD],['Store Incharge',r.sigStore]].map(([l,v])=>`<div style="border:0.5px solid var(--border);border-radius:6px;padding:9px;font-size:11px"><div style="font-size:10px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:3px">${l}</div><div style="font-weight:600">${v||'-'}</div></div>`).join('')}</div>`;
   }else{
-    html=`<div class="dgrid"><div class="di"><div class="dk">GRN No.</div><div class="dv">${r.ref}</div></div><div class="di"><div class="dk">Status</div><div class="dv"><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'—'}</span></div></div><div class="di"><div class="dk">Date</div><div class="dv">${r.date||'—'}</div></div><div class="di"><div class="dk">PRF No.</div><div class="dv">${r.prfRef||'—'}</div></div><div class="di"><div class="dk">Department</div><div class="dv">${r.dept||'—'}</div></div><div class="di"><div class="dk">Supplier</div><div class="dv">${r.supplier||'—'}</div></div><div class="di"><div class="dk">Invoice Ref.</div><div class="dv">${r.invoiceRef||'—'}</div></div><div class="di"><div class="dk">Receiving Incharge</div><div class="dv">${r.recBy||'—'}</div></div>${r.remarks?`<div class="di" style="grid-column:span 2"><div class="dk">Remarks</div><div class="dv">${r.remarks}</div></div>`:''}</div>
-    <div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse"><thead><tr style="background:#162844"><th style="padding:6px 9px;font-size:10px;color:var(--gold)">Sr.</th><th style="padding:6px 9px;font-size:10px;color:var(--gold)">Description</th><th style="padding:6px 9px;font-size:10px;color:var(--gold)">Invoice Ref.</th><th style="padding:6px 9px;font-size:10px;color:var(--gold)">UoM</th><th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:right">Qty</th><th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:right">Unit Price</th><th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:right">Total</th></tr></thead><tbody>${(r.items||[]).map((it,i)=>`<tr style="${i%2?'background:var(--surface2)':''}"><td style="padding:6px 9px">${it.sr||i+1}</td><td style="padding:6px 9px">${it.desc||'—'}</td><td style="padding:6px 9px">${it.invRef||'—'}</td><td style="padding:6px 9px">${it.uom||'—'}</td><td style="padding:6px 9px;text-align:right">${it.qty||0}</td><td style="padding:6px 9px;text-align:right">Rs ${(it.up||0).toLocaleString()}</td><td style="padding:6px 9px;text-align:right">Rs ${(it.total||0).toLocaleString()}</td></tr>`).join('')}<tr style="border-top:1px solid var(--border)"><td colspan="6" style="padding:7px 9px;text-align:right;font-weight:700">Total</td><td style="padding:7px 9px;text-align:right;font-weight:700">Rs ${(r.total||0).toLocaleString()}</td></tr></tbody></table></div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px">${[['Qty Checked By',r.qtyBy],['Receiving Incharge',r.recBy],['Quality Checked By',r.qualBy],['Rate Checked By',r.rateBy],['Store Keeper',r.storeBy],['Accounts Officer',r.acctBy]].map(([l,v])=>`<div style="border:0.5px solid var(--border);border-radius:6px;padding:8px 10px;font-size:11px"><div style="font-size:10px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:2px">${l}</div><div style="font-weight:600">${v||'—'}</div></div>`).join('')}</div>`;
+    html=`<div class="dgrid"><div class="di"><div class="dk">GRN No.</div><div class="dv">${r.ref}</div></div><div class="di"><div class="dk">Status</div><div class="dv"><span class="badge b-${(r.status||'').toLowerCase()}">${r.status||'-'}</span></div></div><div class="di"><div class="dk">Date</div><div class="dv">${r.date||'-'}</div></div><div class="di"><div class="dk">PRF No.</div><div class="dv">${r.prfRef||'-'}</div></div><div class="di"><div class="dk">Department</div><div class="dv">${r.dept||'-'}</div></div><div class="di"><div class="dk">Supplier</div><div class="dv">${r.supplier||'-'}</div></div><div class="di"><div class="dk">Invoice Ref.</div><div class="dv">${r.invoiceRef||'-'}</div></div><div class="di"><div class="dk">Receiving Incharge</div><div class="dv">${r.recBy||'-'}</div></div>${r.remarks?`<div class="di" style="grid-column:span 2"><div class="dk">Remarks</div><div class="dv">${r.remarks}</div></div>`:''}</div>
+    <div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse"><thead><tr style="background:#162844"><th style="padding:6px 9px;font-size:10px;color:var(--gold)">Sr.</th><th style="padding:6px 9px;font-size:10px;color:var(--gold)">Description</th><th style="padding:6px 9px;font-size:10px;color:var(--gold)">Invoice Ref.</th><th style="padding:6px 9px;font-size:10px;color:var(--gold)">UoM</th><th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:right">Qty</th><th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:right">Unit Price</th><th style="padding:6px 9px;font-size:10px;color:var(--gold);text-align:right">Total</th></tr></thead><tbody>${(r.items||[]).map((it,i)=>`<tr style="${i%2?'background:var(--surface2)':''}"><td style="padding:6px 9px">${it.sr||i+1}</td><td style="padding:6px 9px">${it.desc||'-'}</td><td style="padding:6px 9px">${it.invRef||'-'}</td><td style="padding:6px 9px">${it.uom||'-'}</td><td style="padding:6px 9px;text-align:right">${it.qty||0}</td><td style="padding:6px 9px;text-align:right">Rs ${(it.up||0).toLocaleString()}</td><td style="padding:6px 9px;text-align:right">Rs ${(it.total||0).toLocaleString()}</td></tr>`).join('')}<tr style="border-top:1px solid var(--border)"><td colspan="6" style="padding:7px 9px;text-align:right;font-weight:700">Total</td><td style="padding:7px 9px;text-align:right;font-weight:700">Rs ${(r.total||0).toLocaleString()}</td></tr></tbody></table></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px">${[['Qty Checked By',r.qtyBy],['Receiving Incharge',r.recBy],['Quality Checked By',r.qualBy],['Rate Checked By',r.rateBy],['Store Keeper',r.storeBy],['Accounts Officer',r.acctBy]].map(([l,v])=>`<div style="border:0.5px solid var(--border);border-radius:6px;padding:8px 10px;font-size:11px"><div style="font-size:10px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:2px">${l}</div><div style="font-weight:600">${v||'-'}</div></div>`).join('')}</div>`;
   }
   document.getElementById('m-body').innerHTML=html;
   document.getElementById('moverlay').classList.add('open');
@@ -1206,7 +1230,7 @@ function openApprovalPanel(ref){
   document.getElementById('appr-title').textContent='Approval Update';
   document.getElementById('appr-subtitle').textContent=ref+'  |  '+r.dept+'  |  '+r.reqName;
   document.getElementById('appr-ref').value=ref;
-  document.getElementById('appr-summary').innerHTML=[['Department',r.dept||'—'],['Requested By',r.reqName||'—'],['Date',r.date||'—'],['H.O.D',r.sigHOD||'—'],['Store Keeper',r.sigStore||'—'],['Items',((r.items||[]).length)+' line item'+((r.items||[]).length!==1?'s':'')]].map(([k,v])=>`<div style="min-width:0"><div style="font-size:10px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:2px">${k}</div><div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v}</div></div>`).join('');
+  document.getElementById('appr-summary').innerHTML=[['Department',r.dept||'-'],['Requested By',r.reqName||'-'],['Date',r.date||'-'],['H.O.D',r.sigHOD||'-'],['Store Keeper',r.sigStore||'-'],['Items',((r.items||[]).length)+' line item'+((r.items||[]).length!==1?'s':'')]].map(([k,v])=>`<div style="min-width:0"><div style="font-size:10px;color:var(--text2);text-transform:uppercase;font-weight:600;margin-bottom:2px">${k}</div><div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v}</div></div>`).join('');
   const existing=document.getElementById('appr-reason-banner');if(existing)existing.remove();
   if(r.reason){const banner=document.createElement('div');banner.id='appr-reason-banner';banner.style.cssText='font-size:11px;color:var(--text2);padding:8px 12px;background:var(--surface2);border-radius:6px;border-left:3px solid var(--gold);margin-bottom:14px;line-height:1.5';banner.innerHTML='<strong style="color:var(--text)">Reason:</strong> '+r.reason;document.getElementById('appr-summary').insertAdjacentElement('afterend',banner);}
   document.getElementById('appr-fin').value=r.financeApproval||'Pending';
@@ -1229,7 +1253,7 @@ async function saveApproval(){
     const res=await gasPost({action:'updateApproval',entity:ACTIVE_ENTITY,ref,financeApproval:finApproval,gmApproval,financeApprovedBy:finBy,gmApprovedBy:gmBy,approvalNotes:notes});
     if(res.ok){const rec=STATE.prfs.find(x=>x.ref===ref);if(rec){rec.financeApproval=finApproval;rec.gmApproval=gmApproval;rec.financeApprovedBy=finBy;rec.gmApprovedBy=gmBy;rec.approvalNotes=notes;}closeApprD();const banner=document.getElementById('appr-reason-banner');if(banner)banner.remove();rprf();rdash();counts();showToast('Approval updated for '+ref);}
     else showToast('Update failed: '+(res.error||'unknown'),true);
-  }catch(e){showToast('Network error — could not save.',true);}
+  }catch(e){showToast('Network error - could not save.',true);}
   btn.disabled=false;btn.textContent='Save Approval';
 }
 
@@ -1238,7 +1262,7 @@ function openMovePanel(type,ref){
   document.getElementById('move-title').textContent='Move to Different Entity';
   document.getElementById('move-subtitle').textContent=ref+'  |  Currently: '+(r.entity||ACTIVE_ENTITY);
   document.getElementById('move-ref').value=ref;document.getElementById('move-type').value=type;document.getElementById('move-reason').value='';
-  const summary=type==='PRF'?'Dept: '+(r.dept||'—')+'   |   Requester: '+(r.reqName||'—')+'   |   Date: '+(r.date||'—'):'Supplier: '+(r.supplier||'—')+'   |   Dept: '+(r.dept||'—')+'   |   Total: PKR '+(r.total||0).toLocaleString();
+  const summary=type==='PRF'?'Dept: '+(r.dept||'-')+'   |   Requester: '+(r.reqName||'-')+'   |   Date: '+(r.date||'-'):'Supplier: '+(r.supplier||'-')+'   |   Dept: '+(r.dept||'-')+'   |   Total: PKR '+(r.total||0).toLocaleString();
   document.getElementById('move-summary').textContent=summary;
   const current=r.entity||ACTIVE_ENTITY;const grid=document.getElementById('move-entity-grid');
   grid.innerHTML=Object.entries(ENTITIES).map(([name,cfg])=>{if(name===current)return'';return`<button onclick="selectMoveTarget('${name}')" id="move-target-${name}" style="padding:10px 8px;border-radius:8px;border:0.5px solid var(--border2);background:var(--surface2);cursor:pointer;font-family:inherit;text-align:center"><div style="font-size:18px;margin-bottom:4px">${cfg.icon}</div><div style="font-size:12px;font-weight:600;color:var(--text)">${name}</div><div style="font-size:10px;color:var(--text2)">${cfg.desc}</div></button>`;}).join('');
@@ -1263,10 +1287,10 @@ function openRejectPanel(ref){
   if(!ref)return;const r=STATE.prfs.find(x=>x.ref===ref);if(!r){showToast('PRF not found: '+ref,true);return;}
   REJECT_SELECTED_CATEGORY=null;
   document.getElementById('reject-ref').value=ref;
-  document.getElementById('reject-title').textContent='Reject PRF — '+ref;
+  document.getElementById('reject-title').textContent='Reject PRF - '+ref;
   document.getElementById('reject-subtitle').textContent=r.dept+'  |  '+r.reqName+'  |  '+(r.date||'');
   document.getElementById('reject-comment').value='';document.getElementById('reject-by').value='';document.getElementById('reject-error').style.display='none';
-  document.getElementById('reject-summary').innerHTML='<strong>'+ref+'</strong> &nbsp;&middot;&nbsp; '+(r.dept||'—')+' &nbsp;&middot;&nbsp; Requested by: <strong>'+(r.reqName||'—')+'</strong> &nbsp;&middot;&nbsp; '+(r.items||[]).length+' line item'+((r.items||[]).length!==1?'s':'')+(r.reason?'<br><span style="color:#8b3030;font-style:italic">Reason given: "'+r.reason.slice(0,120)+(r.reason.length>120?'…':'') +'"</span>':'');
+  document.getElementById('reject-summary').innerHTML='<strong>'+ref+'</strong> &nbsp;&middot;&nbsp; '+(r.dept||'-')+' &nbsp;&middot;&nbsp; Requested by: <strong>'+(r.reqName||'-')+'</strong> &nbsp;&middot;&nbsp; '+(r.items||[]).length+' line item'+((r.items||[]).length!==1?'s':'')+(r.reason?'<br><span style="color:#8b3030;font-style:italic">Reason given: "'+r.reason.slice(0,120)+(r.reason.length>120?'…':'') +'"</span>':'');
   document.getElementById('reject-category-grid').innerHTML=REJECTION_CATEGORIES.map(cat=>`<button id="rjcat-${cat.id}" onclick="selectRejectCat('${cat.id}')" style="text-align:left;padding:9px 12px;border-radius:7px;border:0.5px solid var(--border2);background:var(--surface2);cursor:pointer;font-family:inherit;transition:all .13s"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px">${cat.label}</div><div style="font-size:10px;color:var(--text3);line-height:1.4">${cat.desc}</div></button>`).join('');
   closeApprD();document.getElementById('reject-overlay').classList.add('open');
 }
@@ -1283,26 +1307,26 @@ async function submitRejection(){
   const btn=document.getElementById('reject-save-btn');btn.disabled=true;btn.textContent='Rejecting...';errEl.style.display='none';
   try{
     const res=await gasPost({action:'rejectPRF',ref,rejectionComment:fullComment,rejectedBy:by,rejectionCategory:REJECT_SELECTED_CATEGORY});
-    if(res.ok){const rec=STATE.prfs.find(x=>x.ref===ref);if(rec){rec.status='Rejected';rec.rejectionComment=fullComment;rec.rejectionCategory=REJECT_SELECTED_CATEGORY;rec.rejectedBy=by;rec.rejectedAt=new Date().toLocaleString();}closeRejectD();counts();rprf();rdash();showToast(ref+' rejected — reason logged');}
+    if(res.ok){const rec=STATE.prfs.find(x=>x.ref===ref);if(rec){rec.status='Rejected';rec.rejectionComment=fullComment;rec.rejectionCategory=REJECT_SELECTED_CATEGORY;rec.rejectedBy=by;rec.rejectedAt=new Date().toLocaleString();}closeRejectD();counts();rprf();rdash();showToast(ref+' rejected - reason logged');}
     else{errEl.textContent='Rejection failed: '+(res.error||'unknown');errEl.style.display='block';}
-  }catch(e){errEl.textContent='Network error — could not submit rejection.';errEl.style.display='block';}
+  }catch(e){errEl.textContent='Network error - could not submit rejection.';errEl.style.display='block';}
   btn.disabled=false;btn.textContent='Confirm Rejection';
 }
 
 function getRejectedPRFs(){return(STATE.prfs||[]).filter(r=>(r.status||'').trim()==='Rejected');}
 function extractCategory(comment){const match=(comment||'').match(/^\[([^\]]+)\]/);return match?match[1]:'Other';}
 function renderRejectionLog(){
-  if(!STATE.loaded){const tb=document.getElementById('rj-tbody');if(tb)tb.innerHTML='<tr><td colspan="9" class="empty">Loading data from Sheets — please wait...</td></tr>';return;}
+  if(!STATE.loaded){const tb=document.getElementById('rj-tbody');if(tb)tb.innerHTML='<tr><td colspan="9" class="empty">Loading data from Sheets - please wait...</td></tr>';return;}
   const rejected=getRejectedPRFs();const now=new Date();const se=id=>document.getElementById(id);
   const thisMonth=rejected.filter(r=>{try{const d=new Date(r.rejectedAt||r.approvalUpdatedAt||'');return!isNaN(d)&&d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}catch(e){return false;}});
   if(se('rj-k-total'))se('rj-k-total').textContent=rejected.length;if(se('rj-k-month'))se('rj-k-month').textContent=thisMonth.length;
   const catCounts={};rejected.forEach(r=>{let cat='Other';if(r.rejectionCategory){const found=REJECTION_CATEGORIES.find(c=>c.id===r.rejectionCategory);cat=found?found.label:r.rejectionCategory;}else if(r.rejectionComment){cat=extractCategory(r.rejectionComment);}catCounts[cat]=(catCounts[cat]||0)+1;});
   const sortedCats=Object.entries(catCounts).sort((a,b)=>b[1]-a[1]);
-  if(se('rj-k-topreason'))se('rj-k-topreason').textContent=sortedCats.length?sortedCats[0][0]:'—';
+  if(se('rj-k-topreason'))se('rj-k-topreason').textContent=sortedCats.length?sortedCats[0][0]:'-';
   const deptCounts={};rejected.forEach(r=>{const d=r.dept||'Unknown';deptCounts[d]=(deptCounts[d]||0)+1;});
   const sortedDepts=Object.entries(deptCounts).sort((a,b)=>b[1]-a[1]);
-  if(se('rj-k-topdept'))se('rj-k-topdept').textContent=sortedDepts.length?sortedDepts[0][0]:'—';
-  if(se('rj-k-resub'))se('rj-k-resub').textContent='—';
+  if(se('rj-k-topdept'))se('rj-k-topdept').textContent=sortedDepts.length?sortedDepts[0][0]:'-';
+  if(se('rj-k-resub'))se('rj-k-resub').textContent='-';
   const breakdown=se('rj-breakdown');const total=rejected.length;
   if(breakdown){if(!total){breakdown.innerHTML='<div style="color:var(--text3);font-style:italic;font-size:12px">No rejections recorded yet.</div>';}else{if(se('rj-breakdown-sub'))se('rj-breakdown-sub').textContent=total+' total rejection'+(total!==1?'s':'');breakdown.innerHTML=sortedCats.map(([cat,count])=>{const pct=Math.round((count/total)*100);return`<div style="display:flex;align-items:center;gap:12px"><div style="width:190px;font-size:12px;color:var(--text);font-weight:500;flex-shrink:0">${cat}</div><div style="flex:1;background:var(--surface2);border-radius:4px;height:10px;overflow:hidden;border:0.5px solid var(--border)"><div style="width:${pct}%;height:100%;background:#a32d2d;border-radius:4px"></div></div><div style="width:60px;font-size:12px;font-weight:600;color:#a32d2d;text-align:right">${count} <span style="font-size:10px;color:var(--text3);font-weight:400">(${pct}%)</span></div></div>`;}).join('');}}
   const allCatLabels=[...new Set(rejected.map(r=>{if(r.rejectionCategory){const f=REJECTION_CATEGORIES.find(c=>c.id===r.rejectionCategory);return f?f.label:r.rejectionCategory;}return extractCategory(r.rejectionComment);}))].sort();
@@ -1324,9 +1348,9 @@ function rrejlog(){
   if(!rows.length){tb.innerHTML='<tr><td colspan="9" class="empty">No rejections match current filters.</td></tr>';return;}
   tb.innerHTML=rows.map((r,i)=>{
     let cat='Other';if(r.rejectionCategory){const f=REJECTION_CATEGORIES.find(c=>c.id===r.rejectionCategory);cat=f?f.label:r.rejectionCategory;}else cat=extractCategory(r.rejectionComment);
-    const rawComment=r.rejectionComment||r.approvalNotes||'—';const commentClean=rawComment.replace(/^\[[^\]]+\]\s*/,'');const commentShort=commentClean.length>80?commentClean.slice(0,80)+'…':commentClean;
-    const rejectedAt=r.rejectedAt||r.approvalUpdatedAt||'—';const rejectedBy=r.rejectedBy||r.gmApprovedBy||r.financeApprovedBy||'—';const enc=btoa('PRF|'+r.ref);
-    return`<tr style="${i%2===1?'background:var(--surface2)':''}"><td><span style="cursor:pointer;font-weight:600;text-decoration:underline;color:var(--info-text)" onclick="viewRecord('${enc}')">${r.ref||'—'}</span></td><td>${r.date||'—'}</td><td>${r.dept||'—'}</td><td>${r.reqName||'—'}</td><td><span style="font-size:10px;padding:2px 9px;border-radius:9px;background:#fcebeb;color:#a32d2d;font-weight:700;white-space:nowrap">${cat}</span></td><td style="font-size:11px;color:var(--text2);max-width:200px" title="${escHtml(commentClean)}">${escHtml(commentShort)||'—'}</td><td style="font-size:11px">${escHtml(rejectedBy)}</td><td style="font-size:11px;color:var(--text3)">${rejectedAt}</td><td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button></td></tr>`;
+    const rawComment=r.rejectionComment||r.approvalNotes||'-';const commentClean=rawComment.replace(/^\[[^\]]+\]\s*/,'');const commentShort=commentClean.length>80?commentClean.slice(0,80)+'…':commentClean;
+    const rejectedAt=r.rejectedAt||r.approvalUpdatedAt||'-';const rejectedBy=r.rejectedBy||r.gmApprovedBy||r.financeApprovedBy||'-';const enc=btoa('PRF|'+r.ref);
+    return`<tr style="${i%2===1?'background:var(--surface2)':''}"><td><span style="cursor:pointer;font-weight:600;text-decoration:underline;color:var(--info-text)" onclick="viewRecord('${enc}')">${r.ref||'-'}</span></td><td>${r.date||'-'}</td><td>${r.dept||'-'}</td><td>${r.reqName||'-'}</td><td><span style="font-size:10px;padding:2px 9px;border-radius:9px;background:#fcebeb;color:#a32d2d;font-weight:700;white-space:nowrap">${cat}</span></td><td style="font-size:11px;color:var(--text2);max-width:200px" title="${escHtml(commentClean)}">${escHtml(commentShort)||'-'}</td><td style="font-size:11px">${escHtml(rejectedBy)}</td><td style="font-size:11px;color:var(--text3)">${rejectedAt}</td><td><button class="abtn gold" onclick="viewRecord('${enc}')">View</button></td></tr>`;
   }).join('');
 }
 function clrRejLog(){['rj-f-cat','rj-f-dept','rj-f-by'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});const q=document.getElementById('rj-f-q');if(q)q.value='';rrejlog();}
@@ -1347,5 +1371,6 @@ window.moveRecord    = function(enc){const r=atob(enc).split('|');openMovePanel(
 })();
 document.getElementById('loading').style.display='none';
 </script>
+<div class="proc-footer">Samsons Procurement Hub v2.4 &middot; Samsons Group of Companies</div>
 </body>
 </html>
